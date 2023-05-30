@@ -15,6 +15,7 @@ Docker/.env
 .cxx
 local.properties
 
+Server/m2/*
 Server/HELP.md
 Server/target/
 Server/!.mvn/wrapper/maven-wrapper.jar

@@ -26,15 +26,12 @@ services:
       PMA_PORT: 3306
       MYSQL_ROOT_PASSWORD: root
       
-  frontend:
+  backend:
     image: java_18_node_16
     container_name: MPScan-backend
     ports:
       - 8089:8080
-      - 4209:4200
-    build:
-      dockerfile: Dockerfile
     volumes:
-      - ../Server/:/mpscan-backend
+      - ../Server/:/app
       - ../Server/m2/repository:/root/.m2/repository
     stdin_open: true
