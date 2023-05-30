@@ -9,8 +9,29 @@
 /.idea/assetWizardSettings.xml
 .DS_Store
 /build
-/Docker/.env
+Docker/.env
 /captures
 .externalNativeBuild
 .cxx
 local.properties
+
+Server/HELP.md
+Server/target/
+Server/!.mvn/wrapper/maven-wrapper.jar
+Server/!**/src/main/**/target/
+Server/!**/src/test/**/target/
+
+### STS ###
+Server/.apt_generated
+Server/.classpath
+Server/.factorypath
+Server/.project
+Server/.settings
+Server/.springBeans
+Server/.sts4-cache
+
+### IntelliJ IDEA ###
+Server/.idea
+Server/*.iws
+Server/*.iml
+Server/*.ipr
