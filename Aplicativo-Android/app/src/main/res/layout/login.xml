@@ -1,8 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/linearLayout2"
+<androidx.core.widget.NestedScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#9AD3DA"/>
+    android:fillViewport="true"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background">
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:src="@drawable/logo_azul_com_fundo"
+            tools:layout_editor_absoluteX="105dp"
+            tools:layout_editor_absoluteY="32dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+        </ImageView>
+
+        <View
+            android:id="@+id/containerComponentLogin"
+            style="@style/ContainerComponents"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/logo"
+            >
+        </View>
+
+        <EditText
+            style="@style/EditText"
+            android:id="@+id/etEmailUsuario"
+            android:inputType="textEmailAddress"
+            android:hint="Email"
+            android:drawableRight="@drawable/icon_email"
+            app:layout_constraintStart_toStartOf="@id/containerComponentLogin"
+            app:layout_constraintEnd_toEndOf="@id/containerComponentLogin"
+            app:layout_constraintTop_toTopOf="@id/containerComponentLogin"
+            >
+        </EditText>
+
+        <EditText
+            style="@style/EditText"
+            android:id="@+id/etSenhaUsuario"
+            android:inputType="textPassword"
+            android:hint="Senha"
+            android:drawableRight="@drawable/icon_eye"
+            app:layout_constraintStart_toStartOf="@id/containerComponentLogin"
+            app:layout_constraintEnd_toEndOf="@id/containerComponentLogin"
+            app:layout_constraintTop_toBottomOf="@id/etEmailUsuario"
+            >
+        </EditText>
+
+        <Button
+            android:id="@+id/btnLogin"
+            style="@style/Button"
+            android:text="@string/fazer_login"
+            app:layout_constraintStart_toStartOf="@id/containerComponentLogin"
+            app:layout_constraintEnd_toEndOf="@id/containerComponentLogin"
+            app:layout_constraintTop_toBottomOf="@id/etSenhaUsuario"
+            app:layout_constraintBottom_toBottomOf="@id/containerComponentLogin"
+            >
+        </Button>
+
+        <ProgressBar
+            android:id="@+id/progressBarLogin"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/containerComponentLogin"
+            app:layout_constraintBottom_toTopOf="@id/tvCadastrar"
+            android:layout_marginTop="20dp"
+            >
+        </ProgressBar>
+
+        <TextView
+            android:id="@+id/tvCadastrar"
+            android:text="Não possue conta? \n Clique aqui para se cadastrar"
+            android:textSize="15sp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/containerComponentLogin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="30dp"
+            >
+        </TextView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>
