@@ -15,7 +15,7 @@
         <activity
             android:name=".CadastroActivity"
             android:exported="true"
-            android:label="@string/title_activity_cadastro"
+            android:label="@string/titulo_activity_cadastro"
             android:theme="@style/Theme.MarketPriceScan" />
         <activity
             android:name=".LoginActivity"
@@ -28,6 +28,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>
