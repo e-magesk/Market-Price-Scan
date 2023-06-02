@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "905192438001",
+    "project_id": "market-price-scan",
+    "storage_bucket": "market-price-scan.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:905192438001:android:c68251b0797e385cd55150",
+        "android_client_info": {
+          "package_name": "br.com.marketpricescan"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "905192438001-6gnm71he252fcvjem60dv55hcl6jd01a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAm_fF6BrqjI5VXGLOrNP8oLtPuWinLKtc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "905192438001-6gnm71he252fcvjem60dv55hcl6jd01a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
