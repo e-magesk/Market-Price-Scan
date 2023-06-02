@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.core.widget.NestedScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background"
+        >
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/logo_com_fundo"
+            tools:layout_editor_absoluteX="105dp"
+            tools:layout_editor_absoluteY="32dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tvAppNome"
+            android:layout_marginTop="30dp"
+            >
+        </ImageView>
+
+        <TextView
+            android:id="@+id/tvAppNome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textAlignment="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/logo"
+            app:layout_constraintBottom_toTopOf="@id/tvTituloTelaCadastro"
+            android:textSize="18sp"
+            android:textColor="@color/light_gray_blue"
+            android:textStyle="bold"
+            android:layout_marginBottom="40dp"
+            >
+        </TextView>
+
+        <TextView
+            android:id="@+id/tvTituloTelaCadastro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:fontFamily="@font/jetbrains_mono_bold"
+            android:text="@string/titulo_tela_cadastro"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTituloTelaCadastro"
+            app:layout_constraintBottom_toTopOf="@id/vContainerComponentes"
+            >
+        </TextView>
+
+        <View
+            android:id="@+id/vContainerComponentes"
+            style="@style/ContainerComponents"
+            android:layout_height="280dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTituloTelaCadastro"></View>
+
+        <EditText
+            android:id="@+id/etNomeCadastro"
+            style="@style/EditText"
+            android:hint="Nome Completo"
+            android:inputType="text"
+            app:layout_constraintBottom_toTopOf="@id/etEmailCadastro"
+            app:layout_constraintEnd_toEndOf="@id/vContainerComponentes"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@id/vContainerComponentes"
+            app:layout_constraintTop_toTopOf="@id/vContainerComponentes"></EditText>
+
+        <EditText
+            android:id="@+id/etEmailCadastro"
+            style="@style/EditText"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            android:drawableRight="@drawable/icon_email"
+            app:layout_constraintTop_toBottomOf="@id/etNomeCadastro"
+            app:layout_constraintStart_toStartOf="@id/vContainerComponentes"
+            app:layout_constraintEnd_toEndOf="@id/vContainerComponentes"
+            app:layout_constraintBottom_toTopOf="@id/etSenhaCadastro"
+            >
+        </EditText>
+
+        <EditText
+            android:id="@+id/etSenhaCadastro"
+            style="@style/EditText"
+            android:hint="Senha"
+            android:inputType="textPassword"
+            android:drawableRight="@drawable/icon_eye"
+            app:layout_constraintTop_toBottomOf="@id/etEmailCadastro"
+            app:layout_constraintStart_toStartOf="@id/vContainerComponentes"
+            app:layout_constraintEnd_toEndOf="@id/vContainerComponentes"
+            app:layout_constraintBottom_toBottomOf="@id/vContainerComponentes"
+            >
+        </EditText>
+
+        <ProgressBar
+            android:id="@+id/progressBarCadastro"
+            android:visibility="visible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/vContainerComponentes"
+            app:layout_constraintBottom_toTopOf="@id/btnCadastrar"
+            android:layout_marginTop="20dp"
+            >
+        </ProgressBar>
+
+        <Button
+            android:id="@+id/btnCadastrar"
+            style="@style/ButtonMediumBlue"
+            android:text="Cadastrar"
+            android:textColor="@color/white"
+            android:fontFamily="@font/jetbrains_mono_bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/vContainerComponentes"
+            >
+        </Button>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
