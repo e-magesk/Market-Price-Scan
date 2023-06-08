@@ -27,10 +27,7 @@ class CadastroActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.cadastro)
 
-        btnCadastrar = findViewById(R.id.btnCadastrar)
-        etNomeCadastro = findViewById(R.id.etNomeCadastro)
-        etEmailCadastro  = findViewById(R.id.etEmailCadastro)
-        etSenhaCadastro = findViewById(R.id.etSenhaCadastro)
+        IniciarComponentes()
 
         btnCadastrar.setOnClickListener{view ->
             val nome = etNomeCadastro.text.toString()
@@ -47,6 +44,13 @@ class CadastroActivity : ComponentActivity() {
                 CadastrarUsuario(view)
             }
         }
+    }
+
+    private fun IniciarComponentes() {
+        btnCadastrar = findViewById(R.id.btnCadastrar)
+        etNomeCadastro = findViewById(R.id.etNomeCadastro)
+        etEmailCadastro = findViewById(R.id.etEmailCadastro)
+        etSenhaCadastro = findViewById(R.id.etSenhaCadastro)
     }
 
     private fun CadastrarUsuario(view : View) {
@@ -91,7 +95,7 @@ class CadastroActivity : ComponentActivity() {
 
         usuarioId = FirebaseAuth.getInstance().currentUser?.uid.toString()
         var database = FirebaseFirestore.getInstance()
-        database.collection("usuarios")
+        database.collection("usuario")
             .document(usuarioId)
             .set(usuario)
             .addOnSuccessListener {
