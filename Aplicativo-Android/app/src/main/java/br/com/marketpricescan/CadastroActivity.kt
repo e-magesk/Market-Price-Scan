@@ -7,11 +7,13 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.graphics.Color
+import br.com.marketpricescan.model.Usuario
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.google.firebase.firestore.FirebaseFirestore
 
 class CadastroActivity : ComponentActivity() {
 
@@ -19,6 +21,7 @@ class CadastroActivity : ComponentActivity() {
     lateinit var etNomeCadastro : EditText
     lateinit var etEmailCadastro : EditText
     lateinit var etSenhaCadastro : EditText
+    lateinit var usuarioId : String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +32,6 @@ class CadastroActivity : ComponentActivity() {
         etEmailCadastro  = findViewById(R.id.etEmailCadastro)
         etSenhaCadastro = findViewById(R.id.etSenhaCadastro)
 
-//        Log.d("Debug","Quero cadastrar")
         btnCadastrar.setOnClickListener{view ->
             val nome = etNomeCadastro.text.toString()
             val email = etEmailCadastro.text.toString()
@@ -54,6 +56,7 @@ class CadastroActivity : ComponentActivity() {
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, senha)
             .addOnCompleteListener { task ->
             if(task.isSuccessful) {
+                SalvarDadosUsuario(view)
                 var snackbar = Snackbar.make(view, "Usuário cadastrado com sucesso", Snackbar.LENGTH_LONG)
                 snackbar.setBackgroundTint(getColor(R.color.green))
                 snackbar.setTextColor(getColor(R.color.black))
@@ -80,6 +83,23 @@ class CadastroActivity : ComponentActivity() {
 
             }
         }
+    }
+
+    private fun SalvarDadosUsuario(view : View) {
+         var nome : String = etNomeCadastro.text.toString()
+         var usuario = Usuario(nome)
+
+        usuarioId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+        var database = FirebaseFirestore.getInstance()
+        database.collection("usuarios")
+            .document(usuarioId)
+            .set(usuario)
+            .addOnSuccessListener {
+                Log.d("Teste", "Sucesso ao salvar os dados do usuário")
+            }
+            .addOnFailureListener {
+                Log.d("Teste", "Erro ao salvar os dados do usuário")
+            }
     }
 
 }
