@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
+        android:id="@+id/tvWelcomeHome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
@@ -14,5 +15,6 @@
         android:text="Welcome, Home!"
         >
     </TextView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

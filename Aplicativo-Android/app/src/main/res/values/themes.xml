@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.MarketPriceScan" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.MarketPriceScan" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Outros atributos do tema -->
+    </style>
 
-    <style name="Theme.MarketPriceScan.NoActionBar">
+    <style name="Theme.MarketPriceScan.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
@@ -11,4 +13,5 @@
     <style name="Theme.MarketPriceScan.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.MarketPriceScan.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
 </resources>
