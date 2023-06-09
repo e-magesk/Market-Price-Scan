@@ -3,7 +3,8 @@
     <string name="fazer_login">Fazer Login</string>
     <string name="titulo_activity_cadastro">CadastroActivity</string>
     <string name="titulo_tela_cadastro">Cadastre-se</string>
-    <string name="title_activity_home">HomeActivity</string>
+    <string name="titulo_activity_home">HomeActivity</string>
+    <string name="titulo_activity_lista_de_compra">CadastrarListaDeCompra</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 
