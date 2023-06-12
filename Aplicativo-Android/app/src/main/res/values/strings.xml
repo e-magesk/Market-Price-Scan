@@ -4,7 +4,8 @@
     <string name="titulo_activity_cadastro">CadastroActivity</string>
     <string name="titulo_tela_cadastro">Cadastre-se</string>
     <string name="titulo_activity_home">HomeActivity</string>
-    <string name="titulo_activity_lista_de_compra">CadastrarListaDeCompra</string>
+    <string name="titulo_activity_lista_de_compra">ListaDeCompraActivity</string>
+    <string name="titulo_activity_item_lista_de_compra">ItemListaDeCompraActivity</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 

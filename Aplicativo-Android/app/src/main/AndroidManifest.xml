@@ -16,14 +16,12 @@
             android:name=".ListaDeCompraActivity"
             android:exported="true"
             android:label="@string/titulo_activity_lista_de_compra"
-            android:theme="@style/Theme.MarketPriceScan">
-        </activity>
+            android:theme="@style/Theme.MarketPriceScan"></activity>
         <activity
             android:name=".HomeActivity"
             android:exported="true"
             android:label="@string/titulo_activity_home"
-            android:theme="@style/Theme.MarketPriceScan">
-        </activity>
+            android:theme="@style/Theme.MarketPriceScan"></activity>
         <activity
             android:name=".CadastroActivity"
             android:exported="true"
