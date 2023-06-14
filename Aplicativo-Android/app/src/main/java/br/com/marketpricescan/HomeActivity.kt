@@ -6,11 +6,12 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import br.com.marketpricescan.model.Usuario
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-class HomeActivity : ComponentActivity() {
+class HomeActivity : AppCompatActivity() {
 
     lateinit var btnCriarListaDeCompra : Button
 

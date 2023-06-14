@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.ImageView
 import android.widget.TextView
 import br.com.marketpricescan.R
 
@@ -30,9 +31,22 @@ class ItemListaAdaptador(context: Context, itens : Array<String>) : BaseAdapter(
         if (itemView == null) {
             itemView = layoutInflater.inflate(R.layout.item_lista_de_compra, parent, false)
         }
+        var tvProdutoListaDeCompra = itemView!!.findViewById<TextView>(R.id.tvProdutoListaDeCompra)
+        var ivCircleCheck = itemView!!.findViewById<ImageView>(R.id.circleCheck)
+        var checkOrUncheck : Int = 0
 
-        var tvItem = itemView!!.findViewById<TextView>(R.id.tvTituloItemListaDeCompra)
-        tvItem.text = itens[position]
+        tvProdutoListaDeCompra.text = itens[position]
+        ivCircleCheck.setOnClickListener(){view ->
+
+            if(checkOrUncheck === 1){
+                ivCircleCheck.setImageResource(R.drawable.unchecked_circle)
+                checkOrUncheck = 0
+            }
+            else{
+                checkOrUncheck = 1
+                ivCircleCheck.setImageResource(R.drawable.check_circle)
+            }
+        }
 
         return itemView
     }

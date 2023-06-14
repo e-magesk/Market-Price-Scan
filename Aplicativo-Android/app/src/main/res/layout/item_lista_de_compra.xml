@@ -4,22 +4,69 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".ItemListaDeCompraActivity">
+    android:layout_gravity="center_vertical"
+    android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/tvTituloItemListaDeCompra"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Nome do item"
-        android:textSize="20sp"></TextView>
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Descrição do item"
-        android:textSize="15sp"></TextView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="3"
+                >
+
+                <TextView
+                    android:id="@+id/tvProdutoListaDeCompra"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Produto"
+                    android:textSize="20sp"
+                    android:layout_weight="3"
+                    >
+                </TextView>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvPrecoProdutoListaDeCompra"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Preço"
+                android:textSize="20sp"
+                android:visibility="invisible"></TextView>
+
+            <ImageView
+                android:id="@+id/circleCheck"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/unchecked_circle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_weight="1"
+
+                >
+            </ImageView>
+        </LinearLayout>
+
+    </RelativeLayout>
 
 </LinearLayout>
