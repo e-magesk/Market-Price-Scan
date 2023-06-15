@@ -17,29 +17,25 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="10dp"
             android:layout_centerInParent="true"
             android:gravity="center"
-            >
+            android:orientation="horizontal"
+            android:padding="5dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_weight="3"
-                >
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tvProdutoListaDeCompra"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="3"
                     android:gravity="center"
                     android:text="Produto"
-                    android:textSize="20sp"
-                    android:layout_weight="3"
-                    >
-                </TextView>
+                    android:textSize="20sp"></TextView>
 
             </LinearLayout>
 
@@ -57,14 +53,13 @@
                 android:id="@+id/circleCheck"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:src="@drawable/unchecked_circle"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 android:layout_weight="1"
+                android:src="@drawable/unchecked_circle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
 
-                >
-            </ImageView>
+                ></ImageView>
         </LinearLayout>
 
     </RelativeLayout>
