@@ -29,7 +29,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/cardViewListaDeCompra"
             android:layout_width="match_parent"
-            android:layout_height="650dp"
+            android:layout_height="0dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -41,16 +41,8 @@
             android:layout_marginBottom="70dp"
             >
 
-<!--            <androidx.recyclerview.widget.RecyclerView-->
-<!--                android:id="@+id/listaDeCompra"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:background="@color/white"-->
-<!--                >-->
-<!--            </androidx.recyclerview.widget.RecyclerView>-->
-
                 <ListView
-                    android:id="@+id/listaDeCompra"
+                    android:id="@+id/lvListaDeCompra"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:background="@color/white"></ListView>

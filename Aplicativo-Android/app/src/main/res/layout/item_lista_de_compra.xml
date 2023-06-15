@@ -20,38 +20,39 @@
             android:layout_centerInParent="true"
             android:gravity="center"
             android:orientation="horizontal"
-            android:padding="5dp">
+            android:padding="5dp"
+            android:weightSum="7">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
+                android:layout_weight="4"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tvProdutoListaDeCompra"
-                    android:layout_width="wrap_content"
+                <EditText
+                    android:id="@+id/etProdutoListaDeCompra"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:gravity="center"
+                    android:backgroundTint="@color/white"
+                    android:gravity="left"
                     android:text="Produto"
-                    android:textSize="20sp"></TextView>
+                    android:textSize="20sp"></EditText>
 
             </LinearLayout>
 
             <TextView
                 android:id="@+id/tvPrecoProdutoListaDeCompra"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:gravity="center"
-                android:text="Preço"
+                android:text="R$ 1000,00"
                 android:textSize="20sp"
-                android:visibility="invisible"></TextView>
+                android:visibility="visible"></TextView>
 
             <ImageView
                 android:id="@+id/circleCheck"
-                android:layout_width="35dp"
+                android:layout_width="0dp"
                 android:layout_height="35dp"
                 android:layout_weight="1"
                 android:src="@drawable/unchecked_circle"

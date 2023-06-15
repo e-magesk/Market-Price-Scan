@@ -7,13 +7,15 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import br.com.marketpricescan.model.Usuario
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class HomeActivity : AppCompatActivity() {
 
-    lateinit var btnCriarListaDeCompra : Button
+    lateinit var cvMinhasListas : CardView
+    lateinit var cvCriarNovaLista : CardView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,7 +23,10 @@ class HomeActivity : AppCompatActivity() {
 
         IniciarComponentes()
 
-        btnCriarListaDeCompra.setOnClickListener(){view ->
+        cvCriarNovaLista.isClickable = true
+        cvMinhasListas.isClickable = true
+
+        cvCriarNovaLista.setOnClickListener(){view ->
             var intent = Intent(this, ListaDeCompraActivity::class.java)
             startActivity(intent)
         }
@@ -41,6 +46,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun IniciarComponentes(){
-        btnCriarListaDeCompra = findViewById(R.id.btnCriarListaDeCompra)
+        cvCriarNovaLista = findViewById(R.id.cvCriarNovaLista)
+        cvMinhasListas = findViewById(R.id.cvMinhasListas)
     }
 }
