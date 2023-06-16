@@ -40,12 +40,26 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="70dp"
             >
+                <TextView
+                    android:id="@+id/tvListaVazia"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Sua lista está vazia. Clique em 'ADICIONAR ITEM' para começar a preenche-la."
+                    android:textColor="@color/black"
+                    android:textSize="20dp"
+                    android:justificationMode="inter_word"
+                    android:visibility="visible"
+                    android:padding="10dp"
+                    >
+                </TextView>
 
                 <ListView
                     android:id="@+id/lvListaDeCompra"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:background="@color/white"></ListView>
+                    android:background="@color/white"
+                    android:visibility="invisible"
+                    ></ListView>
 
 
         </androidx.cardview.widget.CardView>
