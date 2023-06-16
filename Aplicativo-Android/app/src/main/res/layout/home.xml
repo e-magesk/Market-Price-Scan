@@ -35,11 +35,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/logo"
-        app:layout_constraintBottom_toTopOf="@id/tvWelcomeHome"
         android:textSize="15sp"
         android:textColor="@color/black"
         android:textStyle="bold"
-        android:layout_marginBottom="15dp"
         >
     </TextView>
 
@@ -49,9 +47,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvAppNome"
-        app:layout_constraintBottom_toTopOf="@id/cvMinhasListas"
+        android:layout_marginTop="30dp"
         android:layout_marginLeft="15dp"
-        android:layout_marginBottom="15dp"
         android:text="Seja bem-vindo, Fulano!"
         android:textColor="@color/white"
         android:textStyle="bold"
@@ -66,11 +63,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvWelcomeHome"
+        android:layout_marginTop="30dp"
         app:cardCornerRadius="20dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="70dp"
         app:cardBackgroundColor="@color/medium_light_grey_blue"
         >
         <LinearLayout
@@ -85,23 +81,81 @@
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textAlignment="center"
+                android:drawableRight="@drawable/icon_checklist"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="20dp"
                 ></TextView>
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
 
-    <Button
-        android:id="@+id/btnCriarListaDeCompra"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        app:layout_constraintTop_toBottomOf="@id/cvMinhasListas"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cvCriarNovaLista"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="Criar Lista de Compras"
+        app:layout_constraintTop_toBottomOf="@id/cvMinhasListas"
+        android:layout_marginTop="20dp"
+        app:cardCornerRadius="20dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="200dp"
+        app:cardBackgroundColor="@color/medium_light_grey_blue"
         >
-    </Button>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="CRIAR NOVA LISTA"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:drawableRight="@drawable/icon_add"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="20dp"
+                ></TextView>
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cvCriarListaQRCode"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cvCriarNovaLista"
+        android:layout_marginTop="20dp"
+        app:cardCornerRadius="20dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="200dp"
+        app:cardBackgroundColor="@color/medium_light_grey_blue"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="CRIAR LISTA COM QR CODE"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:drawableRight="@drawable/icon_qr_code_scanner"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="20dp"
+                ></TextView>
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -29,7 +29,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/cardViewListaDeCompra"
             android:layout_width="match_parent"
-            android:layout_height="650dp"
+            android:layout_height="0dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -40,20 +40,26 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="70dp"
             >
-
-<!--            <androidx.recyclerview.widget.RecyclerView-->
-<!--                android:id="@+id/listaDeCompra"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:background="@color/white"-->
-<!--                >-->
-<!--            </androidx.recyclerview.widget.RecyclerView>-->
+                <TextView
+                    android:id="@+id/tvListaVazia"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Sua lista está vazia. Clique em 'ADICIONAR ITEM' para começar a preenche-la."
+                    android:textColor="@color/black"
+                    android:textSize="20dp"
+                    android:justificationMode="inter_word"
+                    android:visibility="visible"
+                    android:padding="10dp"
+                    >
+                </TextView>
 
                 <ListView
-                    android:id="@+id/listaDeCompra"
+                    android:id="@+id/lvListaDeCompra"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:background="@color/white"></ListView>
+                    android:background="@color/white"
+                    android:visibility="invisible"
+                    ></ListView>
 
 
         </androidx.cardview.widget.CardView>
