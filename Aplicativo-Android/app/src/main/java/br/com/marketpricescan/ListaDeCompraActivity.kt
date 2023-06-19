@@ -10,7 +10,11 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import br.com.marketpricescan.model.ListaDeCompra
+import br.com.marketpricescan.model.Produto
 import br.com.marketpricescan.util.ItemListaAdaptador
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class ListaDeCompraActivity : AppCompatActivity() {
 
@@ -28,9 +32,7 @@ class ListaDeCompraActivity : AppCompatActivity() {
         setContentView(R.layout.lista_de_compra)
 
         IniciarComponentes()
-        Log.d("Teste", "Vou criar o adaptador")
         adaptador = ItemListaAdaptador(this, itens)
-        Log.d("Teste", "Vou setar o adaptador " + adaptador.itemCount)
         rvListaDeCompra.setHasFixedSize(true)
         rvListaDeCompra.layoutManager = LinearLayoutManager(this)
         rvListaDeCompra.adapter = adaptador
@@ -39,7 +41,6 @@ class ListaDeCompraActivity : AppCompatActivity() {
         VerificarSituacaoLista()
 
         btnAdicionarItem.setOnClickListener(){view ->
-            Log.d("Teste", "Vou adicionar um item")
             itens.add("")
             adaptador.notifyDataSetChanged()
             rvListaDeCompra.smoothScrollToPosition(adaptador.itemCount - 1)
@@ -47,10 +48,17 @@ class ListaDeCompraActivity : AppCompatActivity() {
 
         }
 
-//        adaptador.setOnItemLongClickListener { parent, view, position, id ->
-//            PopUpConfirmacaoDeletarItem(itens[position], position)
-//            true
-//        }
+        val firestore = FirebaseFirestore.getInstance()
+        val usuariosRef = firestore.collection("usuario")
+
+        val listaDeProdutos = ListaDeCompra("Nome da Lista")
+        listaDeProdutos.adicionarProduto(Produto("Produto teste", 1.0))
+
+        val usuarioId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+        val listasDeProdutosRef = usuariosRef.document(usuarioId).collection("lista_de_compra")
+        val novaListaRef = listasDeProdutosRef.document()
+
+        novaListaRef.set(listaDeProdutos)
     }
 
     private fun IniciarComponentes(){
