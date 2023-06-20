@@ -57,6 +57,21 @@
     </TextView>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cvMinhasListasBackground"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvWelcomeHome"
+        android:layout_marginTop="30dp"
+        app:cardCornerRadius="20dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        app:cardBackgroundColor="@color/white"
+        >
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
         android:id="@+id/cvMinhasListas"
         android:layout_width="match_parent"
         android:layout_height="60dp"
@@ -95,7 +110,7 @@
         android:layout_height="60dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cvMinhasListas"
+        app:layout_constraintTop_toBottomOf="@id/cvMinhasListasBackground"
         android:layout_marginTop="20dp"
         app:cardCornerRadius="20dp"
         android:layout_marginLeft="15dp"
