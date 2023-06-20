@@ -47,37 +47,30 @@ class HomeActivity : AppCompatActivity() {
 
     private fun InicializarUsuario() {
 
+        lateinit var listas : ArrayList<DocumentReference>
+
         documentoUsuario = database.collection("usuario").document(usuarioId!!)
         documentoUsuario.get().addOnSuccessListener { documentSnapshot ->
             if (documentSnapshot.exists()) {
-                Log.d("Teste", "Usuario: ${documentSnapshot}")
-                this.usuario = Usuario(documentSnapshot.toObject(Usuario::class.java)!!)
+                usuario = Usuario(documentSnapshot.getString("nome")!!)
+                listas = documentSnapshot.get("listas") as ArrayList<DocumentReference>
+
+                var tvNomeUsuario = findViewById<TextView>(R.id.tvWelcomeHome)
+                tvNomeUsuario.text = "Welcome, ${this.usuario.nome}!"
+
+                InicializarListasDeCompraUsuario(listas)
             }
-
-            var tvNomeUsuario = findViewById<TextView>(R.id.tvWelcomeHome)
-            tvNomeUsuario.text = "Welcome, ${this.usuario.nome}!"
-
-            InicializarListasDeCompraUsuario()
         }
     }
 
-    private fun InicializarListasDeCompraUsuario() {
-        Log.d("Teste", "Cheguei nas listas")
-//        documentoListaDeCompra = database.collection("lista_de_compra").document()
-//        Log.d("Teste", "Documento: ${documentoListaDeCompra}")
-//        documentoListaDeCompra.get().addOnSuccessListener { documentSnapshot ->
-//            if(documentSnapshot.exists()){
-//                Log.d("Teste", "Lista de Compra: ${documentSnapshot.toObject(ListaDeCompra::class.java)}")
-//                this.usuario.listas.add(ListaDeCompra(documentSnapshot.toObject(ListaDeCompra::class.java)!!))
-//            }
-//        }
-
-        database.collection("lista_de_compra")
-            .get().addOnSuccessListener { querySnapshot ->
-                for (document in querySnapshot.documents) {
-                    this.usuario.listas.add(ListaDeCompra(document.toObject(ListaDeCompra::class.java)!!))
+    private fun InicializarListasDeCompraUsuario(listas : ArrayList<DocumentReference>) {
+        for(lista in listas){
+            lista.get().addOnSuccessListener { documentSnapshot ->
+                if(documentSnapshot.exists()){
+                    this.usuario.listas.add(ListaDeCompra(documentSnapshot.toObject(ListaDeCompra::class.java)!!))
                 }
             }
+        }
     }
 
     private fun DefinirAcoes() {

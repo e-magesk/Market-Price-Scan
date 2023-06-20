@@ -59,7 +59,6 @@ class ListaDeCompraActivity : AppCompatActivity() {
             VerificarSituacaoLista()
 
         }
-
     }
 
     private fun IniciarComponentes() {
