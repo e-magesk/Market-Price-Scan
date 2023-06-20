@@ -14,7 +14,10 @@ import br.com.marketpricescan.model.ListaDeCompra
 import br.com.marketpricescan.model.Produto
 import br.com.marketpricescan.util.ItemListaAdaptador
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
 
 class ListaDeCompraActivity : AppCompatActivity() {
 
@@ -26,6 +29,13 @@ class ListaDeCompraActivity : AppCompatActivity() {
         "Produto 1", "Produto 2", "Produto 3", "Produto 4", "Produto 5",
         "Produto 6", "Produto 7", "Produto 8", "Produto 9", "Produto 10", "Produto 11"
     )
+    private lateinit var listaDeCompra: ListaDeCompra
+    private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private val usuarioId: String = FirebaseAuth.getInstance().currentUser!!.uid
+    private lateinit var documentoUsuario: DocumentReference
+    private lateinit var documentoListaDeCompra: DocumentReference
+
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,9 +48,11 @@ class ListaDeCompraActivity : AppCompatActivity() {
         rvListaDeCompra.adapter = adaptador
         rvListaDeCompra.isClickable = true
 
+        CriarNovaListaDeCompra()
+
         VerificarSituacaoLista()
 
-        btnAdicionarItem.setOnClickListener(){view ->
+        btnAdicionarItem.setOnClickListener() { view ->
             itens.add("")
             adaptador.notifyDataSetChanged()
             rvListaDeCompra.smoothScrollToPosition(adaptador.itemCount - 1)
@@ -48,51 +60,49 @@ class ListaDeCompraActivity : AppCompatActivity() {
 
         }
 
-        val firestore = FirebaseFirestore.getInstance()
-        val usuariosRef = firestore.collection("usuario")
-
-        val listaDeProdutos = ListaDeCompra("Nome da Lista")
-        listaDeProdutos.adicionarProduto(Produto("Produto teste", 1.0))
-
-        val usuarioId = FirebaseAuth.getInstance().currentUser?.uid.toString()
-        val listasDeProdutosRef = usuariosRef.document(usuarioId).collection("lista_de_compra")
-        val novaListaRef = listasDeProdutosRef.document()
-
-        novaListaRef.set(listaDeProdutos)
     }
 
-    private fun IniciarComponentes(){
+    private fun IniciarComponentes() {
         btnAdicionarItem = findViewById(R.id.btnAdicionarItem)
         rvListaDeCompra = findViewById(R.id.rvListaDeCompra)
         tvListaVazia = findViewById(R.id.tvListaVazia)
     }
 
-    private fun VerificarSituacaoLista(){
-        if(itens.size == 0){
+    private fun VerificarSituacaoLista() {
+        if (itens.size == 0) {
             tvListaVazia.visibility = TextView.VISIBLE
             rvListaDeCompra.visibility = ListView.INVISIBLE
-        }
-        else{
+        } else {
             tvListaVazia.visibility = TextView.INVISIBLE
             rvListaDeCompra.visibility = ListView.VISIBLE
         }
     }
 
-    private fun PopUpConfirmacaoDeletarItem(item : String, position : Int){
-        val alertDialog = AlertDialog.Builder(this)
-            .setTitle("Deletar Item")
-            .setMessage("O item " + item + " será deletado da lista. Deseja continuar?")
-            .setPositiveButton("OK") { dialog, which ->
-                itens.removeAt(position)
-                adaptador.notifyDataSetChanged()
-                VerificarSituacaoLista()
-                dialog.dismiss()
+    private fun CriarNovaListaDeCompra() {
+        listaDeCompra = ListaDeCompra("")
+        documentoListaDeCompra = database.collection("lista_de_compra")
+            .document()
+        documentoListaDeCompra.set(listaDeCompra)
+            .addOnSuccessListener {
+                VincularListaAoUsuario()
+                Log.d("Teste", "Sucesso ao salvar a lista no banco de dados")
             }
-            .setNegativeButton("Cancelar") { dialog, which ->
-                dialog.dismiss()
+            .addOnFailureListener {
+                Log.d("Teste", "Erro ao salvar a lista no banco de dados")
             }
-            .create()
-        alertDialog.show()
     }
 
+    private fun VincularListaAoUsuario() {
+
+        documentoUsuario = database.collection("usuario")
+            .document(usuarioId)
+        documentoUsuario.update("listas", FieldValue.arrayUnion(documentoListaDeCompra))
+            .addOnSuccessListener {
+                Log.d("Teste", "Sucesso ao vincular a lista ao usuário")
+            }
+            .addOnFailureListener {
+                Log.d("Teste", "Erro ao vincular a lista ao usuário")
+            }
+
+    }
 }

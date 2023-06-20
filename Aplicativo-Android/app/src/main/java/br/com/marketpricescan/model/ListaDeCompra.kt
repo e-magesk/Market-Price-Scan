@@ -1,8 +1,18 @@
 package br.com.marketpricescan.model
 
-class ListaDeCompra(var nome : String) {
+class ListaDeCompra() {
 
     private var produtos : MutableList<Produto> = mutableListOf()
+    var name : String = ""
+
+    constructor(lista : ListaDeCompra) : this(){
+        produtos = lista.getProdutos()
+        name = lista.name
+    }
+
+    constructor(name : String) : this(){
+        this.name = name
+    }
 
     fun adicionarProduto(produto : Produto){
         produtos.add(produto)

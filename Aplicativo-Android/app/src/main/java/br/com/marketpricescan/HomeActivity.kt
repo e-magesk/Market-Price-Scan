@@ -15,13 +15,14 @@ import kotlin.math.floor
 
 class HomeActivity : AppCompatActivity() {
 
-    lateinit var cvMinhasListas : CardView
-    lateinit var cvMinhasListasBackground : CardView
-    lateinit var cvCriarNovaLista : CardView
-    lateinit var minhasListas : ArrayList<ListaDeCompra>
-    private val database : FirebaseFirestore = FirebaseFirestore.getInstance()
-    private val usuarioId : String = FirebaseAuth.getInstance().currentUser!!.uid
-    private lateinit var documentoUsuario : DocumentReference
+    lateinit var cvMinhasListas: CardView
+    lateinit var cvMinhasListasBackground: CardView
+    lateinit var cvCriarNovaLista: CardView
+    lateinit var minhasListas: ArrayList<ListaDeCompra>
+    private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private val usuarioId: String = FirebaseAuth.getInstance().currentUser!!.uid
+    private lateinit var documentoUsuario: DocumentReference
+    private lateinit var documentoListaDeCompra: DocumentReference
     private lateinit var usuario: Usuario
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,40 +39,49 @@ class HomeActivity : AppCompatActivity() {
         InicializarUsuario()
     }
 
-    private fun IniciarComponentes(){
+    private fun IniciarComponentes() {
         cvCriarNovaLista = findViewById(R.id.cvCriarNovaLista)
         cvMinhasListas = findViewById(R.id.cvMinhasListas)
         cvMinhasListasBackground = findViewById(R.id.cvMinhasListasBackground)
     }
 
-    private fun InicializarUsuario(){
+    private fun InicializarUsuario() {
 
         documentoUsuario = database.collection("usuario").document(usuarioId!!)
         documentoUsuario.get().addOnSuccessListener { documentSnapshot ->
-            Log.d("Teste", "Entrei")
-//            if(documentSnapshot.exists()){
-//                usuario.nome = documentSnapshot.get("nome") as String
-//            }
+            if (documentSnapshot.exists()) {
+                Log.d("Teste", "Usuario: ${documentSnapshot}")
+                this.usuario = Usuario(documentSnapshot.toObject(Usuario::class.java)!!)
+            }
+
+            var tvNomeUsuario = findViewById<TextView>(R.id.tvWelcomeHome)
+            tvNomeUsuario.text = "Welcome, ${this.usuario.nome}!"
+
+            InicializarListasDeCompraUsuario()
         }
-//
-//        var tvNomeUsuario = findViewById<TextView>(R.id.tvWelcomeHome)
-//        tvNomeUsuario.text = "Welcome, ${usuario?.nome}!"
-
-//        var listas = documentoUsuario.collection("lista_de_compra").get()
-//                .addOnSuccessListener { querySnapshot ->
-//                    // O sucesso da consulta
-//                    for (document in querySnapshot.documents) {
-//                        // Processar os documentos da coleção interna
-//                        Log.d("Teste", document.data?.values.toString())
-//                        val data = document.data
-//                        // ...
-//                    }
-//                }
-
     }
 
-    private fun DefinirAcoes(){
-        cvCriarNovaLista.setOnClickListener(){view ->
+    private fun InicializarListasDeCompraUsuario() {
+        Log.d("Teste", "Cheguei nas listas")
+//        documentoListaDeCompra = database.collection("lista_de_compra").document()
+//        Log.d("Teste", "Documento: ${documentoListaDeCompra}")
+//        documentoListaDeCompra.get().addOnSuccessListener { documentSnapshot ->
+//            if(documentSnapshot.exists()){
+//                Log.d("Teste", "Lista de Compra: ${documentSnapshot.toObject(ListaDeCompra::class.java)}")
+//                this.usuario.listas.add(ListaDeCompra(documentSnapshot.toObject(ListaDeCompra::class.java)!!))
+//            }
+//        }
+
+        database.collection("lista_de_compra")
+            .get().addOnSuccessListener { querySnapshot ->
+                for (document in querySnapshot.documents) {
+                    this.usuario.listas.add(ListaDeCompra(document.toObject(ListaDeCompra::class.java)!!))
+                }
+            }
+    }
+
+    private fun DefinirAcoes() {
+        cvCriarNovaLista.setOnClickListener() { view ->
             var intent = Intent(this, ListaDeCompraActivity::class.java)
             startActivity(intent)
         }
@@ -81,10 +91,9 @@ class HomeActivity : AppCompatActivity() {
             val density = resources.displayMetrics.density
             var heightCv = cvMinhasListasBackground.height
 
-            if(heightCv > floor(60 * density)){
+            if (heightCv > floor(60 * density)) {
                 layout.height = (floor(60 * density)).toInt()
-            }
-            else{
+            } else {
                 layout.height = (heightCv + floor(60 * density)).toInt()
             }
             cvMinhasListasBackground.layoutParams = layout
