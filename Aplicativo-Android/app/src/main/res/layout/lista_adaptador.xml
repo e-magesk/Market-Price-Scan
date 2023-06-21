@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dp"
+            android:weightSum="7">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/etNomeListaDeCompra"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/white"
+                    android:gravity="left"
+                    android:text="Nome Lista de Compra"
+                    android:textSize="15sp"></EditText>
+
+            </LinearLayout>
+
+<!--            <ImageView-->
+<!--                android:id="@+id/circleCheck"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="30dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:src="@drawable/unchecked_circle"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="parent"-->
+
+<!--                ></ImageView>-->
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

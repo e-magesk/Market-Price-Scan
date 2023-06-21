@@ -6,8 +6,12 @@ import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.model.ListaDeCompra
 import br.com.marketpricescan.model.Usuario
+import br.com.marketpricescan.util.ItemListaAdaptador
+import br.com.marketpricescan.util.ListaAdaptador
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -18,7 +22,9 @@ class HomeActivity : AppCompatActivity() {
     lateinit var cvMinhasListas: CardView
     lateinit var cvMinhasListasBackground: CardView
     lateinit var cvCriarNovaLista: CardView
+    lateinit var rvMinhasListas : RecyclerView
     lateinit var minhasListas: ArrayList<ListaDeCompra>
+    private lateinit var adaptador: ListaAdaptador
     private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val usuarioId: String = FirebaseAuth.getInstance().currentUser!!.uid
     private lateinit var documentoUsuario: DocumentReference
@@ -30,6 +36,12 @@ class HomeActivity : AppCompatActivity() {
         setContentView(R.layout.home)
 
         IniciarComponentes()
+
+        adaptador = ListaAdaptador(this, minhasListas)
+        rvMinhasListas.setHasFixedSize(true)
+        rvMinhasListas.layoutManager = LinearLayoutManager(this)
+        rvMinhasListas.adapter = adaptador
+        rvMinhasListas.isClickable = true
 
         cvCriarNovaLista.isClickable = true
         cvMinhasListas.isClickable = true
@@ -43,6 +55,7 @@ class HomeActivity : AppCompatActivity() {
         cvCriarNovaLista = findViewById(R.id.cvCriarNovaLista)
         cvMinhasListas = findViewById(R.id.cvMinhasListas)
         cvMinhasListasBackground = findViewById(R.id.cvMinhasListasBackground)
+        rvMinhasListas = findViewById(R.id.rvMinhasListas)
     }
 
     private fun InicializarUsuario() {
@@ -85,7 +98,7 @@ class HomeActivity : AppCompatActivity() {
             var heightCv = cvMinhasListasBackground.height
 
             if (heightCv > floor(60 * density)) {
-                layout.height = (floor(60 * density)).toInt()
+                layout.height = (floor(60 * density * minhasListas.size)).toInt()
             } else {
                 layout.height = (heightCv + floor(60 * density)).toInt()
             }
