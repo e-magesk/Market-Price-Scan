@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +17,7 @@ import br.com.marketpricescan.model.ListaDeCompra
 class ListaAdaptador(private val context : Context, private val listasDeCompra: MutableList<ListaDeCompra>) : RecyclerView.Adapter<ListaAdaptador.ItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val itemView = LayoutInflater.from(context).inflate(R.layout.item_lista_de_compra, parent, false)
+        val itemView = LayoutInflater.from(context).inflate(R.layout.lista_adaptador, parent, false)
         return ItemViewHolder(itemView)
     }
 
@@ -42,7 +43,8 @@ class ListaAdaptador(private val context : Context, private val listasDeCompra: 
         }
 
         fun bind(lista: ListaDeCompra) {
-            etNomeListaDeCompra.setText(lista.nome)
+//            etNomeListaDeCompra.setText(lista.nome)
+            etNomeListaDeCompra.setText("Nome da Lista")
         }
 
         private fun PopUpConfirmacaoDeletarLista(lista : ListaDeCompra, position : Int){

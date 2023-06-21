@@ -35,6 +35,7 @@
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/white"
                     android:gravity="left"
+                    android:textColor="@color/black"
                     android:text="Nome Lista de Compra"
                     android:textSize="15sp"></EditText>
 

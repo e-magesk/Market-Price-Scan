@@ -23,7 +23,6 @@ class HomeActivity : AppCompatActivity() {
     lateinit var cvMinhasListasBackground: CardView
     lateinit var cvCriarNovaLista: CardView
     lateinit var rvMinhasListas : RecyclerView
-    lateinit var minhasListas: ArrayList<ListaDeCompra>
     private lateinit var adaptador: ListaAdaptador
     private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val usuarioId: String = FirebaseAuth.getInstance().currentUser!!.uid
@@ -37,18 +36,11 @@ class HomeActivity : AppCompatActivity() {
 
         IniciarComponentes()
 
-        adaptador = ListaAdaptador(this, minhasListas)
-        rvMinhasListas.setHasFixedSize(true)
-        rvMinhasListas.layoutManager = LinearLayoutManager(this)
-        rvMinhasListas.adapter = adaptador
-        rvMinhasListas.isClickable = true
-
         cvCriarNovaLista.isClickable = true
         cvMinhasListas.isClickable = true
 
-        DefinirAcoes()
-
         InicializarUsuario()
+
     }
 
     private fun IniciarComponentes() {
@@ -72,6 +64,7 @@ class HomeActivity : AppCompatActivity() {
                 tvNomeUsuario.text = "Welcome, ${this.usuario.nome}!"
 
                 InicializarListasDeCompraUsuario(listas)
+
             }
         }
     }
@@ -80,10 +73,12 @@ class HomeActivity : AppCompatActivity() {
         for(lista in listas){
             lista.get().addOnSuccessListener { documentSnapshot ->
                 if(documentSnapshot.exists()){
-                    this.usuario.listas.add(ListaDeCompra(documentSnapshot.toObject(ListaDeCompra::class.java)!!))
+                    this.usuario.adicionarLista(ListaDeCompra(documentSnapshot.toObject(ListaDeCompra::class.java)!!))
+                    DefinirAcoes()
                 }
             }
         }
+        PrepararCardViewMinhasListas()
     }
 
     private fun DefinirAcoes() {
@@ -92,17 +87,27 @@ class HomeActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        Log.d("Teste", usuario.listas.toString())
+        Log.d("Teste", usuario.listas.size.toString())
+
         cvMinhasListas.setOnClickListener { view ->
             var layout = cvMinhasListasBackground.layoutParams
             val density = resources.displayMetrics.density
             var heightCv = cvMinhasListasBackground.height
-
             if (heightCv > floor(60 * density)) {
-                layout.height = (floor(60 * density * minhasListas.size)).toInt()
+                layout.height = (floor(60 * density * usuario.listas.size)).toInt()
             } else {
                 layout.height = (heightCv + floor(60 * density)).toInt()
             }
             cvMinhasListasBackground.layoutParams = layout
         }
+    }
+
+    private fun PrepararCardViewMinhasListas(){
+        adaptador = ListaAdaptador(this, usuario.listas)
+        rvMinhasListas.setHasFixedSize(true)
+        rvMinhasListas.layoutManager = LinearLayoutManager(this)
+        rvMinhasListas.adapter = adaptador
+        rvMinhasListas.isClickable = true
     }
 }
