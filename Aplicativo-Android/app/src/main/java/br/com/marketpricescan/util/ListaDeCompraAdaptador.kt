@@ -39,7 +39,7 @@ class ListaDeCompraAdaptador(private val context : Context, private val listasDe
         }
 
         fun bind(lista: ListaDeCompra) {
-            tvNomeListaDeCompra.setText("Nome da Lista")
+            tvNomeListaDeCompra.setText(lista.nome)
         }
 
         private fun PopUpConfirmacaoDeletarLista(lista : ListaDeCompra, position : Int){
