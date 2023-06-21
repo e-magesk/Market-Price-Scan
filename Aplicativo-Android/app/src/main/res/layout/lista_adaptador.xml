@@ -37,7 +37,10 @@
                     android:gravity="left"
                     android:textColor="@color/black"
                     android:text="Nome Lista de Compra"
-                    android:textSize="20sp"></TextView>
+                    android:textSize="20sp"
+                    android:layout_marginLeft="10dp"
+                    >
+                </TextView>
 
             </LinearLayout>
 

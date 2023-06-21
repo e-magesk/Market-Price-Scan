@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.model.ListaDeCompra
 import br.com.marketpricescan.model.Usuario
-import br.com.marketpricescan.util.ItemListaAdaptador
 import br.com.marketpricescan.util.ListaAdaptador
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
@@ -96,16 +95,18 @@ class HomeActivity : AppCompatActivity() {
                 var layout = cvMinhasListasBackground.layoutParams
                 val density = resources.displayMetrics.density
                 layout.height = (floor(60 * density)).toInt()
-
+//                cvMinhasListasBackground.visibility = CardView.GONE
                 cvMinhasListasBackground.layoutParams = layout
                 flagExibindoMinhasListas = false
             }
             else{
                 var layout = cvMinhasListasBackground.layoutParams
-                val density = resources.displayMetrics.density
-                layout.height = (floor(60 * density * usuario.listas.size)).toInt()
+                layout.height = RecyclerView.LayoutParams.WRAP_CONTENT
+//                val density = resources.displayMetrics.density
+//                layout.height = (floor(60 * density * usuario.listas.size) + 20 * density).toInt()
 
                 cvMinhasListasBackground.layoutParams = layout
+                adaptador.notifyDataSetChanged()
                 flagExibindoMinhasListas = true
             }
         }

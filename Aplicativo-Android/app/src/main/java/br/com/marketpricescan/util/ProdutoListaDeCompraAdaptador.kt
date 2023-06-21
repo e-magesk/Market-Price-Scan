@@ -13,16 +13,14 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.R
 
-class ItemListaAdaptador(private val context : Context, private val itens: MutableList<String>) : RecyclerView.Adapter<ItemListaAdaptador.ItemViewHolder>() {
+class ProdutoListaDeCompraAdaptador(private val context : Context, private val itens: MutableList<String>) : RecyclerView.Adapter<ProdutoListaDeCompraAdaptador.ItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        Log.d("Teste", "onCreateViewHolder: " + itens.size)
-        val itemView = LayoutInflater.from(context).inflate(R.layout.item_lista_de_compra, parent, false)
+        val itemView = LayoutInflater.from(context).inflate(R.layout.produto_lista_de_compra_adaptador, parent, false)
         return ItemViewHolder(itemView)
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        Log.d("Teste", "onBindViewHolder: " + itens[position])
         val item = itens[position]
         holder.bind(item)
     }
@@ -72,7 +70,6 @@ class ItemListaAdaptador(private val context : Context, private val itens: Mutab
         }
 
         fun bind(item: String) {
-            Log.d("Tester", "bind: $item")
             etProdutoListaDeCompra.setText(item)
         }
 
@@ -81,7 +78,9 @@ class ItemListaAdaptador(private val context : Context, private val itens: Mutab
                 .setTitle("Deletar Item")
                 .setMessage("O item " + item + " será deletado da lista. Deseja continuar?")
                 .setPositiveButton("OK") { dialog, which ->
+                    Log.d("Teste", "PopUpConfirmacaoDeletarItem: " + position)
                     itens.removeAt(position)
+                    notifyItemRemoved(position)
                     dialog.dismiss()
                 }
                 .setNegativeButton("Cancelar") { dialog, which ->

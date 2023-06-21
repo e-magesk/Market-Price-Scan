@@ -44,7 +44,6 @@ class ListaAdaptador(private val context : Context, private val listasDeCompra: 
         }
 
         fun bind(lista: ListaDeCompra) {
-//            etNomeListaDeCompra.setText(lista.nome)
             tvNomeListaDeCompra.setText("Nome da Lista")
         }
 
@@ -54,6 +53,7 @@ class ListaAdaptador(private val context : Context, private val listasDeCompra: 
                 .setMessage("A lista " + lista.nome + " será deletado de Mnhas Listas. Deseja continuar?")
                 .setPositiveButton("OK") { dialog, which ->
                     listasDeCompra.removeAt(position)
+                    notifyItemRemoved(position)
                     dialog.dismiss()
                 }
                 .setNegativeButton("Cancelar") { dialog, which ->
