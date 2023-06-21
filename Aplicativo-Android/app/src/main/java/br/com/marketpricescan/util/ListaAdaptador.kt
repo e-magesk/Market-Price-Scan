@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.R
 import br.com.marketpricescan.model.ListaDeCompra
@@ -31,7 +32,7 @@ class ListaAdaptador(private val context : Context, private val listasDeCompra: 
     }
 
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val etNomeListaDeCompra: EditText = itemView.findViewById(R.id.etNomeListaDeCompra)
+        private val tvNomeListaDeCompra: TextView = itemView.findViewById(R.id.tvNomeListaDeCompra)
 
         init {
             itemView.setOnLongClickListener {
@@ -44,7 +45,7 @@ class ListaAdaptador(private val context : Context, private val listasDeCompra: 
 
         fun bind(lista: ListaDeCompra) {
 //            etNomeListaDeCompra.setText(lista.nome)
-            etNomeListaDeCompra.setText("Nome da Lista")
+            tvNomeListaDeCompra.setText("Nome da Lista")
         }
 
         private fun PopUpConfirmacaoDeletarLista(lista : ListaDeCompra, position : Int){

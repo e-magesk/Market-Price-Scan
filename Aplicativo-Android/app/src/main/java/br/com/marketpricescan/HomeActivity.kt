@@ -29,6 +29,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var documentoUsuario: DocumentReference
     private lateinit var documentoListaDeCompra: DocumentReference
     private lateinit var usuario: Usuario
+    private var flagExibindoMinhasListas : Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,15 +92,22 @@ class HomeActivity : AppCompatActivity() {
         Log.d("Teste", usuario.listas.size.toString())
 
         cvMinhasListas.setOnClickListener { view ->
-            var layout = cvMinhasListasBackground.layoutParams
-            val density = resources.displayMetrics.density
-            var heightCv = cvMinhasListasBackground.height
-            if (heightCv > floor(60 * density)) {
-                layout.height = (floor(60 * density * usuario.listas.size)).toInt()
-            } else {
-                layout.height = (heightCv + floor(60 * density)).toInt()
+            if(flagExibindoMinhasListas) {
+                var layout = cvMinhasListasBackground.layoutParams
+                val density = resources.displayMetrics.density
+                layout.height = (floor(60 * density)).toInt()
+
+                cvMinhasListasBackground.layoutParams = layout
+                flagExibindoMinhasListas = false
             }
-            cvMinhasListasBackground.layoutParams = layout
+            else{
+                var layout = cvMinhasListasBackground.layoutParams
+                val density = resources.displayMetrics.density
+                layout.height = (floor(60 * density * usuario.listas.size)).toInt()
+
+                cvMinhasListasBackground.layoutParams = layout
+                flagExibindoMinhasListas = true
+            }
         }
     }
 
