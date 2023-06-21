@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.model.ListaDeCompra
 import br.com.marketpricescan.model.Usuario
-import br.com.marketpricescan.util.ListaAdaptador
+import br.com.marketpricescan.util.ListaDeCompraAdaptador
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -22,7 +22,7 @@ class HomeActivity : AppCompatActivity() {
     lateinit var cvMinhasListasBackground: CardView
     lateinit var cvCriarNovaLista: CardView
     lateinit var rvMinhasListas : RecyclerView
-    private lateinit var adaptador: ListaAdaptador
+    private lateinit var adaptador: ListaDeCompraAdaptador
     private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val usuarioId: String = FirebaseAuth.getInstance().currentUser!!.uid
     private lateinit var documentoUsuario: DocumentReference
@@ -87,24 +87,17 @@ class HomeActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        Log.d("Teste", usuario.listas.toString())
-        Log.d("Teste", usuario.listas.size.toString())
-
         cvMinhasListas.setOnClickListener { view ->
             if(flagExibindoMinhasListas) {
                 var layout = cvMinhasListasBackground.layoutParams
                 val density = resources.displayMetrics.density
                 layout.height = (floor(60 * density)).toInt()
-//                cvMinhasListasBackground.visibility = CardView.GONE
                 cvMinhasListasBackground.layoutParams = layout
                 flagExibindoMinhasListas = false
             }
             else{
                 var layout = cvMinhasListasBackground.layoutParams
                 layout.height = RecyclerView.LayoutParams.WRAP_CONTENT
-//                val density = resources.displayMetrics.density
-//                layout.height = (floor(60 * density * usuario.listas.size) + 20 * density).toInt()
-
                 cvMinhasListasBackground.layoutParams = layout
                 adaptador.notifyDataSetChanged()
                 flagExibindoMinhasListas = true
@@ -113,7 +106,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun PrepararCardViewMinhasListas(){
-        adaptador = ListaAdaptador(this, usuario.listas)
+        adaptador = ListaDeCompraAdaptador(this, usuario.listas)
         rvMinhasListas.setHasFixedSize(true)
         rvMinhasListas.layoutManager = LinearLayoutManager(this)
         rvMinhasListas.adapter = adaptador

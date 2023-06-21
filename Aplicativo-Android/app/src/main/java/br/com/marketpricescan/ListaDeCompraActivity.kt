@@ -1,6 +1,7 @@
 package br.com.marketpricescan
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -10,23 +11,27 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.model.ListaDeCompra
+import br.com.marketpricescan.model.Produto
 import br.com.marketpricescan.util.ProdutoListaDeCompraAdaptador
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.runBlocking
 
 class ListaDeCompraActivity : AppCompatActivity() {
 
     private lateinit var rvListaDeCompra: RecyclerView
     private lateinit var btnAdicionarItem: Button
     private lateinit var tvListaVazia: TextView
+    private lateinit var etTituloLista: TextView
     private lateinit var adaptador: ProdutoListaDeCompraAdaptador
     var itens = mutableListOf<String>(
         "Produto 1", "Produto 2", "Produto 3", "Produto 4", "Produto 5",
         "Produto 6", "Produto 7", "Produto 8", "Produto 9", "Produto 10", "Produto 11"
     )
     private lateinit var listaDeCompra: ListaDeCompra
+    private var produtos: ArrayList<Produto> = ArrayList()
     private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val usuarioId: String = FirebaseAuth.getInstance().currentUser!!.uid
     private lateinit var documentoUsuario: DocumentReference
@@ -62,6 +67,7 @@ class ListaDeCompraActivity : AppCompatActivity() {
         btnAdicionarItem = findViewById(R.id.btnAdicionarItem)
         rvListaDeCompra = findViewById(R.id.rvListaDeCompra)
         tvListaVazia = findViewById(R.id.tvListaVazia)
+        etTituloLista = findViewById(R.id.etTituloLista)
     }
 
     private fun VerificarSituacaoLista() {
@@ -101,4 +107,40 @@ class ListaDeCompraActivity : AppCompatActivity() {
             }
 
     }
+
+    override fun onBackPressed() {
+        var alertDialog = AlertDialog.Builder(this)
+            .setTitle("Salvar Lista?")
+            .setMessage("Deseja salvar a lista " + etTituloLista.text + "?")
+            .setPositiveButton("OK") { dialog, which ->
+                runBlocking {
+                    SalvarListaDeCompra()
+                }
+                dialog.dismiss()
+                finish()
+            }
+            .setNegativeButton("Cancelar") { dialog, which ->
+                dialog.dismiss()
+                finish()
+            }
+            .create()
+        alertDialog.show()
+    }
+
+    private fun SalvarListaDeCompra(){
+        val updates = hashMapOf<String, Any>(
+            "produtos" to produtos,
+            "nome" to etTituloLista.text.toString(),
+        )
+
+        documentoListaDeCompra.update(updates)
+            .addOnSuccessListener {
+                Log.d("Teste", "Sucesso ao atualizar a lista no banco de dados")
+            }
+            .addOnFailureListener { e ->
+                Log.d("Teste", "Erro ao atualizar a lista no banco de dados")
+            }
+    }
+
+
 }
