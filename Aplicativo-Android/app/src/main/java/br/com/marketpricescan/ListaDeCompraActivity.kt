@@ -2,6 +2,7 @@ package br.com.marketpricescan
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -113,10 +114,14 @@ class ListaDeCompraActivity : AppCompatActivity() {
                 runBlocking {
                     SalvarListaDeCompra()
                 }
+                val intent = Intent(this, HomeActivity::class.java)
+                startActivity(intent)
                 dialog.dismiss()
                 finish()
             }
             .setNegativeButton("Cancelar") { dialog, which ->
+                val intent = Intent(this, HomeActivity::class.java)
+                startActivity(intent)
                 dialog.dismiss()
                 finish()
             }

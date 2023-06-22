@@ -126,6 +126,8 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
                 finish()
             }
             .setNegativeButton("Cancelar") { dialog, which ->
+                val intent = Intent(this, HomeActivity::class.java)
+                startActivity(intent)
                 dialog.dismiss()
                 finish()
             }

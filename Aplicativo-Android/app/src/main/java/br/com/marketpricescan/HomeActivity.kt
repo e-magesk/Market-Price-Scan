@@ -87,6 +87,7 @@ class HomeActivity : AppCompatActivity() {
         cvCriarNovaLista.setOnClickListener() { view ->
             var intent = Intent(this, ListaDeCompraActivity::class.java)
             startActivity(intent)
+            finish()
         }
 
         cvMinhasListas.setOnClickListener { view ->
