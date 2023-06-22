@@ -13,9 +13,9 @@
         android:theme="@style/Theme.MarketPriceScan"
         tools:targetApi="31">
         <activity
-            android:name=".ItemListaDeCompraActivity"
+            android:name=".AtualizarListaDeCompraActivity"
             android:exported="true"
-            android:label="@string/titulo_activity_item_lista_de_compra"
+            android:label="@string/titulo_activity_atualizar_lista_de_compra"
             android:theme="@style/Theme.MarketPriceScan"></activity>
         <activity
             android:name=".ListaDeCompraActivity"

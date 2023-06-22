@@ -2,11 +2,15 @@ package br.com.marketpricescan.util
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import br.com.marketpricescan.AtualizarListaDeCompraActivity
 import br.com.marketpricescan.R
 import br.com.marketpricescan.model.ListaDeCompra
 
@@ -34,6 +38,15 @@ class ListaDeCompraAdaptador(private val context : Context, private val listasDe
                 val currentPosition = bindingAdapterPosition
                 PopUpConfirmacaoDeletarLista(listasDeCompra[currentPosition], currentPosition)
                 true
+            }
+
+            itemView.setOnClickListener {
+                val currentPosition = bindingAdapterPosition
+                val bundle = Bundle()
+                bundle.putParcelable("listaDeCompra", listasDeCompra[currentPosition])
+                val intent = Intent(itemView.context, AtualizarListaDeCompraActivity::class.java)
+                intent.putExtras(bundle)
+                itemView.context.startActivity(intent)
             }
 
         }

@@ -1,17 +1,24 @@
 package br.com.marketpricescan.model
 
+import android.os.Parcel
+import android.os.Parcelable
 import com.google.firebase.firestore.DocumentReference
 
-class ListaDeCompra() {
+class ListaDeCompra() : Parcelable{
 
     var id : String = ""
     var produtos : MutableList<Produto> = mutableListOf()
     var nome : String = ""
 
+    constructor(parcel: Parcel) : this() {
+        id = parcel.readString()!!
+        nome = parcel.readString()!!
+    }
+
 
     constructor(lista : ListaDeCompra) : this(){
-        nome = lista.nome
         id = lista.id
+        nome = lista.nome
     }
 
     constructor(nome : String) : this(){
@@ -19,8 +26,8 @@ class ListaDeCompra() {
     }
 
     constructor(nome : String, id : String) : this(){
-        this.nome = nome
         this.id = id
+        this.nome = nome
     }
     fun adicionarProduto(produto : Produto){
         produtos.add(produto)
@@ -36,5 +43,24 @@ class ListaDeCompra() {
 
     fun removeProduto(index : Int){
         produtos.removeAt(index)
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(id)
+        parcel.writeString(nome)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<ListaDeCompra> {
+        override fun createFromParcel(parcel: Parcel): ListaDeCompra {
+            return ListaDeCompra(parcel)
+        }
+
+        override fun newArray(size: Int): Array<ListaDeCompra?> {
+            return arrayOfNulls(size)
+        }
     }
 }
