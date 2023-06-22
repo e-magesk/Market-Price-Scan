@@ -26,10 +26,7 @@ class ListaDeCompraActivity : AppCompatActivity() {
     private lateinit var tvListaVazia: TextView
     private lateinit var etTituloLista: TextView
     private lateinit var adaptador: ProdutoListaDeCompraAdaptador
-    var itens = mutableListOf<String>(
-        "Produto 1", "Produto 2", "Produto 3", "Produto 4", "Produto 5",
-        "Produto 6", "Produto 7", "Produto 8", "Produto 9", "Produto 10", "Produto 11"
-    )
+    var itens = mutableListOf<Produto>()
     private lateinit var listaDeCompra: ListaDeCompra
     private var produtos: ArrayList<Produto> = ArrayList()
     private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
@@ -55,7 +52,7 @@ class ListaDeCompraActivity : AppCompatActivity() {
         VerificarSituacaoLista()
 
         btnAdicionarItem.setOnClickListener() { view ->
-            itens.add("")
+            itens.add(Produto("" ))
             adaptador.notifyDataSetChanged()
             rvListaDeCompra.smoothScrollToPosition(adaptador.itemCount - 1)
             VerificarSituacaoLista()
@@ -98,7 +95,6 @@ class ListaDeCompraActivity : AppCompatActivity() {
 
         documentoUsuario = database.collection("usuario")
             .document(usuarioId)
-        Log.d("Teste", "Cheguei aqui!")
         documentoUsuario.update("listasDeCompra", FieldValue.arrayUnion(documentoListaDeCompra))
             .addOnSuccessListener {
                 Log.d("Teste", "Sucesso ao vincular a lista ao usuário")

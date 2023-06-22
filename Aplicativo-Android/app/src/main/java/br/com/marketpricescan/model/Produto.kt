@@ -18,6 +18,7 @@ class Produto() {
 
     constructor(nome: String) : this(){
         this.nome = nome
+        this.id = ""
         this.preco = 0.0
         this.codigoLocal = 0
         this.codigoBarras = 0
@@ -25,7 +26,16 @@ class Produto() {
 
     constructor(nome: String, preco: Double) : this(){
         this.nome = nome
+        this.id = ""
         this.preco = preco
+        this.codigoLocal = 0
+        this.codigoBarras = 0
+    }
+
+    constructor(nome: String, id: String) : this(){
+        this.nome = nome
+        this.id = id
+        this.preco = 0.0
         this.codigoLocal = 0
         this.codigoBarras = 0
     }

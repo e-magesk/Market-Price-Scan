@@ -1,5 +1,6 @@
 package br.com.marketpricescan.util
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -47,6 +48,7 @@ class ListaDeCompraAdaptador(private val context : Context, private val listasDe
                 val intent = Intent(itemView.context, AtualizarListaDeCompraActivity::class.java)
                 intent.putExtras(bundle)
                 itemView.context.startActivity(intent)
+                (itemView.context as? Activity)?.finish()
             }
 
         }
