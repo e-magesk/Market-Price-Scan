@@ -98,7 +98,8 @@ class ListaDeCompraActivity : AppCompatActivity() {
 
         documentoUsuario = database.collection("usuario")
             .document(usuarioId)
-        documentoUsuario.update("listas", FieldValue.arrayUnion(documentoListaDeCompra))
+        Log.d("Teste", "Cheguei aqui!")
+        documentoUsuario.update("listasDeCompra", FieldValue.arrayUnion(documentoListaDeCompra))
             .addOnSuccessListener {
                 Log.d("Teste", "Sucesso ao vincular a lista ao usuário")
             }

@@ -26,7 +26,6 @@ class HomeActivity : AppCompatActivity() {
     private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val usuarioId: String = FirebaseAuth.getInstance().currentUser!!.uid
     private lateinit var documentoUsuario: DocumentReference
-    private lateinit var documentoListaDeCompra: DocumentReference
     private lateinit var usuario: Usuario
     private var flagExibindoMinhasListas : Boolean = false
 
@@ -58,12 +57,14 @@ class HomeActivity : AppCompatActivity() {
         documentoUsuario.get().addOnSuccessListener { documentSnapshot ->
             if (documentSnapshot.exists()) {
                 usuario = Usuario(documentSnapshot.getString("nome")!!)
-                listas = documentSnapshot.get("listas") as ArrayList<DocumentReference>
+                listas = documentSnapshot.get("listasDeCompra") as ArrayList<DocumentReference>
 
                 var tvNomeUsuario = findViewById<TextView>(R.id.tvWelcomeHome)
                 tvNomeUsuario.text = "Welcome, ${this.usuario.nome}!"
 
                 InicializarListasDeCompraUsuario(listas)
+
+                DefinirAcoes()
 
             }
         }
@@ -73,7 +74,8 @@ class HomeActivity : AppCompatActivity() {
         for(lista in listas){
             lista.get().addOnSuccessListener { documentSnapshot ->
                 if(documentSnapshot.exists()){
-                    this.usuario.adicionarLista(ListaDeCompra(documentSnapshot.toObject(ListaDeCompra::class.java)!!))
+                    var lista = ListaDeCompra(documentSnapshot.getString("nome")!!, documentSnapshot.id)
+                    this.usuario.listasDeCompra.add(lista)
                     DefinirAcoes()
                 }
             }
@@ -106,7 +108,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun PrepararCardViewMinhasListas(){
-        adaptador = ListaDeCompraAdaptador(this, usuario.listas)
+        adaptador = ListaDeCompraAdaptador(this, usuario.listasDeCompra)
         rvMinhasListas.setHasFixedSize(true)
         rvMinhasListas.layoutManager = LinearLayoutManager(this)
         rvMinhasListas.adapter = adaptador

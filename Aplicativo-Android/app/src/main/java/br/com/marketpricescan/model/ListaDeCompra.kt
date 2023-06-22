@@ -1,29 +1,33 @@
 package br.com.marketpricescan.model
 
+import com.google.firebase.firestore.DocumentReference
+
 class ListaDeCompra() {
 
-    private var produtos : MutableList<Produto> = mutableListOf()
+    var id : String = ""
+    var produtos : MutableList<Produto> = mutableListOf()
     var nome : String = ""
 
+
     constructor(lista : ListaDeCompra) : this(){
-        produtos = lista.getProdutos()
         nome = lista.nome
+        id = lista.id
     }
 
-    constructor(name : String) : this(){
-        this.nome = name
+    constructor(nome : String) : this(){
+        this.nome = nome
     }
 
+    constructor(nome : String, id : String) : this(){
+        this.nome = nome
+        this.id = id
+    }
     fun adicionarProduto(produto : Produto){
         produtos.add(produto)
     }
 
     fun adicionarProdutos(produtos : MutableList<Produto>){
         this.produtos.addAll(produtos)
-    }
-
-    fun getProdutos() : MutableList<Produto>{
-        return produtos
     }
 
     fun getProduto(index : Int) : Produto{
@@ -33,22 +37,4 @@ class ListaDeCompra() {
     fun removeProduto(index : Int){
         produtos.removeAt(index)
     }
-
-    fun removeProduto(produto : Produto){
-        produtos.remove(produto)
-    }
-
-    fun getQuantidadeDeProdutos() : Int{
-        return produtos.size
-    }
-
-    fun getValorTotal() : Double{
-        var valorTotal : Double = 0.0
-        for(produto in produtos){
-            valorTotal += produto.preco
-        }
-        return valorTotal
-    }
-
-
 }
