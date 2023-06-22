@@ -91,10 +91,18 @@ class CadastroActivity : ComponentActivity() {
 
     private fun SalvarDadosUsuario(view : View) {
          var nome : String = etNomeCadastro.text.toString()
-         var usuario = Usuario(nome)
+
 
         usuarioId = FirebaseAuth.getInstance().currentUser?.uid.toString()
         var database = FirebaseFirestore.getInstance()
+        var usuario = Usuario(nome, usuarioId)
+
+//        val usuarioTeste = hashMapOf<String, Any>(
+//            "nome" to usuario.nome,
+//            "documentReferenceId" to doc.id,
+//            "documentReference" to doc
+//        )
+
         database.collection("usuario")
             .document(usuarioId)
             .set(usuario)

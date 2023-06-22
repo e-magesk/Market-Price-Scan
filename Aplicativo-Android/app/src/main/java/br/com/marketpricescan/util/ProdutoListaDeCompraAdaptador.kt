@@ -12,23 +12,23 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.R
+import br.com.marketpricescan.model.Produto
+import com.google.firebase.firestore.FirebaseFirestore
 
-class ItemListaAdaptador(private val context : Context, private val itens: MutableList<String>) : RecyclerView.Adapter<ItemListaAdaptador.ItemViewHolder>() {
+class ProdutoListaDeCompraAdaptador(private val context : Context, private val produtos: MutableList<Produto>) : RecyclerView.Adapter<ProdutoListaDeCompraAdaptador.ItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        Log.d("Teste", "onCreateViewHolder: " + itens.size)
-        val itemView = LayoutInflater.from(context).inflate(R.layout.item_lista_de_compra, parent, false)
+        val itemView = LayoutInflater.from(context).inflate(R.layout.produto_lista_de_compra_adaptador, parent, false)
         return ItemViewHolder(itemView)
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        Log.d("Teste", "onBindViewHolder: " + itens[position])
-        val item = itens[position]
-        holder.bind(item)
+        val produto = produtos[position]
+        holder.bind(produto)
     }
 
     override fun getItemCount(): Int {
-        return itens.size
+        return produtos.size
     }
 
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -37,6 +37,7 @@ class ItemListaAdaptador(private val context : Context, private val itens: Mutab
         private var checkOrUncheck: Int = 0
 
         init {
+
             etProdutoListaDeCompra.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                     // Não é necessário implementar
@@ -44,7 +45,7 @@ class ItemListaAdaptador(private val context : Context, private val itens: Mutab
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     val position = bindingAdapterPosition
-                    itens[position] = s.toString()
+                    produtos[position].nome = s.toString()
                 }
 
                 override fun afterTextChanged(s: Editable?) {
@@ -64,24 +65,25 @@ class ItemListaAdaptador(private val context : Context, private val itens: Mutab
 
             itemView.setOnLongClickListener {
                 val currentPosition = bindingAdapterPosition
-                PopUpConfirmacaoDeletarItem(itens[currentPosition], currentPosition)
+                PopUpConfirmacaoDeletarItem(produtos[currentPosition], currentPosition)
                 // Implemente o clique longo do item aqui
                 true
             }
 
         }
 
-        fun bind(item: String) {
-            Log.d("Tester", "bind: $item")
-            etProdutoListaDeCompra.setText(item)
+        fun bind(produto: Produto) {
+            etProdutoListaDeCompra.setText(produto.nome)
         }
 
-        private fun PopUpConfirmacaoDeletarItem(item : String, position : Int){
+        private fun PopUpConfirmacaoDeletarItem(produto : Produto, position : Int){
             val alertDialog = AlertDialog.Builder(itemView.context)
                 .setTitle("Deletar Item")
-                .setMessage("O item " + item + " será deletado da lista. Deseja continuar?")
+                .setMessage("O item " + produto.nome + " será deletado da lista. Deseja continuar?")
                 .setPositiveButton("OK") { dialog, which ->
-                    itens.removeAt(position)
+                    Log.d("Teste", "PopUpConfirmacaoDeletarItem: " + position)
+                    DeletarProduto(produto)
+                    notifyItemRemoved(position)
                     dialog.dismiss()
                 }
                 .setNegativeButton("Cancelar") { dialog, which ->
@@ -90,5 +92,17 @@ class ItemListaAdaptador(private val context : Context, private val itens: Mutab
                 .create()
             alertDialog.show()
         }
+    }
+
+    private fun DeletarProduto(produto : Produto){
+        produtos.remove(produto)
+        FirebaseFirestore.getInstance().collection("produto")
+            .document(produto.id).delete()
+            .addOnSuccessListener {
+                Log.d("Teste", "Sucesso ao deletar o produto no banco de dados")
+            }
+            .addOnFailureListener {
+                Log.d("Teste", "Falha ao deletar o produto no banco de dados")
+            }
     }
 }

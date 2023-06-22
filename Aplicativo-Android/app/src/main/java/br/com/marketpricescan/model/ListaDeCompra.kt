@@ -1,19 +1,40 @@
 package br.com.marketpricescan.model
 
-class ListaDeCompra(var nome : String) {
+import android.os.Parcel
+import android.os.Parcelable
+import com.google.firebase.firestore.DocumentReference
 
-    private var produtos : MutableList<Produto> = mutableListOf()
+class ListaDeCompra() : Parcelable{
 
+    var id : String = ""
+    var produtos : MutableList<Produto> = mutableListOf()
+    var nome : String = ""
+
+    constructor(parcel: Parcel) : this() {
+        id = parcel.readString()!!
+        nome = parcel.readString()!!
+    }
+
+
+    constructor(lista : ListaDeCompra) : this(){
+        id = lista.id
+        nome = lista.nome
+    }
+
+    constructor(nome : String) : this(){
+        this.nome = nome
+    }
+
+    constructor(nome : String, id : String) : this(){
+        this.id = id
+        this.nome = nome
+    }
     fun adicionarProduto(produto : Produto){
         produtos.add(produto)
     }
 
     fun adicionarProdutos(produtos : MutableList<Produto>){
         this.produtos.addAll(produtos)
-    }
-
-    fun getProdutos() : MutableList<Produto>{
-        return produtos
     }
 
     fun getProduto(index : Int) : Produto{
@@ -24,21 +45,22 @@ class ListaDeCompra(var nome : String) {
         produtos.removeAt(index)
     }
 
-    fun removeProduto(produto : Produto){
-        produtos.remove(produto)
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(id)
+        parcel.writeString(nome)
     }
 
-    fun getQuantidadeDeProdutos() : Int{
-        return produtos.size
+    override fun describeContents(): Int {
+        return 0
     }
 
-    fun getValorTotal() : Double{
-        var valorTotal : Double = 0.0
-        for(produto in produtos){
-            valorTotal += produto.preco
+    companion object CREATOR : Parcelable.Creator<ListaDeCompra> {
+        override fun createFromParcel(parcel: Parcel): ListaDeCompra {
+            return ListaDeCompra(parcel)
         }
-        return valorTotal
+
+        override fun newArray(size: Int): Array<ListaDeCompra?> {
+            return arrayOfNulls(size)
+        }
     }
-
-
 }
