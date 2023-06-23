@@ -67,6 +67,8 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
 
         documentoListaDeCompra = FirebaseFirestore.getInstance().collection("lista_de_compra")
             .document(listaDeCompra.id)
+
+        etTituloLista.text = listaDeCompra.nome
     }
 
     private fun ObterProdutos(){
@@ -98,7 +100,9 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
             if(adaptador.itemCount > 0) {
                 rvListaDeCompra.smoothScrollToPosition(adaptador.itemCount - 1)
             }
+            Log.d("Teste", "Antes de verificar")
             VerificarSituacaoLista()
+            Log.d("Teste", "Depois de verificar")
         }
     }
 

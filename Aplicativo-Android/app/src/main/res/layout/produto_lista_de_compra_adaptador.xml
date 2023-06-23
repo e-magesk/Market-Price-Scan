@@ -29,6 +29,7 @@
                 android:layout_weight="4"
                 android:orientation="vertical">
 
+
                 <EditText
                     android:id="@+id/etProdutoListaDeCompra"
                     android:layout_width="match_parent"
@@ -36,19 +37,35 @@
                     android:backgroundTint="@color/white"
                     android:gravity="left"
                     android:text="Produto"
-                    android:textSize="15sp"></EditText>
+                android:textSize="15sp"></EditText>
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tvPrecoProdutoListaDeCompra"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:orientation="horizontal"
                 android:layout_weight="2"
-                android:gravity="center"
-                android:text="R$ 1000,00"
-                android:textSize="15sp"
-                android:visibility="visible"></TextView>
+                >
+
+                <TextView
+                    android:id="@+id/tvPrecoProdutoListaDeCompra"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="R$"
+                    android:textSize="15sp"
+                    android:visibility="visible"></TextView>
+
+                <EditText
+                    android:id="@+id/etPrecoProdutoListaDeCompra"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textSize="15sp"
+                    ></EditText>
+            </LinearLayout>
+
 
             <ImageView
                 android:id="@+id/circleCheck"
