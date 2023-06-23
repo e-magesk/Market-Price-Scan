@@ -82,11 +82,8 @@ class HomeActivity : AppCompatActivity() {
     private fun InicializarListasDeCompraUsuario(listas : ArrayList<DocumentReference>) {
 
         val coroutineScope = CoroutineScope(Dispatchers.Main)
-
         coroutineScope.launch {
-
             val tasks = mutableListOf<Deferred<Unit>>()
-
             for (lista in listas) {
                 val task = async {
                     val documentSnapshot =
@@ -98,10 +95,8 @@ class HomeActivity : AppCompatActivity() {
                         usuario.listasDeCompra.add(listaDeCompra)
                     }
                 }
-
                 tasks.add(task)
             }
-
             // Aguarde a conclusão de todas as tarefas assíncronas
             tasks.awaitAll()
 

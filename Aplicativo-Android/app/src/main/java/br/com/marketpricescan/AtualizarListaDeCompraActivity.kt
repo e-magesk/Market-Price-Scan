@@ -16,9 +16,15 @@ import br.com.marketpricescan.model.ListaDeCompra
 import br.com.marketpricescan.model.Produto
 import br.com.marketpricescan.util.ProdutoListaDeCompraAdaptador
 import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 
 class AtualizarListaDeCompraActivity : AppCompatActivity() {
 
@@ -42,15 +48,9 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
             listaDeCompra = intent.getParcelableExtra<ListaDeCompra>("listaDeCompra")!!
         }
 
-        Log.d("Teste", "listaDeCompra: " + listaDeCompra.nome)
-
         IniciarComponentes()
 
-        adaptador = ProdutoListaDeCompraAdaptador(this, listaDeCompra.produtos)
-        rvListaDeCompra.setHasFixedSize(true)
-        rvListaDeCompra.layoutManager = LinearLayoutManager(this)
-        rvListaDeCompra.adapter = adaptador
-        rvListaDeCompra.isClickable = true
+        DefinirAdaptador()
 
         ObterProdutos()
 
@@ -72,14 +72,13 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
     }
 
     private fun ObterProdutos(){
+
         documentoListaDeCompra.get()
             .addOnSuccessListener { document ->
                 if (document != null) {
-                    Log.d("Teste", "DocumentSnapshot data: " + document)
                     var referenciaProdutos = document.get("produtos") as ArrayList<DocumentReference>
                     for (produto in referenciaProdutos) {
                         produto.get().addOnSuccessListener {it ->
-                            Log.d("Teste", "DocumentSnapshot data: " + it)
                             listaDeCompra.produtos.add(Produto(it.toObject(Produto::class.java)!!))
                             adaptador.notifyDataSetChanged()
                             VerificarSituacaoLista()
@@ -100,9 +99,7 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
             if(adaptador.itemCount > 0) {
                 rvListaDeCompra.smoothScrollToPosition(adaptador.itemCount - 1)
             }
-            Log.d("Teste", "Antes de verificar")
             VerificarSituacaoLista()
-            Log.d("Teste", "Depois de verificar")
         }
     }
 
@@ -141,20 +138,39 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
 
     private fun AtualizarProdutos(){
 
-        var referenciasProdutos = mutableListOf<DocumentReference>()
-        for(produto in listaDeCompra.produtos){
-            var documentoProduto = FirebaseFirestore.getInstance().collection("produto")
-                .document(produto.id)
-            referenciasProdutos.add(documentoProduto)
-            documentoProduto.set(produto)
-                .addOnSuccessListener {
-                    Log.d("Teste", "Sucesso ao salvar o produto no banco de dados")
+        val coroutineScope = CoroutineScope(Dispatchers.Main)
+        coroutineScope.launch {
+            val tasks = mutableListOf<Deferred<Unit>>()
+            val referenciasProdutos = mutableListOf<DocumentReference>()
+            for (produto in listaDeCompra.produtos) {
+                val task : Deferred<Unit> = async {
+                    val documentoProduto =
+                        FirebaseFirestore.getInstance().collection("produto").document(produto.id)
+                    referenciasProdutos.add(documentoProduto)
+                    documentoProduto.set(produto).await()
+                    // Você pode adicionar o código para tratamento de sucesso/erro aqui se necessário
                 }
-                .addOnFailureListener {
-                    Log.d("Teste", "Erro ao salvar o produto no banco de dados")
-                }
+                tasks.add(task)
+            }
+            tasks.awaitAll()
+
+            AtualizarListaDeCompra(referenciasProdutos)
         }
-        AtualizarListaDeCompra(referenciasProdutos)
+
+//        var referenciasProdutos = mutableListOf<DocumentReference>()
+//        for(produto in listaDeCompra.produtos){
+//            var documentoProduto = FirebaseFirestore.getInstance().collection("produto")
+//                .document(produto.id)
+//            referenciasProdutos.add(documentoProduto)
+//            documentoProduto.set(produto)
+//                .addOnSuccessListener {
+//                    Log.d("Teste", "Sucesso ao salvar o produto no banco de dados")
+//                }
+//                .addOnFailureListener {
+//                    Log.d("Teste", "Erro ao salvar o produto no banco de dados")
+//                }
+//        }
+//        AtualizarListaDeCompra(referenciasProdutos)
     }
 
     private fun AtualizarListaDeCompra(referenciasProdutos : MutableList<DocumentReference>) {
@@ -165,12 +181,29 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
             "nome" to etTituloLista.text.toString(),
         )
 
-        documentoListaDeCompra.update(updates)
-            .addOnSuccessListener {
-                Log.d("Teste", "Sucesso ao atualizar a lista no banco de dados")
+        runBlocking {
+            documentoListaDeCompra.update(updates)
+                .addOnSuccessListener {
+                    Log.d("Teste", "Sucesso ao atualizar a lista no banco de dados")
+                }
+                .addOnFailureListener { e ->
+                    Log.d("Teste", "Erro ao atualizar a lista no banco de dados")
+                }
+        }
+    }
+
+    private fun DefinirAdaptador(){
+        adaptador = ProdutoListaDeCompraAdaptador(this, listaDeCompra.produtos)
+        adaptador.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+                super.onItemRangeRemoved(positionStart, itemCount)
+                VerificarSituacaoLista()
             }
-            .addOnFailureListener { e ->
-                Log.d("Teste", "Erro ao atualizar a lista no banco de dados")
-            }
+        })
+
+        rvListaDeCompra.setHasFixedSize(true)
+        rvListaDeCompra.layoutManager = LinearLayoutManager(this)
+        rvListaDeCompra.adapter = adaptador
+        rvListaDeCompra.isClickable = true
     }
 }

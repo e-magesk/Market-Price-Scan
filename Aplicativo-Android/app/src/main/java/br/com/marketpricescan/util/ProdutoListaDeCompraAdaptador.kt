@@ -67,8 +67,13 @@ class ProdutoListaDeCompraAdaptador(private val context : Context, private val p
                 .setTitle("Deletar Item")
                 .setMessage("O item " + produto.nome + " será deletado da lista. Deseja continuar?")
                 .setPositiveButton("OK") { dialog, which ->
-                    Log.d("Teste", "PopUpConfirmacaoDeletarItem: " + position)
-                    DeletarProduto(produto)
+                    if(produto.id.isEmpty()){
+                        produtos.remove(produto)
+                        notifyItemRemoved(position)
+                    }
+                    else{
+                        DeletarProdutoBancoDeDados(produto)
+                    }
                     notifyItemRemoved(position)
                     dialog.dismiss()
                 }
@@ -79,7 +84,7 @@ class ProdutoListaDeCompraAdaptador(private val context : Context, private val p
             alertDialog.show()
         }
 
-        private fun DeletarProduto(produto: Produto) {
+        private fun DeletarProdutoBancoDeDados(produto: Produto) {
             produtos.remove(produto)
             FirebaseFirestore.getInstance().collection("produto")
                 .document(produto.id).delete()

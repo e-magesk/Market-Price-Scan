@@ -19,6 +19,7 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.runBlocking
+import kotlin.math.floor
 
 class CriarListaDeCompraActivity : AppCompatActivity() {
 
@@ -42,11 +43,7 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
 
         IniciarComponentes()
 
-        adaptador = ProdutoListaDeCompraAdaptador(this, produtos)
-        rvListaDeCompra.setHasFixedSize(true)
-        rvListaDeCompra.layoutManager = LinearLayoutManager(this)
-        rvListaDeCompra.adapter = adaptador
-        rvListaDeCompra.isClickable = true
+        DefinirAdaptador()
 
         VerificarSituacaoLista()
 
@@ -82,8 +79,7 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
 
         documentoUsuario = database.collection("usuario")
             .document(usuarioId)
-        Log.d("Teste", "Documento: " + documentoUsuario)
-        Log.d("Teste", "ID do usuário: " + documentoUsuario.id)
+
         documentoUsuario.update("listasDeCompra", FieldValue.arrayUnion(documentoListaDeCompra))
             .addOnSuccessListener {
                 Log.d("Teste", "Sucesso ao vincular a lista ao usuário")
@@ -153,8 +149,6 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
 
         documentoListaDeCompra = database.collection("lista_de_compra")
             .document()
-        Log.d("Teste", "Documento: " + documentoListaDeCompra)
-        Log.d("Teste", "ID da lista de compra: " + documentoListaDeCompra.id)
 
         val updates = hashMapOf<String, Any>(
             "produtos" to referenciaProdutos,
@@ -172,6 +166,21 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
             .addOnFailureListener { e ->
                 Log.d("Teste", "Erro ao criar a lista no banco de dados")
             }
+    }
+
+    private fun DefinirAdaptador(){
+        adaptador = ProdutoListaDeCompraAdaptador(this, produtos)
+        adaptador.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+                super.onItemRangeRemoved(positionStart, itemCount)
+                VerificarSituacaoLista()
+            }
+        })
+
+        rvListaDeCompra.setHasFixedSize(true)
+        rvListaDeCompra.layoutManager = LinearLayoutManager(this)
+        rvListaDeCompra.adapter = adaptador
+        rvListaDeCompra.isClickable = true
     }
 
 
