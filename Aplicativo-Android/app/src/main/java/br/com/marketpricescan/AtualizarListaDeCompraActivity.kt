@@ -142,7 +142,6 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
     private fun AtualizarProdutos(){
 
         var referenciasProdutos = mutableListOf<DocumentReference>()
-
         for(produto in listaDeCompra.produtos){
             var documentoProduto = FirebaseFirestore.getInstance().collection("produto")
                 .document(produto.id)

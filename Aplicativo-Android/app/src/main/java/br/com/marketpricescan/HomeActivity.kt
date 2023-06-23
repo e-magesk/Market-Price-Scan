@@ -65,7 +65,6 @@ class HomeActivity : AppCompatActivity() {
                 InicializarListasDeCompraUsuario(listas)
 
                 DefinirAcoes()
-
             }
         }
     }
@@ -85,7 +84,8 @@ class HomeActivity : AppCompatActivity() {
 
     private fun DefinirAcoes() {
         cvCriarNovaLista.setOnClickListener() { view ->
-            var intent = Intent(this, ListaDeCompraActivity::class.java)
+            VerificarDelecaoDeListas()
+            var intent = Intent(this, CriarListaDeCompraActivity::class.java)
             startActivity(intent)
             finish()
         }
@@ -114,5 +114,27 @@ class HomeActivity : AppCompatActivity() {
         rvMinhasListas.layoutManager = LinearLayoutManager(this)
         rvMinhasListas.adapter = adaptador
         rvMinhasListas.isClickable = true
+    }
+
+    override fun onBackPressed() {
+        VerificarDelecaoDeListas()
+        finish()
+    }
+
+    private fun VerificarDelecaoDeListas(){
+        var referenciasListas = mutableListOf<DocumentReference>()
+        for(lista in usuario.listasDeCompra){
+            referenciasListas.add(database.collection("lista_de_compra").document(lista.id))
+        }
+
+        val updates = hashMapOf<String, Any>(
+            "listasDeCompra" to referenciasListas,
+        )
+
+        documentoUsuario.update(updates).addOnSuccessListener {
+            Log.d("Teste", "Substituição de lista feita com sucesso")
+        }.addOnFailureListener {
+            Log.d("Teste", "Substituição de lista falhou")
+        }
     }
 }

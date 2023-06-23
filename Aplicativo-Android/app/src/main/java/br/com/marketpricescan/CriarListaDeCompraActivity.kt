@@ -20,16 +20,15 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.runBlocking
 
-class ListaDeCompraActivity : AppCompatActivity() {
+class CriarListaDeCompraActivity : AppCompatActivity() {
 
     private lateinit var rvListaDeCompra: RecyclerView
     private lateinit var btnAdicionarItem: Button
     private lateinit var tvListaVazia: TextView
     private lateinit var etTituloLista: TextView
     private lateinit var adaptador: ProdutoListaDeCompraAdaptador
-    var itens = mutableListOf<Produto>()
+    var produtos = mutableListOf<Produto>()
     private lateinit var listaDeCompra: ListaDeCompra
-    private var produtos: ArrayList<Produto> = ArrayList()
     private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val usuarioId: String = FirebaseAuth.getInstance().currentUser!!.uid
     private lateinit var documentoUsuario: DocumentReference
@@ -42,18 +41,17 @@ class ListaDeCompraActivity : AppCompatActivity() {
         setContentView(R.layout.lista_de_compra)
 
         IniciarComponentes()
-        adaptador = ProdutoListaDeCompraAdaptador(this, itens)
+
+        adaptador = ProdutoListaDeCompraAdaptador(this, produtos)
         rvListaDeCompra.setHasFixedSize(true)
         rvListaDeCompra.layoutManager = LinearLayoutManager(this)
         rvListaDeCompra.adapter = adaptador
         rvListaDeCompra.isClickable = true
 
-        CriarNovaListaDeCompra()
-
         VerificarSituacaoLista()
 
         btnAdicionarItem.setOnClickListener() { view ->
-            itens.add(Produto("" ))
+            produtos.add(Produto("" ))
             adaptador.notifyDataSetChanged()
             rvListaDeCompra.smoothScrollToPosition(adaptador.itemCount - 1)
             VerificarSituacaoLista()
@@ -66,10 +64,12 @@ class ListaDeCompraActivity : AppCompatActivity() {
         rvListaDeCompra = findViewById(R.id.rvListaDeCompra)
         tvListaVazia = findViewById(R.id.tvListaVazia)
         etTituloLista = findViewById(R.id.etTituloLista)
+
+        listaDeCompra = ListaDeCompra("")
     }
 
     private fun VerificarSituacaoLista() {
-        if (itens.size == 0) {
+        if (produtos.size == 0) {
             tvListaVazia.visibility = TextView.VISIBLE
             rvListaDeCompra.visibility = ListView.INVISIBLE
         } else {
@@ -78,24 +78,12 @@ class ListaDeCompraActivity : AppCompatActivity() {
         }
     }
 
-    private fun CriarNovaListaDeCompra() {
-        listaDeCompra = ListaDeCompra("")
-        documentoListaDeCompra = database.collection("lista_de_compra")
-            .document()
-        documentoListaDeCompra.set(listaDeCompra)
-            .addOnSuccessListener {
-                VincularListaAoUsuario()
-                Log.d("Teste", "Sucesso ao salvar a lista no banco de dados")
-            }
-            .addOnFailureListener {
-                Log.d("Teste", "Erro ao salvar a lista no banco de dados")
-            }
-    }
-
     private fun VincularListaAoUsuario() {
 
         documentoUsuario = database.collection("usuario")
             .document(usuarioId)
+        Log.d("Teste", "Documento: " + documentoUsuario)
+        Log.d("Teste", "ID do usuário: " + documentoUsuario.id)
         documentoUsuario.update("listasDeCompra", FieldValue.arrayUnion(documentoListaDeCompra))
             .addOnSuccessListener {
                 Log.d("Teste", "Sucesso ao vincular a lista ao usuário")
@@ -112,7 +100,7 @@ class ListaDeCompraActivity : AppCompatActivity() {
             .setMessage("Deseja salvar a lista " + etTituloLista.text + "?")
             .setPositiveButton("OK") { dialog, which ->
                 runBlocking {
-                    SalvarListaDeCompra()
+                    CriarProdutos()
                 }
                 val intent = Intent(this, HomeActivity::class.java)
                 startActivity(intent)
@@ -129,18 +117,60 @@ class ListaDeCompraActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
-    private fun SalvarListaDeCompra(){
+    private fun CriarProdutos(){
+
+        if(produtos.size == 0){
+            runBlocking {
+                SalvarListaDeCompra(mutableListOf<DocumentReference>())
+            }
+            return
+        }
+
+        var referenciasProdutos = mutableListOf<DocumentReference>()
+        var flagFinal = 0
+        for(produto in produtos){
+            var documentoProduto = FirebaseFirestore.getInstance().collection("produto")
+                .document()
+            produto.id = documentoProduto.id
+            referenciasProdutos.add(documentoProduto)
+            documentoProduto.set(produto)
+                .addOnSuccessListener {
+                    flagFinal++
+                    if (flagFinal == produtos.size){
+                        runBlocking {
+                            SalvarListaDeCompra(referenciasProdutos)
+                        }
+                    }
+                    Log.d("Teste", "Sucesso ao salvar o produto no banco de dados")
+                }
+                .addOnFailureListener {
+                    Log.d("Teste", "Erro ao salvar o produto no banco de dados")
+                }
+        }
+    }
+
+    private fun SalvarListaDeCompra(referenciaProdutos: MutableList<DocumentReference>){
+
+        documentoListaDeCompra = database.collection("lista_de_compra")
+            .document()
+        Log.d("Teste", "Documento: " + documentoListaDeCompra)
+        Log.d("Teste", "ID da lista de compra: " + documentoListaDeCompra.id)
+
         val updates = hashMapOf<String, Any>(
-            "produtos" to produtos,
+            "produtos" to referenciaProdutos,
             "nome" to etTituloLista.text.toString(),
+            "id" to documentoListaDeCompra.id
         )
 
-        documentoListaDeCompra.update(updates)
+        documentoListaDeCompra.set(updates)
             .addOnSuccessListener {
-                Log.d("Teste", "Sucesso ao atualizar a lista no banco de dados")
+                Log.d("Teste", "Sucesso ao criar a lista no banco de dados")
+                runBlocking {
+                    VincularListaAoUsuario()
+                }
             }
             .addOnFailureListener { e ->
-                Log.d("Teste", "Erro ao atualizar a lista no banco de dados")
+                Log.d("Teste", "Erro ao criar a lista no banco de dados")
             }
     }
 
