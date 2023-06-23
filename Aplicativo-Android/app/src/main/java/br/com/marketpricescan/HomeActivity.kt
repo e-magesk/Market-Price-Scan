@@ -14,6 +14,14 @@ import br.com.marketpricescan.util.ListaDeCompraAdaptador
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 import kotlin.math.floor
 
 class HomeActivity : AppCompatActivity() {
@@ -37,6 +45,8 @@ class HomeActivity : AppCompatActivity() {
 
         cvCriarNovaLista.isClickable = true
         cvMinhasListas.isClickable = true
+
+
 
         InicializarUsuario()
 
@@ -62,7 +72,7 @@ class HomeActivity : AppCompatActivity() {
                 var tvNomeUsuario = findViewById<TextView>(R.id.tvWelcomeHome)
                 tvNomeUsuario.text = "Welcome, ${this.usuario.nome}!"
 
-                InicializarListasDeCompraUsuario(listas)
+                InicializarListasDeCompraUsuario(listas) // transformar em função de corrotina
 
                 DefinirAcoes()
             }
@@ -70,21 +80,40 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun InicializarListasDeCompraUsuario(listas : ArrayList<DocumentReference>) {
-        for(lista in listas){
-            lista.get().addOnSuccessListener { documentSnapshot ->
-                if(documentSnapshot.exists()){
-                    var lista = ListaDeCompra(documentSnapshot.getString("nome")!!, documentSnapshot.id)
-                    this.usuario.listasDeCompra.add(lista)
-                    DefinirAcoes()
+
+        val coroutineScope = CoroutineScope(Dispatchers.Main)
+
+        coroutineScope.launch {
+
+            val tasks = mutableListOf<Deferred<Unit>>()
+
+            for (lista in listas) {
+                val task = async {
+                    val documentSnapshot =
+                        lista.get().await() // Await espera a conclusão da chamada assíncrona
+                    if (documentSnapshot.exists()) {
+                        val nome = documentSnapshot.getString("nome")!!
+                        val id = documentSnapshot.id
+                        val listaDeCompra = ListaDeCompra(nome, id)
+                        usuario.listasDeCompra.add(listaDeCompra)
+                    }
                 }
+
+                tasks.add(task)
             }
+
+            // Aguarde a conclusão de todas as tarefas assíncronas
+            tasks.awaitAll()
+
+            PrepararCardViewMinhasListas()
         }
-        PrepararCardViewMinhasListas()
     }
 
     private fun DefinirAcoes() {
         cvCriarNovaLista.setOnClickListener() { view ->
-            VerificarDelecaoDeListas()
+            runBlocking {
+                VerificarDelecaoDeListas()
+            }
             var intent = Intent(this, CriarListaDeCompraActivity::class.java)
             startActivity(intent)
             finish()
@@ -110,6 +139,16 @@ class HomeActivity : AppCompatActivity() {
 
     private fun PrepararCardViewMinhasListas(){
         adaptador = ListaDeCompraAdaptador(this, usuario.listasDeCompra)
+        adaptador.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+                super.onItemRangeRemoved(positionStart, itemCount)
+                Log.d("Teste", "Entrei para deletar")
+                var layout = cvMinhasListasBackground.layoutParams
+                val density = resources.displayMetrics.density
+                layout.height = (floor(60 * density) * (usuario.listasDeCompra.size + 1)).toInt()
+                cvMinhasListasBackground.layoutParams = layout
+            }
+        })
         rvMinhasListas.setHasFixedSize(true)
         rvMinhasListas.layoutManager = LinearLayoutManager(this)
         rvMinhasListas.adapter = adaptador
@@ -131,10 +170,12 @@ class HomeActivity : AppCompatActivity() {
             "listasDeCompra" to referenciasListas,
         )
 
-        documentoUsuario.update(updates).addOnSuccessListener {
-            Log.d("Teste", "Substituição de lista feita com sucesso")
-        }.addOnFailureListener {
-            Log.d("Teste", "Substituição de lista falhou")
+        runBlocking {
+            documentoUsuario.update(updates).addOnSuccessListener {
+                Log.d("Teste", "Substituição de lista feita com sucesso")
+            }.addOnFailureListener {
+                Log.d("Teste", "Substituição de lista falhou")
+            }
         }
     }
 }
