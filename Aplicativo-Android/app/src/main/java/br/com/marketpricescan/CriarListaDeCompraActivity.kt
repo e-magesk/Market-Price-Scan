@@ -5,10 +5,12 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.model.ListaDeCompra
@@ -18,6 +20,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlin.math.floor
 
@@ -41,19 +47,29 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.lista_de_compra)
 
-        IniciarComponentes()
+        val loadingCard = findViewById<CardView>(R.id.loadingPageListaDeCompra)
+        loadingCard.visibility = View.VISIBLE // Exibir o indicador de progresso
 
-        DefinirAdaptador()
+        val coroutineScope = CoroutineScope(Dispatchers.Main)
+        coroutineScope.launch {
 
-        VerificarSituacaoLista()
+            IniciarComponentes()
 
-        btnAdicionarItem.setOnClickListener() { view ->
-            produtos.add(Produto("" ))
-            adaptador.notifyDataSetChanged()
-            rvListaDeCompra.smoothScrollToPosition(adaptador.itemCount - 1)
+            DefinirAdaptador()
+
             VerificarSituacaoLista()
 
+            btnAdicionarItem.setOnClickListener() { view ->
+                produtos.add(Produto("" ))
+                adaptador.notifyDataSetChanged()
+                rvListaDeCompra.smoothScrollToPosition(adaptador.itemCount - 1)
+                VerificarSituacaoLista()
+
+            }
+
+            delay(3000)
         }
+
     }
 
     private fun IniciarComponentes() {

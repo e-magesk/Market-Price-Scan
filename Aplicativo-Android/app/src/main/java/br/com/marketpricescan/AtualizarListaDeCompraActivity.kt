@@ -5,11 +5,13 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.model.ListaDeCompra
@@ -22,6 +24,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
@@ -42,21 +45,32 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.lista_de_compra)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            listaDeCompra = intent.getParcelableExtra("listaDeCompra", ListaDeCompra::class.java)!!
-        } else {
-            listaDeCompra = intent.getParcelableExtra<ListaDeCompra>("listaDeCompra")!!
+        val loadingCard = findViewById<CardView>(R.id.loadingPageListaDeCompra)
+        loadingCard.visibility = View.VISIBLE // Exibir o indicador de progresso
+
+        val coroutineScope = CoroutineScope(Dispatchers.Main)
+        coroutineScope.launch {
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                listaDeCompra = intent.getParcelableExtra("listaDeCompra", ListaDeCompra::class.java)!!
+            } else {
+                listaDeCompra = intent.getParcelableExtra<ListaDeCompra>("listaDeCompra")!!
+            }
+
+            IniciarComponentes()
+
+            DefinirAdaptador()
+
+            ObterProdutos()
+
+            delay(5000)
+
+            VerificarSituacaoLista()
+
+            DefinirAcoes()
+
+            loadingCard.visibility = View.INVISIBLE
         }
-
-        IniciarComponentes()
-
-        DefinirAdaptador()
-
-        ObterProdutos()
-
-        VerificarSituacaoLista()
-
-        DefinirAcoes()
     }
 
     private fun IniciarComponentes() {
@@ -78,11 +92,12 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
                 if (document != null) {
                     var referenciaProdutos = document.get("produtos") as ArrayList<DocumentReference>
                     for (produto in referenciaProdutos) {
-                        produto.get().addOnSuccessListener {it ->
-                            listaDeCompra.produtos.add(Produto(it.toObject(Produto::class.java)!!))
-                            adaptador.notifyDataSetChanged()
-                            VerificarSituacaoLista()
-                        }
+                            produto.get().addOnSuccessListener {it ->
+                                listaDeCompra.produtos.add(Produto(it.toObject(Produto::class.java)!!))
+                                adaptador.notifyDataSetChanged()
+                                VerificarSituacaoLista()
+                            }
+
                     }
                 }
             }

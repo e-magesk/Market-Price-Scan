@@ -3,6 +3,7 @@ package br.com.marketpricescan
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
@@ -19,6 +20,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
@@ -41,14 +43,23 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home)
 
-        IniciarComponentes()
+        val loadingCard = findViewById<CardView>(R.id.loadingPageHome)
+        loadingCard.visibility = View.VISIBLE // Exibir o indicador de progresso
 
-        cvCriarNovaLista.isClickable = true
-        cvMinhasListas.isClickable = true
+        val coroutineScope = CoroutineScope(Dispatchers.Main)
+        coroutineScope.launch {
 
+            IniciarComponentes()
 
+            cvCriarNovaLista.isClickable = true
+            cvMinhasListas.isClickable = true
 
-        InicializarUsuario()
+            InicializarUsuario()
+
+            delay(3000)
+
+            loadingCard.visibility = View.GONE // Ocultar o indicador de progresso
+        }
 
     }
 
