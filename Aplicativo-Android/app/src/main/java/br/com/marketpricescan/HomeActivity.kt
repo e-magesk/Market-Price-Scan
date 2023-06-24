@@ -1,9 +1,12 @@
 package br.com.marketpricescan
 
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
@@ -44,6 +47,7 @@ class HomeActivity : AppCompatActivity() {
         setContentView(R.layout.home)
 
         val loadingCard = findViewById<CardView>(R.id.loadingPageHome)
+
         loadingCard.visibility = View.VISIBLE // Exibir o indicador de progresso
 
         val coroutineScope = CoroutineScope(Dispatchers.Main)
@@ -56,7 +60,7 @@ class HomeActivity : AppCompatActivity() {
 
             InicializarUsuario()
 
-            delay(3000)
+            delay(2000)
 
             loadingCard.visibility = View.GONE // Ocultar o indicador de progresso
         }

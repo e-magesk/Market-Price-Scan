@@ -63,11 +63,11 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
 
             ObterProdutos()
 
-            delay(5000)
-
             VerificarSituacaoLista()
 
             DefinirAcoes()
+
+            delay(2000)
 
             loadingCard.visibility = View.INVISIBLE
         }

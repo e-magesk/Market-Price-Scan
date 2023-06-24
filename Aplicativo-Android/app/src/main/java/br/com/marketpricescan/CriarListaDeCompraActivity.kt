@@ -67,7 +67,9 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
 
             }
 
-            delay(3000)
+            delay(2000)
+
+            loadingCard.visibility = View.GONE // Ocultar o indicador de progresso
         }
 
     }

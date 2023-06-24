@@ -81,6 +81,7 @@
             android:id="@+id/btnLogin"
             style="@style/ButtonMediumBlue"
             android:text="@string/fazer_login"
+            android:textColor="@color/white"
             android:fontFamily="@font/jetbrains_mono_bold"
             app:layout_constraintStart_toStartOf="@id/containerComponentLogin"
             app:layout_constraintEnd_toEndOf="@id/containerComponentLogin"
