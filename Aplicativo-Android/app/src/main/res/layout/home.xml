@@ -9,7 +9,7 @@
     >
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
-    android:background="@color/light_gray_blue"
+    android:background="@color/medium_blue"
     android:layout_height="match_parent">
 
     <ImageView
@@ -36,7 +36,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/logo"
         android:textSize="15sp"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textStyle="bold"
         >
     </TextView>
@@ -59,7 +59,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cvMinhasListasBackground"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvWelcomeHome"
@@ -67,7 +67,7 @@
         app:cardCornerRadius="20dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        app:cardBackgroundColor="@color/white"
+        app:cardBackgroundColor="@color/light_grey"
         >
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvMinhasListas"
@@ -89,7 +89,7 @@
         app:cardCornerRadius="20dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        app:cardBackgroundColor="@color/medium_light_grey_blue"
+        app:cardBackgroundColor="@color/white"
         >
         <LinearLayout
             android:layout_width="match_parent"
@@ -123,7 +123,7 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:layout_marginBottom="200dp"
-        app:cardBackgroundColor="@color/medium_light_grey_blue"
+        app:cardBackgroundColor="@color/white"
         >
         <LinearLayout
             android:layout_width="match_parent"
@@ -157,7 +157,7 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:layout_marginBottom="200dp"
-        app:cardBackgroundColor="@color/medium_light_grey_blue"
+        app:cardBackgroundColor="@color/white"
         >
         <LinearLayout
             android:layout_width="match_parent"
@@ -177,6 +177,29 @@
                 ></TextView>
         </LinearLayout>
 
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/loadingPageHome"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:foregroundGravity="center"
+        app:cardBackgroundColor="@color/medium_blue"
+        android:visibility="gone"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            >
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:indeterminateTintMode="src_atop"
+                android:indeterminateTint="@color/white"
+                />
+        </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
 

@@ -10,10 +10,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.AtualizarListaDeCompraActivity
 import br.com.marketpricescan.R
 import br.com.marketpricescan.model.ListaDeCompra
+import br.com.marketpricescan.model.Produto
+import com.google.firebase.firestore.FirebaseFirestore
 
 class ListaDeCompraAdaptador(private val context : Context, private val listasDeCompra: MutableList<ListaDeCompra>) : RecyclerView.Adapter<ListaDeCompraAdaptador.ItemViewHolder>() {
 
@@ -62,8 +65,7 @@ class ListaDeCompraAdaptador(private val context : Context, private val listasDe
                 .setTitle("Deletar Item")
                 .setMessage("A lista " + lista.nome + " será deletado de Mnhas Listas. Deseja continuar?")
                 .setPositiveButton("OK") { dialog, which ->
-                    listasDeCompra.removeAt(position)
-                    notifyItemRemoved(position)
+                    DeletarListaDeCompra(lista, position)
                     dialog.dismiss()
                 }
                 .setNegativeButton("Cancelar") { dialog, which ->
@@ -71,6 +73,19 @@ class ListaDeCompraAdaptador(private val context : Context, private val listasDe
                 }
                 .create()
             alertDialog.show()
+        }
+
+        private fun DeletarListaDeCompra(lista: ListaDeCompra, position: Int) {
+            FirebaseFirestore.getInstance().collection("lista_de_compra")
+                .document(lista.id).delete()
+                .addOnSuccessListener {
+                    Log.d("Teste", "Sucesso ao deletar a lista de compra no banco de dados")
+                    listasDeCompra.remove(lista)
+                    notifyItemRemoved(position)
+                }
+                .addOnFailureListener {
+                    Log.d("Teste", "Falha ao deletar a lista de compra no banco de dados")
+                }
         }
     }
 }

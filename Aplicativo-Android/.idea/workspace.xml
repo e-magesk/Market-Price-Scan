@@ -11,15 +11,14 @@
   <component name="ChangeListManager">
     <list default="true" id="c266b3e8-be57-4435-9a93-50d6ce0627f0" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/AtualizarListaDeCompraActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/AtualizarListaDeCompraActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/ListaDeCompraActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/ListaDeCompraActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/model/ListaDeCompra.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/model/ListaDeCompra.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/model/Produto.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/model/Produto.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/model/Usuario.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/model/Usuario.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/util/ListaDeCompraAdaptador.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/util/ListaDeCompraAdaptador.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/util/ProdutoListaDeCompraAdaptador.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/util/ProdutoListaDeCompraAdaptador.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/CriarListaDeCompraActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/CriarListaDeCompraActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/HomeActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/HomeActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/home.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/home.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/lista_adaptador.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/lista_adaptador.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/lista_de_compra.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/lista_de_compra.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/login.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/login.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

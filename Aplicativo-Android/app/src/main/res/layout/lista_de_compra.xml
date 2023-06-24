@@ -6,8 +6,10 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/light_gray_blue"
+        android:background="@color/medium_blue"
         >
+
+
 
         <EditText
             android:id="@+id/etTituloLista"
@@ -22,6 +24,7 @@
             android:textSize="25sp"
             android:textStyle="bold"
             android:textAllCaps="true"
+            android:textColor="@color/light_gray_blue"
             android:layout_marginTop="10dp"
             >
         </EditText>
@@ -74,12 +77,36 @@
             android:text="Adicionar item"
             android:layout_marginRight="30dp"
             android:layout_marginBottom="10dp"
-            android:background="@drawable/button_medium_blue"
+            android:background="@drawable/button_light_gray_blue"
             android:drawableRight="@drawable/icon_add"
             android:layout_marginTop="30dp"
             android:padding="5dp"
             android:textStyle="bold"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             >
         </Button>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/loadingPageListaDeCompra"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:foregroundGravity="center"
+        app:cardBackgroundColor="@color/medium_blue"
+        android:visibility="gone"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            >
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:indeterminateTintMode="src_atop"
+                android:indeterminateTint="@color/white"
+                />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
