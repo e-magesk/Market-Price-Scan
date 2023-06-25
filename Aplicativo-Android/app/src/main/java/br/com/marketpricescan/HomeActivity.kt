@@ -18,6 +18,7 @@ import br.com.marketpricescan.util.ListaDeCompraAdaptador
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.zxing.qrcode.encoder.QRCode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -41,6 +42,8 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var documentoUsuario: DocumentReference
     private lateinit var usuario: Usuario
     private var flagExibindoMinhasListas : Boolean = false
+
+    lateinit var cvCriarListaQRCode: CardView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +75,7 @@ class HomeActivity : AppCompatActivity() {
         cvMinhasListas = findViewById(R.id.cvMinhasListas)
         cvMinhasListasBackground = findViewById(R.id.cvMinhasListasBackground)
         rvMinhasListas = findViewById(R.id.rvMinhasListas)
+        cvCriarListaQRCode = findViewById(R.id.cvCriarListaQRCode)
     }
 
     private fun InicializarUsuario() {
@@ -144,6 +148,12 @@ class HomeActivity : AppCompatActivity() {
                 adaptador.notifyDataSetChanged()
                 flagExibindoMinhasListas = true
             }
+        }
+
+        cvCriarListaQRCode.setOnClickListener() { view ->
+            var intent = Intent(this, QRCodeActivity::class.java)
+            startActivity(intent)
+            finish()
         }
     }
 
