@@ -77,6 +77,18 @@
             >
         </EditText>
 
+        <TextView
+            android:id="@+id/tvRedefinirSenha"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginLeft="50dp"
+            android:text="Esqueceu sua senha?"
+            android:layout_marginTop="5dp"
+            app:layout_constraintTop_toBottomOf="@id/etSenhaUsuario"
+            >
+        </TextView>
+
         <Button
             android:id="@+id/btnLogin"
             style="@style/ButtonMediumBlue"
@@ -85,7 +97,7 @@
             android:fontFamily="@font/jetbrains_mono_bold"
             app:layout_constraintStart_toStartOf="@id/containerComponentLogin"
             app:layout_constraintEnd_toEndOf="@id/containerComponentLogin"
-            app:layout_constraintTop_toBottomOf="@id/etSenhaUsuario"
+            app:layout_constraintTop_toBottomOf="@id/tvRedefinirSenha"
             app:layout_constraintBottom_toBottomOf="@id/containerComponentLogin"
             >
         </Button>
@@ -99,7 +111,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/containerComponentLogin"
             app:layout_constraintBottom_toTopOf="@id/tvCadastrar"
-            android:layout_marginTop="20dp"
             >
         </ProgressBar>
 

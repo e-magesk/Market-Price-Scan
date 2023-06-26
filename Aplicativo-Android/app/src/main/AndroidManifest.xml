@@ -13,20 +13,28 @@
         android:theme="@style/Theme.MarketPriceScan"
         tools:targetApi="31">
         <activity
+            android:name=".RedefinirSenhaActivity"
+            android:exported="true"
+            android:theme="@style/Theme.MarketPriceScan"/>
+        <activity
+            android:name=".EditarUsuarioActivity"
+            android:exported="true"
+            android:theme="@style/Theme.MarketPriceScan" />
+        <activity
             android:name=".AtualizarListaDeCompraActivity"
             android:exported="true"
             android:label="@string/titulo_activity_atualizar_lista_de_compra"
-            android:theme="@style/Theme.MarketPriceScan"></activity>
+            android:theme="@style/Theme.MarketPriceScan" />
         <activity
             android:name=".CriarListaDeCompraActivity"
             android:exported="true"
             android:label="@string/titulo_activity_lista_de_compra"
-            android:theme="@style/Theme.MarketPriceScan"></activity>
+            android:theme="@style/Theme.MarketPriceScan" />
         <activity
             android:name=".HomeActivity"
             android:exported="true"
             android:label="@string/titulo_activity_home"
-            android:theme="@style/Theme.MarketPriceScan"></activity>
+            android:theme="@style/Theme.MarketPriceScan" />
         <activity
             android:name=".CadastroActivity"
             android:exported="true"

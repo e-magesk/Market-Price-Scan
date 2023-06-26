@@ -34,6 +34,7 @@ class HomeActivity : AppCompatActivity() {
     lateinit var cvMinhasListas: CardView
     lateinit var cvMinhasListasBackground: CardView
     lateinit var cvCriarNovaLista: CardView
+    lateinit var cvEditarConta : CardView
     lateinit var rvMinhasListas : RecyclerView
     private lateinit var adaptador: ListaDeCompraAdaptador
     private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
@@ -55,9 +56,6 @@ class HomeActivity : AppCompatActivity() {
 
             IniciarComponentes()
 
-            cvCriarNovaLista.isClickable = true
-            cvMinhasListas.isClickable = true
-
             InicializarUsuario()
 
             delay(2000)
@@ -68,10 +66,15 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun IniciarComponentes() {
+        cvEditarConta = findViewById(R.id.cvEditarConta)
         cvCriarNovaLista = findViewById(R.id.cvCriarNovaLista)
         cvMinhasListas = findViewById(R.id.cvMinhasListas)
         cvMinhasListasBackground = findViewById(R.id.cvMinhasListasBackground)
         rvMinhasListas = findViewById(R.id.rvMinhasListas)
+
+        cvCriarNovaLista.isClickable = true
+        cvMinhasListas.isClickable = true
+        cvEditarConta.isClickable = true
     }
 
     private fun InicializarUsuario() {
@@ -120,6 +123,13 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun DefinirAcoes() {
+
+        cvEditarConta.setOnClickListener() { view ->
+            var intent = Intent(this, EditarUsuarioActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
         cvCriarNovaLista.setOnClickListener() { view ->
             runBlocking {
                 VerificarDelecaoDeListas()
