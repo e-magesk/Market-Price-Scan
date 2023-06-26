@@ -49,7 +49,6 @@
             android:id="@+id/tvTituloTelaCadastro"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/jetbrains_mono_bold"
             android:text="Editar cadastro"
             android:textAllCaps="true"
             android:textColor="@color/white"
@@ -64,9 +63,9 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/cvComponentes"
             android:layout_width="match_parent"
-            android:layout_height="400dp"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
+            android:layout_height="300dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
             app:cardCornerRadius="20dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -80,19 +79,30 @@
 
                 <EditText
                     android:id="@+id/etNomeEditar"
-                    style="@style/EditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edit_text"
+                    android:padding="20dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
                     android:hint="Nome Completo"
                     android:inputType="text"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    android:enabled="false"
                     app:layout_constraintBottom_toTopOf="@id/etEmailEditar"
                     android:layout_marginTop="20dp"
                     ></EditText>
 
                 <EditText
                     android:id="@+id/etEmailEditar"
-                    style="@style/EditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edit_text"
+                    android:padding="20dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
                     android:drawableRight="@drawable/icon_email"
                     android:hint="Email"
                     android:inputType="textEmailAddress"
@@ -105,7 +115,12 @@
 
                 <EditText
                     android:id="@+id/etSenhaEditar"
-                    style="@style/EditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edit_text"
+                    android:padding="20dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
                     android:drawableRight="@drawable/icon_eye"
                     android:hint="Nova senha"
                     android:inputType="textPassword"
@@ -127,8 +142,8 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
             app:layout_constraintTop_toBottomOf="@id/cvComponentes"
             app:layout_constraintBottom_toTopOf="@id/btnCadastrar"
             >
@@ -139,13 +154,35 @@
             style="@style/ButtonLightGreyBlue"
             android:text="Salvar informações"
             android:textColor="@color/black"
-            android:fontFamily="@font/jetbrains_mono_bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cvComponentes"
             >
         </Button>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/loadingPageEditarUsuario"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:foregroundGravity="center"
+            app:cardBackgroundColor="@color/medium_blue"
+            android:visibility="gone"
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                >
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="true"
+                    android:indeterminateTintMode="src_atop"
+                    android:indeterminateTint="@color/white"
+                    />
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
