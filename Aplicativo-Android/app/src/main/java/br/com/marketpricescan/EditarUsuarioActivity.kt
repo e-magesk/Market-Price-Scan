@@ -2,6 +2,7 @@ package br.com.marketpricescan
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.cardview.widget.CardView
@@ -51,10 +52,12 @@ class EditarUsuarioActivity : AppCompatActivity() {
     }
 
     private fun InicializarUsuario(){
-//        database.document(usuarioId).get().addOnSuccessListener {
-//            usuario = Usuario(it.getString("nome")!!)
-//            etNomeEditar.setText(usuario.nome)
-//        }
-//        etEmailEditar.setText(FirebaseAuth.getInstance().currentUser?.email)
+        database.collection("usuario").document(usuarioId).get().addOnSuccessListener {document ->
+            Log.d("Teste", document.toString())
+            usuario = Usuario(document.getString("nome")!!)
+            etNomeEditar.setText(usuario.nome)
+        }
+        etEmailEditar.setText(FirebaseAuth.getInstance().currentUser?.email)
+        etSenhaEditar.setText("********")
     }
 }
