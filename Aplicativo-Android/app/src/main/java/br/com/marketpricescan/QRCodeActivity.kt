@@ -1,7 +1,6 @@
 package br.com.marketpricescan
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -35,11 +34,19 @@ class QRCodeActivity : AppCompatActivity() {
         // Callbacks
         codeScanner.decodeCallback = DecodeCallback {
             runOnUiThread {
-                Toast.makeText(this, "Scan result: ${it.text}", Toast.LENGTH_LONG).show()
+                //Toast.makeText(this, "Scan result: ${it.text}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Scaneado", Toast.LENGTH_SHORT).show()
 
-                val i = Intent(Intent.ACTION_VIEW)
-                i.data = Uri.parse(it.text)
-                startActivity(i)
+                val intent = Intent(this, NotaFiscalActivity::class.java)
+                intent.putExtra(
+                    "URL",
+                    it.text
+                )
+                startActivity(intent)
+
+//                val i = Intent(Intent.ACTION_VIEW)
+//                i.data = Uri.parse(it.text)
+//                startActivity(i)
             }
         }
         codeScanner.errorCallback = ErrorCallback { // or ErrorCallback.SUPPRESS
