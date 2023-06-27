@@ -2,8 +2,11 @@ package br.com.marketpricescan
 
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.CheckBox
 import android.widget.TextView
@@ -32,6 +35,7 @@ class GerenciarAmigosActivity : AppCompatActivity() {
     private lateinit var usuario: Usuario
     private lateinit var documentoUsuario: DocumentReference
     private val database = FirebaseFirestore.getInstance()
+    private val usuarios = FirebaseFirestore.getInstance().collection("usuario")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,14 +118,75 @@ class GerenciarAmigosActivity : AppCompatActivity() {
             if(cbId.isChecked && cbNome.isChecked){
                 cbNome.isChecked = false
             }
+            else if(!cbId.isChecked && !cbNome.isChecked){
+                cbId.isChecked = true
+            }
+            actvBuscarAmigos.hint = if(cbId.isChecked) "Buscar usuario por ID" else "Buscar usuario por nome"
         }
 
         cbNome.setOnCheckedChangeListener { _, _ ->
             if(cbNome.isChecked && cbId.isChecked){
                 cbId.isChecked = false
             }
+            else if(!cbId.isChecked && !cbNome.isChecked){
+                cbId.isChecked = true
+            }
+            actvBuscarAmigos.hint = if(cbId.isChecked) "Buscar usuario por ID" else "Buscar usuario por nome"
         }
 
+        actvBuscarAmigos.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                val texto = s.toString()
+                // Aqui você pode chamar a função para buscar sugestões no Firebase Firestore com base no texto digitado
+                if(cbId.isChecked)
+                    BuscarUsuariosPorId(texto)
+                else if(cbNome.isChecked)
+                    BuscarUsuariosPorNome(texto)
+            }
+        })
+
+    }
+
+    private fun BuscarUsuariosPorNome(texto : String){
+        usuarios.whereGreaterThanOrEqualTo("nome", texto)
+            .orderBy("nome")
+            .limit(10)
+            .get()
+            .addOnSuccessListener { documents ->
+                val sugestoes = mutableListOf<String>()
+                for (document in documents) {
+                    val nome = document.getString("nome")
+                    nome?.let { sugestoes.add(it) }
+                }
+                val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, sugestoes)
+                actvBuscarAmigos.setAdapter(adapter)
+            }
+            .addOnFailureListener { exception ->
+                actvBuscarAmigos.setError("Nenhum usuário encontrado")
+            }
+    }
+
+    private fun BuscarUsuariosPorId(texto : String){
+        usuarios.whereGreaterThanOrEqualTo("id", texto)
+            .orderBy("id")
+            .limit(10)
+            .get()
+            .addOnSuccessListener { documents ->
+                val sugestoes = mutableListOf<String>()
+                for (document in documents) {
+                    val id = document.getString("id")
+                    id?.let { sugestoes.add(it) }
+                }
+                val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, sugestoes)
+                actvBuscarAmigos.setAdapter(adapter)
+            }
+            .addOnFailureListener { exception ->
+                actvBuscarAmigos.setError("Nenhum usuário encontrado")
+            }
     }
 
     private fun VerificarSituacaoListaDeAmigos(){
