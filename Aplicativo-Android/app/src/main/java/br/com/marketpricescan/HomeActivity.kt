@@ -1,6 +1,8 @@
 package br.com.marketpricescan
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -10,6 +12,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.model.ListaDeCompra
@@ -18,7 +21,6 @@ import br.com.marketpricescan.util.ListaDeCompraAdaptador
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.zxing.qrcode.encoder.QRCode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -151,7 +153,25 @@ class HomeActivity : AppCompatActivity() {
         }
 
         cvCriarListaQRCode.setOnClickListener() { view ->
-            var intent = Intent(this, QRCodeActivity::class.java)
+            if (ActivityCompat.checkSelfPermission(applicationContext, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CAMERA), 1)
+            } else {
+                val intent = Intent(this, QRCodeActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+        }
+
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (grantResults[0] == PERMISSION_GRANTED){
+            val intent = Intent(this, QRCodeActivity::class.java)
             startActivity(intent)
             finish()
         }
