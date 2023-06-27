@@ -9,7 +9,19 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c266b3e8-be57-4435-9a93-50d6ce0627f0" name="Changes" comment="" />
+    <list default="true" id="c266b3e8-be57-4435-9a93-50d6ce0627f0" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/icon_exit_to_app.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/icon_person_add.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/assetWizardSettings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/assetWizardSettings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/EditarUsuarioActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/EditarUsuarioActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/HomeActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/HomeActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/model/Usuario.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/model/Usuario.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/editar_usuario.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/editar_usuario.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/home.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/home.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -95,6 +107,9 @@
 }</component>
   <component name="RecentsManager">
     <key name="android.template.-633194619">
+      <recent name="br.com.marketpricescan" />
+    </key>
+    <key name="android.template.1727414059">
       <recent name="br.com.marketpricescan" />
     </key>
     <key name="android.template.1702550106">

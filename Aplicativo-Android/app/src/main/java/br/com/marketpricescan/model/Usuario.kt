@@ -9,6 +9,7 @@ class Usuario() :Parcelable {
     public var id : String = ""
     public var nome : String = ""
     public var listasDeCompra : MutableList<ListaDeCompra> = mutableListOf()
+    public var amigos : MutableList<Usuario> = mutableListOf()
 
     constructor(parcel: Parcel) : this() {
         id = parcel.readString()!!

@@ -1,12 +1,9 @@
 package br.com.marketpricescan
 
 import android.content.Intent
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
@@ -29,13 +26,18 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlin.math.floor
 
+
 class HomeActivity : AppCompatActivity() {
 
     lateinit var cvMinhasListas: CardView
     lateinit var cvMinhasListasBackground: CardView
     lateinit var cvCriarNovaLista: CardView
-    lateinit var cvEditarConta : CardView
+    lateinit var cvConfiguracoes : CardView
+    lateinit var cvConfiguracoesBackground : CardView
     lateinit var rvMinhasListas : RecyclerView
+    lateinit var tvEditarConta : TextView
+    lateinit var tvListaDeAmigos : TextView
+    lateinit var tvSairDaConta : TextView
     private lateinit var adaptador: ListaDeCompraAdaptador
     private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val usuarioId: String = FirebaseAuth.getInstance().currentUser!!.uid
@@ -58,7 +60,7 @@ class HomeActivity : AppCompatActivity() {
 
             InicializarUsuario()
 
-            delay(2000)
+            delay(3000)
 
             loadingCard.visibility = View.GONE // Ocultar o indicador de progresso
         }
@@ -66,15 +68,19 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun IniciarComponentes() {
-        cvEditarConta = findViewById(R.id.cvEditarConta)
+        cvConfiguracoes = findViewById(R.id.cvConfiguracoes)
         cvCriarNovaLista = findViewById(R.id.cvCriarNovaLista)
         cvMinhasListas = findViewById(R.id.cvMinhasListas)
         cvMinhasListasBackground = findViewById(R.id.cvMinhasListasBackground)
+        cvConfiguracoesBackground = findViewById(R.id.cvConfiguracoesBackground)
         rvMinhasListas = findViewById(R.id.rvMinhasListas)
+        tvEditarConta = findViewById(R.id.tvEditarConta)
+        tvListaDeAmigos = findViewById(R.id.tvListaDeAmigos)
+        tvSairDaConta = findViewById(R.id.tvSairDaConta)
 
         cvCriarNovaLista.isClickable = true
         cvMinhasListas.isClickable = true
-        cvEditarConta.isClickable = true
+        cvConfiguracoes.isClickable = true
     }
 
     private fun InicializarUsuario() {
@@ -84,7 +90,7 @@ class HomeActivity : AppCompatActivity() {
         documentoUsuario = database.collection("usuario").document(usuarioId!!)
         documentoUsuario.get().addOnSuccessListener { documentSnapshot ->
             if (documentSnapshot.exists()) {
-                usuario = Usuario(documentSnapshot.getString("nome")!!)
+                usuario = Usuario(documentSnapshot.getString("nome")!!, usuarioId!!)
                 listas = documentSnapshot.get("listasDeCompra") as ArrayList<DocumentReference>
 
                 var tvNomeUsuario = findViewById<TextView>(R.id.tvWelcomeHome)
@@ -124,8 +130,35 @@ class HomeActivity : AppCompatActivity() {
 
     private fun DefinirAcoes() {
 
-        cvEditarConta.setOnClickListener() { view ->
+        // CONFIGURAÇÕES
+
+        cvConfiguracoes.setOnClickListener() { view ->
+            if(cvConfiguracoesBackground.visibility === View.GONE){
+                cvConfiguracoesBackground.visibility = View.VISIBLE
+            }
+            else{
+                cvConfiguracoesBackground.visibility = View.GONE
+            }
+        }
+
+        tvEditarConta.setOnClickListener() { view ->
             var intent = Intent(this, EditarUsuarioActivity::class.java)
+            startActivity(intent)
+            cvConfiguracoesBackground.visibility = View.GONE
+        }
+
+        tvListaDeAmigos.setOnClickListener() { view ->
+            val bundle = Bundle()
+            bundle.putParcelable("usuario", usuario)
+            var intent = Intent(this, GerenciarAmigosActivity::class.java)
+            intent.putExtras(bundle)
+            startActivity(intent)
+            cvConfiguracoesBackground.visibility = View.GONE
+        }
+
+        tvSairDaConta.setOnClickListener() { view ->
+            FirebaseAuth.getInstance().signOut()
+            var intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
         }

@@ -96,7 +96,6 @@ class EditarUsuarioActivity : AppCompatActivity() {
                             startActivity(intent)
                             finish()
                         }
-
                     }?.addOnFailureListener {
                         pbEditarUsuario.visibility = View.INVISIBLE
                         var snackbar = Snackbar.make(view, "Erro ao alterar informações! Tente novamente.", Snackbar.LENGTH_LONG)
