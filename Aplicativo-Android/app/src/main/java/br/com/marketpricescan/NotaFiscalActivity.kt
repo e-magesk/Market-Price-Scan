@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.model.ListaDeCompra
 import br.com.marketpricescan.model.Produto
 import br.com.marketpricescan.util.ProdutoListaDeCompraAdaptador
+import br.com.marketpricescan.util.ProdutoNotaFiscalAdaptador
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
@@ -41,7 +42,7 @@ class NotaFiscalActivity : AppCompatActivity() {
 
 
     var produtos = mutableListOf<Produto>()
-    private lateinit var adaptador: ProdutoListaDeCompraAdaptador
+    private lateinit var adaptador: ProdutoNotaFiscalAdaptador
 
     private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
     private lateinit var documentoListaDeCompra: DocumentReference
@@ -127,7 +128,7 @@ class NotaFiscalActivity : AppCompatActivity() {
     }
 
     private fun DefinirAdaptador(){
-        adaptador = ProdutoListaDeCompraAdaptador(this, produtos)
+        adaptador = ProdutoNotaFiscalAdaptador(this, produtos)
 //        adaptador.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
 //            override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
 //                super.onItemRangeRemoved(positionStart, itemCount)
@@ -138,7 +139,7 @@ class NotaFiscalActivity : AppCompatActivity() {
         rvListaDeCompra.setHasFixedSize(true)
         rvListaDeCompra.layoutManager = LinearLayoutManager(this)
         rvListaDeCompra.adapter = adaptador
-        rvListaDeCompra.isClickable = true
+        rvListaDeCompra.isClickable = false
     }
 
     private fun VerificarSituacaoLista() {
