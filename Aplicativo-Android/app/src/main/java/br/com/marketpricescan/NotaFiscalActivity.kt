@@ -139,7 +139,7 @@ class NotaFiscalActivity : AppCompatActivity() {
         rvListaDeCompra.setHasFixedSize(true)
         rvListaDeCompra.layoutManager = LinearLayoutManager(this)
         rvListaDeCompra.adapter = adaptador
-        rvListaDeCompra.isClickable = false
+        rvListaDeCompra.isClickable = true
     }
 
     private fun VerificarSituacaoLista() {
