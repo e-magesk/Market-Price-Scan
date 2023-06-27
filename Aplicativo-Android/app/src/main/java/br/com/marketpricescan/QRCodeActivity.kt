@@ -35,7 +35,7 @@ class QRCodeActivity : AppCompatActivity() {
         codeScanner.decodeCallback = DecodeCallback {
             runOnUiThread {
                 //Toast.makeText(this, "Scan result: ${it.text}", Toast.LENGTH_LONG).show()
-                Toast.makeText(this, "Scaneado", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "QR Code lido com sucesso", Toast.LENGTH_SHORT).show()
 
                 val intent = Intent(this, NotaFiscalActivity::class.java)
                 intent.putExtra(
