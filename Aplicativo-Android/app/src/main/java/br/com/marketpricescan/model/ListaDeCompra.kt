@@ -18,16 +18,16 @@ class ListaDeCompra() : Parcelable{
 
     constructor(lista : ListaDeCompra) : this(){
         id = lista.id
-        nome = lista.nome
+        nome = lista.nome.uppercase()
     }
 
     constructor(nome : String) : this(){
-        this.nome = nome
+        this.nome = nome.uppercase()
     }
 
     constructor(nome : String, id : String) : this(){
         this.id = id
-        this.nome = nome
+        this.nome = nome.uppercase()
     }
     fun adicionarProduto(produto : Produto){
         produtos.add(produto)

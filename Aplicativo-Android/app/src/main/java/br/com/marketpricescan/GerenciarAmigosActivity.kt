@@ -1,20 +1,26 @@
 package br.com.marketpricescan
 
+import android.app.AlertDialog
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.CheckBox
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
+import br.com.marketpricescan.model.ListaDeCompra
 import br.com.marketpricescan.model.Usuario
+import br.com.marketpricescan.util.UsuarioArrayAdaptador
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -149,20 +155,28 @@ class GerenciarAmigosActivity : AppCompatActivity() {
             }
         })
 
+        actvBuscarAmigos.onItemClickListener =
+            AdapterView.OnItemClickListener { parent, _, position, _ ->
+                val objetoCompleto = parent.getItemAtPosition(position) as Usuario
+                PopUpConfirmacaoAdicionarAmigo(objetoCompleto)
+            }
+
     }
 
     private fun BuscarUsuariosPorNome(texto : String){
-        usuarios.whereGreaterThanOrEqualTo("nome", texto)
+        usuarios.whereGreaterThanOrEqualTo("nome", texto.uppercase())
             .orderBy("nome")
             .limit(10)
             .get()
             .addOnSuccessListener { documents ->
-                val sugestoes = mutableListOf<String>()
+                val sugestoes = mutableListOf<Usuario>()
                 for (document in documents) {
-                    val nome = document.getString("nome")
-                    nome?.let { sugestoes.add(it) }
+                    val nome = document.getString("nome")!!
+                    val id = document.id
+                    val usuario = Usuario(nome, id)
+                    sugestoes.add(usuario)
                 }
-                val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, sugestoes)
+                val adapter = UsuarioArrayAdaptador(this, sugestoes)
                 actvBuscarAmigos.setAdapter(adapter)
             }
             .addOnFailureListener { exception ->
@@ -176,12 +190,14 @@ class GerenciarAmigosActivity : AppCompatActivity() {
             .limit(10)
             .get()
             .addOnSuccessListener { documents ->
-                val sugestoes = mutableListOf<String>()
+                val sugestoes = mutableListOf<Usuario>()
                 for (document in documents) {
-                    val id = document.getString("id")
-                    id?.let { sugestoes.add(it) }
+                    val nome = document.getString("nome")!!
+                    val id = document.id
+                    val usuario = Usuario(nome, id)
+                    sugestoes.add(usuario)
                 }
-                val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, sugestoes)
+                val adapter = UsuarioArrayAdaptador(this, sugestoes)
                 actvBuscarAmigos.setAdapter(adapter)
             }
             .addOnFailureListener { exception ->
@@ -198,5 +214,34 @@ class GerenciarAmigosActivity : AppCompatActivity() {
             tvListaDeAmigosVazia.visibility = View.GONE
             rvListaDeAmigos.visibility = View.VISIBLE
         }
+    }
+
+    private fun PopUpConfirmacaoAdicionarAmigo(amigo : Usuario){
+        val alertDialog = AlertDialog.Builder(this)
+            .setTitle("Adicionar Amigo")
+            .setMessage("Deseja adicionar " + amigo.nome + " a sua lista de amigos?")
+            .setPositiveButton("Adicionar") { dialog, which ->
+                AdicionarAmigo(amigo)
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancelar") { dialog, which ->
+                dialog.dismiss()
+            }
+            .create()
+        alertDialog.show()
+    }
+
+    private fun AdicionarAmigo(amigo : Usuario){
+        val amigoRef = database.collection("usuario").document(amigo.id)
+
+        documentoUsuario.update("amigos", FieldValue.arrayUnion(amigoRef))
+            .addOnSuccessListener {
+                usuario.amigos.add(amigo)
+                VerificarSituacaoListaDeAmigos()
+                Toast.makeText(this, "Amigo adicionado com sucesso", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Erro ao adicionar amigo", Toast.LENGTH_SHORT).show()
+            }
     }
 }

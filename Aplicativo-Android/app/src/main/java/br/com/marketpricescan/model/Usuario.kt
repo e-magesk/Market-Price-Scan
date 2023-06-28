@@ -2,6 +2,7 @@ package br.com.marketpricescan.model
 
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.compose.ui.text.toUpperCase
 import com.google.firebase.firestore.DocumentReference
 
 class Usuario() :Parcelable {
@@ -18,16 +19,16 @@ class Usuario() :Parcelable {
 
     constructor(usuario: Usuario) : this(){
         this.id = usuario.id
-        this.nome = usuario.nome
+        this.nome = usuario.nome.uppercase()
     }
 
     constructor(nome: String) : this(){
-        this.nome = nome
+        this.nome = nome.uppercase()
     }
 
     constructor(nome: String, id : String) : this(){
         this.id = id
-        this.nome = nome
+        this.nome = nome.uppercase()
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
