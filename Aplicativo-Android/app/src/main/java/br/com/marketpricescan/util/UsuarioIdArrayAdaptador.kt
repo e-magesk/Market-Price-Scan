@@ -8,7 +8,7 @@ import android.widget.Filter
 import android.widget.TextView
 import br.com.marketpricescan.model.Usuario
 
-class UsuarioArrayAdaptador(context: Context, listaUsuarios: List<Usuario>) :
+class UsuarioIdArrayAdaptador(context: Context, listaUsuarios: List<Usuario>) :
     ArrayAdapter<Usuario>(context, android.R.layout.simple_dropdown_item_1line, listaUsuarios) {
     private var sugestoes: List<Usuario> = listaUsuarios
     private var sugestoesFiltradas: List<Usuario> = listaUsuarios
@@ -25,7 +25,7 @@ class UsuarioArrayAdaptador(context: Context, listaUsuarios: List<Usuario>) :
     override fun getFilter(): Filter {
         return object : Filter() {
             override fun performFiltering(constraint: CharSequence?): FilterResults {
-                val filtro = constraint?.toString()?.toLowerCase()
+                val filtro = constraint?.toString()
                 val resultados = FilterResults()
 
                 if (filtro.isNullOrEmpty()) {
@@ -34,7 +34,7 @@ class UsuarioArrayAdaptador(context: Context, listaUsuarios: List<Usuario>) :
                 } else {
                     val sugestoesFiltradasTemp = mutableListOf<Usuario>()
                     for (usuario in sugestoes) {
-                        if (usuario.nome.toLowerCase().startsWith(filtro)) {
+                        if (usuario.id.startsWith(filtro)) {
                             sugestoesFiltradasTemp.add(usuario)
                         }
                     }

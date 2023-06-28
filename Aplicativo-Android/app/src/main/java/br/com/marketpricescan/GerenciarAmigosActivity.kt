@@ -8,7 +8,6 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.CheckBox
 import android.widget.TextView
@@ -17,11 +16,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import br.com.marketpricescan.model.ListaDeCompra
 import br.com.marketpricescan.model.Usuario
-import br.com.marketpricescan.util.ListaDeCompraAdaptador
 import br.com.marketpricescan.util.UsuarioAdaptador
-import br.com.marketpricescan.util.UsuarioArrayAdaptador
+import br.com.marketpricescan.util.UsuarioIdArrayAdaptador
+import br.com.marketpricescan.util.UsuarioNomeArrayAdaptador
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -33,7 +31,6 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlin.math.floor
 
 class GerenciarAmigosActivity : AppCompatActivity() {
 
@@ -183,7 +180,7 @@ class GerenciarAmigosActivity : AppCompatActivity() {
                     val usuario = Usuario(nome, id)
                     sugestoes.add(usuario)
                 }
-                val adapter = UsuarioArrayAdaptador(this, sugestoes)
+                val adapter = UsuarioNomeArrayAdaptador(this, sugestoes)
                 actvBuscarAmigos.setAdapter(adapter)
             }
             .addOnFailureListener { exception ->
@@ -203,8 +200,12 @@ class GerenciarAmigosActivity : AppCompatActivity() {
                     val id = document.id
                     val usuario = Usuario(nome, id)
                     sugestoes.add(usuario)
+                    Log.d("Teste", "Sugestoes")
+                    for(usuario in sugestoes){
+                        Log.d("Teste", usuario.nome)
+                    }
                 }
-                val adapter = UsuarioArrayAdaptador(this, sugestoes)
+                val adapter = UsuarioIdArrayAdaptador(this, sugestoes)
                 actvBuscarAmigos.setAdapter(adapter)
             }
             .addOnFailureListener { exception ->
