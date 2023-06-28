@@ -255,16 +255,18 @@ class GerenciarAmigosActivity : AppCompatActivity() {
 
     private fun PrepararExibicaoListaDeAmigos(){
         adaptador = UsuarioAdaptador(this, usuario.amigos)
-//        adaptador.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-//            override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
-//                super.onItemRangeRemoved(positionStart, itemCount)
-//                Log.d("Teste", "Entrei para deletar")
-//                documentoUsuario.update("amigos", FieldValue.arrayRemove(usuario.amigos[positionStart]))
-//                    .addOnSuccessListener {
-//                        VerificarSituacaoListaDeAmigos()
-//                    }
-//            }
-//        })
+        adaptador.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+                super.onItemRangeRemoved(positionStart, itemCount)
+                Log.d("Teste", "Entrei para deletar")
+                val amigoRef = database.collection("usuario").document(usuario.amigos[positionStart].id)
+                documentoUsuario.update("amigos", FieldValue.arrayRemove(amigoRef))
+                    .addOnSuccessListener {
+                        Log.d("Teste", "Deletado com sucesso")
+                        VerificarSituacaoListaDeAmigos()
+                    }
+            }
+        })
         rvListaDeAmigos.setHasFixedSize(true)
         rvListaDeAmigos.layoutManager = LinearLayoutManager(this)
         rvListaDeAmigos.adapter = adaptador

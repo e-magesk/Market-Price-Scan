@@ -220,7 +220,7 @@
                 android:text="LISTA DE AMIGOS"
                 android:textColor="@color/black"
                 android:textSize="18sp"
-                android:drawableRight="@drawable/icon_person_add"
+                android:drawableRight="@drawable/icon_group"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:paddingTop="10dp"

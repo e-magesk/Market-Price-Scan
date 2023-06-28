@@ -56,6 +56,7 @@ class UsuarioAdaptador(private val context : Context, private val usuarios: Muta
                 .setPositiveButton("Remover amigo") { dialog, which ->
                     usuarios.remove(usuario)
                     notifyDataSetChanged()
+                    notifyItemRemoved(position)
                     dialog.dismiss()
                 }
                 .setNegativeButton("Cancelar") { dialog, which ->
