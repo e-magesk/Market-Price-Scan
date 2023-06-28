@@ -210,8 +210,8 @@
                 android:drawableRight="@drawable/icon_person"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 ></TextView>
             <TextView
                 android:id="@+id/tvListaDeAmigos"
@@ -223,8 +223,8 @@
                 android:drawableRight="@drawable/icon_person_add"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 ></TextView>
             <TextView
                 android:id="@+id/tvSairDaConta"
@@ -236,8 +236,8 @@
                 android:drawableRight="@drawable/icon_exit_to_app"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 ></TextView>
         </LinearLayout>
 <!--        <androidx.recyclerview.widget.RecyclerView-->

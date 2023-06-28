@@ -15,9 +15,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.model.ListaDeCompra
 import br.com.marketpricescan.model.Usuario
+import br.com.marketpricescan.util.ListaDeCompraAdaptador
+import br.com.marketpricescan.util.UsuarioAdaptador
 import br.com.marketpricescan.util.UsuarioArrayAdaptador
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
@@ -30,6 +33,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlin.math.floor
 
 class GerenciarAmigosActivity : AppCompatActivity() {
 
@@ -40,6 +44,7 @@ class GerenciarAmigosActivity : AppCompatActivity() {
     private lateinit var rvListaDeAmigos : RecyclerView
     private lateinit var usuario: Usuario
     private lateinit var documentoUsuario: DocumentReference
+    private lateinit var adaptador: UsuarioAdaptador
     private val database = FirebaseFirestore.getInstance()
     private val usuarios = FirebaseFirestore.getInstance().collection("usuario")
 
@@ -83,6 +88,8 @@ class GerenciarAmigosActivity : AppCompatActivity() {
         actvBuscarAmigos = findViewById(R.id.actvBuscarAmigos)
         tvListaDeAmigosVazia = findViewById(R.id.tvListaDeAmigosVazia)
         rvListaDeAmigos = findViewById(R.id.rvListaDeAmigos)
+
+
     }
 
     private fun BuscarAmigosUsuario() {
@@ -112,7 +119,7 @@ class GerenciarAmigosActivity : AppCompatActivity() {
                     // Aguarde a conclusão de todas as tarefas assíncronas
                     tasks.awaitAll()
 
-                    VerificarSituacaoListaDeAmigos()
+                    PrepararExibicaoListaDeAmigos()
                 }
             }
         }
@@ -206,6 +213,7 @@ class GerenciarAmigosActivity : AppCompatActivity() {
     }
 
     private fun VerificarSituacaoListaDeAmigos(){
+        adaptador.notifyDataSetChanged()
         if(usuario.amigos.size === 0){
             tvListaDeAmigosVazia.visibility = View.VISIBLE
             rvListaDeAmigos.visibility = View.GONE
@@ -243,5 +251,25 @@ class GerenciarAmigosActivity : AppCompatActivity() {
             .addOnFailureListener {
                 Toast.makeText(this, "Erro ao adicionar amigo", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    private fun PrepararExibicaoListaDeAmigos(){
+        adaptador = UsuarioAdaptador(this, usuario.amigos)
+//        adaptador.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+//            override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+//                super.onItemRangeRemoved(positionStart, itemCount)
+//                Log.d("Teste", "Entrei para deletar")
+//                documentoUsuario.update("amigos", FieldValue.arrayRemove(usuario.amigos[positionStart]))
+//                    .addOnSuccessListener {
+//                        VerificarSituacaoListaDeAmigos()
+//                    }
+//            }
+//        })
+        rvListaDeAmigos.setHasFixedSize(true)
+        rvListaDeAmigos.layoutManager = LinearLayoutManager(this)
+        rvListaDeAmigos.adapter = adaptador
+        rvListaDeAmigos.isClickable = true
+
+        VerificarSituacaoListaDeAmigos()
     }
 }

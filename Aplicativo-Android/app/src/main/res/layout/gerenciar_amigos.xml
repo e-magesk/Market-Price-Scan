@@ -77,29 +77,26 @@
                     ></TextView>
 
                 <CheckBox
+                    android:id="@+id/cbNome"
+                    app:layout_constraintTop_toBottomOf="@id/tvTituloAdicionarAmigos"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:checked="true"
+                    android:text="Nome"
+                    >
+                </CheckBox>
+
+                <CheckBox
                     android:id="@+id/cbId"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     app:layout_constraintTop_toBottomOf="@id/tvTituloAdicionarAmigos"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/cbNome"
                     android:layout_marginLeft="10dp"
                     android:text="ID"
-                    android:checked="true"
                     >
-
-                </CheckBox>
-
-                <CheckBox
-                    android:id="@+id/cbNome"
-                    app:layout_constraintTop_toBottomOf="@id/tvTituloAdicionarAmigos"
-                    app:layout_constraintStart_toEndOf="@id/cbId"
-                    android:layout_marginLeft="10dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-
-                    android:text="Nome"
-                    >
-
                 </CheckBox>
 
                 <AutoCompleteTextView

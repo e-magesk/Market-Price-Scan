@@ -31,6 +31,10 @@ class Usuario() :Parcelable {
         this.nome = nome.uppercase()
     }
 
+    override fun toString(): String {
+        return nome
+    }
+
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(id)
         parcel.writeString(nome)
