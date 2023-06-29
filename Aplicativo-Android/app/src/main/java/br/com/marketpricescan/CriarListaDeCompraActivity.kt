@@ -3,8 +3,10 @@ package br.com.marketpricescan
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.ListView
@@ -15,7 +17,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.model.ListaDeCompra
 import br.com.marketpricescan.model.Produto
+import br.com.marketpricescan.model.Usuario
 import br.com.marketpricescan.util.ProdutoListaDeCompraAdaptador
+import br.com.marketpricescan.util.UsuarioCompartilharAdaptador
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
@@ -25,7 +29,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlin.math.floor
 
 class CriarListaDeCompraActivity : AppCompatActivity() {
 
@@ -33,12 +36,17 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
     private lateinit var btnAdicionarItem: Button
     private lateinit var tvListaVazia: TextView
     private lateinit var etTituloLista: TextView
-    private lateinit var adaptador: ProdutoListaDeCompraAdaptador
+    private lateinit var cvCompartilharComAmigos : CardView
+    private lateinit var rvCompartilharComAmigos : RecyclerView
+    private lateinit var adaptadorUsuariosCompartilhar : UsuarioCompartilharAdaptador
+    private lateinit var adaptadorProdutos: ProdutoListaDeCompraAdaptador
+    private var amigosCompartilhar = mutableListOf<Usuario>()
     var produtos = mutableListOf<Produto>()
     private lateinit var listaDeCompra: ListaDeCompra
     private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val usuarioId: String = FirebaseAuth.getInstance().currentUser!!.uid
     private lateinit var documentoUsuario: DocumentReference
+    private lateinit var usuario: Usuario
     private lateinit var documentoListaDeCompra: DocumentReference
 
 
@@ -53,19 +61,21 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
         val coroutineScope = CoroutineScope(Dispatchers.Main)
         coroutineScope.launch {
 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                usuario = intent.getParcelableExtra("usuario", Usuario::class.java)!!
+            } else {
+                usuario = intent.getParcelableExtra<Usuario>("usuario")!!
+            }
+
             IniciarComponentes()
 
-            DefinirAdaptador()
+            DefinirAdaptadorProdutos()
+
+            DefinirAdaptadorUsuariosCompartilhar()
 
             VerificarSituacaoLista()
 
-            btnAdicionarItem.setOnClickListener() { view ->
-                produtos.add(Produto("" ))
-                adaptador.notifyDataSetChanged()
-                rvListaDeCompra.smoothScrollToPosition(adaptador.itemCount - 1)
-                VerificarSituacaoLista()
-
-            }
+            DefinirAcoes()
 
             delay(2000)
 
@@ -79,6 +89,9 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
         rvListaDeCompra = findViewById(R.id.rvListaDeCompra)
         tvListaVazia = findViewById(R.id.tvListaVazia)
         etTituloLista = findViewById(R.id.etTituloLista)
+
+        rvCompartilharComAmigos = findViewById(R.id.rvCompartilharComAmigos)
+        cvCompartilharComAmigos = findViewById(R.id.cvCompartilharComAmigos)
 
         listaDeCompra = ListaDeCompra("")
     }
@@ -108,27 +121,60 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
 
     }
 
-    override fun onBackPressed() {
-        var alertDialog = AlertDialog.Builder(this)
-            .setTitle("Salvar Lista?")
-            .setMessage("Deseja salvar a lista " + etTituloLista.text + "?")
-            .setPositiveButton("OK") { dialog, which ->
-                runBlocking {
-                    CriarProdutos()
+    private fun DefinirAcoes(){
+
+        etTituloLista.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                val drawableRight = etTituloLista.compoundDrawables[2] // Ícone no lado direito (índice 2)
+                if (event.rawX >= (etTituloLista.right - drawableRight.bounds.width())) {
+                    if(cvCompartilharComAmigos.visibility === View.VISIBLE){
+                        cvCompartilharComAmigos.visibility = View.GONE
+                    }
+                    else{
+                        cvCompartilharComAmigos.visibility = View.VISIBLE
+                    }
+                    return@setOnTouchListener true
                 }
-                val intent = Intent(this, HomeActivity::class.java)
-                startActivity(intent)
-                dialog.dismiss()
-                finish()
             }
-            .setNegativeButton("Cancelar") { dialog, which ->
-                val intent = Intent(this, HomeActivity::class.java)
-                startActivity(intent)
-                dialog.dismiss()
-                finish()
-            }
-            .create()
-        alertDialog.show()
+            false
+        }
+
+        btnAdicionarItem.setOnClickListener() { view ->
+            produtos.add(Produto("" ))
+            adaptadorProdutos.notifyDataSetChanged()
+            rvListaDeCompra.smoothScrollToPosition(adaptadorProdutos.itemCount - 1)
+            VerificarSituacaoLista()
+
+        }
+
+    }
+
+    override fun onBackPressed() {
+        if(cvCompartilharComAmigos.visibility === View.VISIBLE){
+            cvCompartilharComAmigos.visibility = View.GONE
+        }
+        else {
+            var alertDialog = AlertDialog.Builder(this)
+                .setTitle("Salvar Lista?")
+                .setMessage("Deseja salvar a lista " + etTituloLista.text + "?")
+                .setPositiveButton("OK") { dialog, which ->
+                    runBlocking {
+                        CriarProdutos()
+                    }
+                    val intent = Intent(this, HomeActivity::class.java)
+                    startActivity(intent)
+                    dialog.dismiss()
+                    finish()
+                }
+                .setNegativeButton("Cancelar") { dialog, which ->
+                    val intent = Intent(this, HomeActivity::class.java)
+                    startActivity(intent)
+                    dialog.dismiss()
+                    finish()
+                }
+                .create()
+            alertDialog.show()
+        }
     }
 
     private fun CriarProdutos(){
@@ -186,9 +232,9 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
             }
     }
 
-    private fun DefinirAdaptador(){
-        adaptador = ProdutoListaDeCompraAdaptador(this, produtos)
-        adaptador.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+    private fun DefinirAdaptadorProdutos(){
+        adaptadorProdutos = ProdutoListaDeCompraAdaptador(this, produtos)
+        adaptadorProdutos.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
                 super.onItemRangeRemoved(positionStart, itemCount)
                 VerificarSituacaoLista()
@@ -197,8 +243,31 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
 
         rvListaDeCompra.setHasFixedSize(true)
         rvListaDeCompra.layoutManager = LinearLayoutManager(this)
-        rvListaDeCompra.adapter = adaptador
+        rvListaDeCompra.adapter = adaptadorProdutos
         rvListaDeCompra.isClickable = true
+    }
+
+    private fun DefinirAdaptadorUsuariosCompartilhar(){
+
+        adaptadorUsuariosCompartilhar = UsuarioCompartilharAdaptador(this, usuario.amigos)
+        adaptadorUsuariosCompartilhar.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeChanged(positionStart: Int, itemCount: Int, payload: Any?) {
+                super.onItemRangeChanged(positionStart, itemCount, payload)
+                if(payload.toString() === "checked"){
+                    Log.d("Teste", "Usuário selecionado")
+                    amigosCompartilhar.add(usuario.amigos[positionStart])
+                }
+                else if(payload.toString() === "unchecked"){
+                    Log.d("Teste", "Usuário desmarcado")
+                    amigosCompartilhar.remove(usuario.amigos[positionStart])
+                }
+            }
+        })
+
+        rvCompartilharComAmigos.setHasFixedSize(true)
+        rvCompartilharComAmigos.layoutManager = LinearLayoutManager(this)
+        rvCompartilharComAmigos.adapter = adaptadorUsuariosCompartilhar
+        rvCompartilharComAmigos.isClickable = true
     }
 
 

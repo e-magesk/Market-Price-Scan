@@ -16,6 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@id/cardViewListaDeCompra"
+            android:drawableRight="@drawable/icon_share"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -26,6 +27,8 @@
             android:textAllCaps="true"
             android:textColor="@color/light_gray_blue"
             android:layout_marginTop="10dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             >
         </EditText>
 
@@ -107,6 +110,54 @@
                 android:indeterminateTint="@color/white"
                 />
         </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cvCompartilharComAmigos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:cardBackgroundColor="@color/light_gray_blue"
+        android:visibility="gone"
+        >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tvCompartilharComAmigos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:padding="20dp"
+                android:layout_marginTop="5dp"
+                android:textSize="12sp"
+                android:text="Selecione os amigos com quem deseja compartilhar a lista"
+                ></TextView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvCompartilharComAmigos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvCompartilharComAmigos"
+                android:background="@color/light_gray_blue"
+                android:layout_marginBottom="10dp"
+                android:padding="20dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                ></androidx.recyclerview.widget.RecyclerView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
     </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

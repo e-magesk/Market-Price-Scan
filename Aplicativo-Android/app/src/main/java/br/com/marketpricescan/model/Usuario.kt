@@ -15,6 +15,7 @@ class Usuario() :Parcelable {
     constructor(parcel: Parcel) : this() {
         id = parcel.readString()!!
         nome = parcel.readString()!!
+        parcel.readTypedList(amigos, Usuario.CREATOR)
     }
 
     constructor(usuario: Usuario) : this(){
@@ -38,6 +39,7 @@ class Usuario() :Parcelable {
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(id)
         parcel.writeString(nome)
+        parcel.writeTypedList(amigos)
     }
 
     override fun describeContents(): Int {

@@ -86,17 +86,20 @@ class HomeActivity : AppCompatActivity() {
     private fun InicializarUsuario() {
 
         lateinit var listas : ArrayList<DocumentReference>
+        lateinit var amigos : ArrayList<DocumentReference>
 
         documentoUsuario = database.collection("usuario").document(usuarioId!!)
         documentoUsuario.get().addOnSuccessListener { documentSnapshot ->
             if (documentSnapshot.exists()) {
                 usuario = Usuario(documentSnapshot.getString("nome")!!, usuarioId!!)
                 listas = documentSnapshot.get("listasDeCompra") as ArrayList<DocumentReference>
+                amigos = documentSnapshot.get("amigos") as ArrayList<DocumentReference>
 
                 var tvNomeUsuario = findViewById<TextView>(R.id.tvWelcomeHome)
                 tvNomeUsuario.text = "Welcome, ${this.usuario.nome}!"
 
                 InicializarListasDeCompraUsuario(listas) // transformar em função de corrotina
+                InicializarAmigos(amigos)
 
                 DefinirAcoes()
             }
@@ -125,6 +128,29 @@ class HomeActivity : AppCompatActivity() {
             tasks.awaitAll()
 
             PrepararCardViewMinhasListas()
+        }
+    }
+
+    private fun InicializarAmigos(amigos : ArrayList<DocumentReference>){
+
+        val coroutineScope = CoroutineScope(Dispatchers.Main)
+        coroutineScope.launch {
+            val tasks = mutableListOf<Deferred<Unit>>()
+            for (amigo in amigos) {
+                val task = async {
+                    val documentSnapshot =
+                        amigo.get()
+                            .await() // Await espera a conclusão da chamada assíncrona
+                    if (documentSnapshot.exists()) {
+                        val nome = documentSnapshot.getString("nome")!!
+                        val id = documentSnapshot.id
+                        usuario.amigos.add(Usuario(nome, id))
+                    }
+                }
+                tasks.add(task)
+            }
+            // Aguarde a conclusão de todas as tarefas assíncronas
+            tasks.awaitAll()
         }
     }
 
@@ -167,7 +193,10 @@ class HomeActivity : AppCompatActivity() {
             runBlocking {
                 VerificarDelecaoDeListas()
             }
+            val bundle = Bundle()
+            bundle.putParcelable("usuario", usuario)
             var intent = Intent(this, CriarListaDeCompraActivity::class.java)
+            intent.putExtras(bundle)
             startActivity(intent)
             finish()
         }
