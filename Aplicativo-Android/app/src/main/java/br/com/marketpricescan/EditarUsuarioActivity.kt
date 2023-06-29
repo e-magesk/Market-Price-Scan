@@ -4,8 +4,10 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
@@ -21,9 +23,10 @@ import kotlinx.coroutines.launch
 
 class EditarUsuarioActivity : AppCompatActivity() {
 
-    private lateinit var etNomeEditar: TextView
-    private lateinit var etEmailEditar: TextView
-    private lateinit var etSenhaEditar: TextView
+    private lateinit var etNomeEditar: EditText
+    private lateinit var etEmailEditar: EditText
+    private lateinit var etSenhaEditar: EditText
+    private lateinit var etIdUsuario: EditText
     private lateinit var pbEditarUsuario: ProgressBar
     private lateinit var btnEditarUsuario: Button
     private lateinit var usuario: Usuario
@@ -57,6 +60,7 @@ class EditarUsuarioActivity : AppCompatActivity() {
         etNomeEditar = findViewById(R.id.etNomeEditar)
         etEmailEditar = findViewById(R.id.etEmailEditar)
         etSenhaEditar = findViewById(R.id.etSenhaEditar)
+        etIdUsuario = findViewById(R.id.etIdUsuario)
         btnEditarUsuario = findViewById(R.id.btnEditarUsuario)
         pbEditarUsuario = findViewById(R.id.pbEditarUsuario)
     }
@@ -105,6 +109,17 @@ class EditarUsuarioActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+        etIdUsuario.isEnabled = true
+        etIdUsuario.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                val drawableRight = etIdUsuario.compoundDrawables[2] // Ícone no lado direito (índice 2)
+                if (event.rawX >= (etIdUsuario.right - drawableRight.bounds.width())) {
+                    Log.d("Teste", "Clicou no ícone de copiar")
+                    return@setOnTouchListener true
+                }
+            }
+            false
         }
     }
 }

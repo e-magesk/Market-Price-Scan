@@ -104,13 +104,15 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
                     android:hint="Id"
+                    android:drawableRight="@drawable/icon_content_copy"
                     android:inputType="text"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:enabled="false"
                     app:layout_constraintTop_toBottomOf="@id/etNomeEditar"
                     app:layout_constraintBottom_toTopOf="@id/etEmailEditar"
-                    ></EditText>
+                    >
+                </EditText>
 
                 <EditText
                     android:id="@+id/etEmailEditar"
