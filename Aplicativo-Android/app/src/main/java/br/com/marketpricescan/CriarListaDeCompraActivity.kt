@@ -34,17 +34,18 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
 
     private lateinit var rvListaDeCompra: RecyclerView
     private lateinit var btnAdicionarItem: Button
+    private lateinit var btnCompartilhar: Button
     private lateinit var tvListaVazia: TextView
     private lateinit var etTituloLista: TextView
     private lateinit var cvCompartilharComAmigos : CardView
     private lateinit var rvCompartilharComAmigos : RecyclerView
     private lateinit var adaptadorUsuariosCompartilhar : UsuarioCompartilharAdaptador
     private lateinit var adaptadorProdutos: ProdutoListaDeCompraAdaptador
-    private var amigosCompartilhar = mutableListOf<Usuario>()
-    var produtos = mutableListOf<Produto>()
     private lateinit var listaDeCompra: ListaDeCompra
+    private var produtos = mutableListOf<Produto>()
     private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val usuarioId: String = FirebaseAuth.getInstance().currentUser!!.uid
+    private var amigosCompartilhar = mutableListOf<Usuario>()
     private lateinit var documentoUsuario: DocumentReference
     private lateinit var usuario: Usuario
     private lateinit var documentoListaDeCompra: DocumentReference
@@ -77,7 +78,7 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
 
             DefinirAcoes()
 
-            delay(2000)
+            delay(500)
 
             loadingCard.visibility = View.GONE // Ocultar o indicador de progresso
         }
@@ -89,6 +90,7 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
         rvListaDeCompra = findViewById(R.id.rvListaDeCompra)
         tvListaVazia = findViewById(R.id.tvListaVazia)
         etTituloLista = findViewById(R.id.etTituloLista)
+        btnCompartilhar = findViewById(R.id.btnCompartilhar)
 
         rvCompartilharComAmigos = findViewById(R.id.rvCompartilharComAmigos)
         cvCompartilharComAmigos = findViewById(R.id.cvCompartilharComAmigos)
@@ -127,10 +129,7 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
             if (event.action == MotionEvent.ACTION_UP) {
                 val drawableRight = etTituloLista.compoundDrawables[2] // Ícone no lado direito (índice 2)
                 if (event.rawX >= (etTituloLista.right - drawableRight.bounds.width())) {
-                    if(cvCompartilharComAmigos.visibility === View.VISIBLE){
-                        cvCompartilharComAmigos.visibility = View.GONE
-                    }
-                    else{
+                    if(cvCompartilharComAmigos.visibility === View.GONE){
                         cvCompartilharComAmigos.visibility = View.VISIBLE
                     }
                     return@setOnTouchListener true
@@ -147,11 +146,16 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
 
         }
 
+        btnCompartilhar.setOnClickListener() { view ->
+            cvCompartilharComAmigos.visibility = View.GONE
+        }
+
     }
 
     override fun onBackPressed() {
         if(cvCompartilharComAmigos.visibility === View.VISIBLE){
             cvCompartilharComAmigos.visibility = View.GONE
+            amigosCompartilhar.clear()
         }
         else {
             var alertDialog = AlertDialog.Builder(this)
@@ -225,11 +229,29 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
                 Log.d("Teste", "Sucesso ao criar a lista no banco de dados")
                 runBlocking {
                     VincularListaAoUsuario()
+                    CompartilharLista()
                 }
             }
             .addOnFailureListener { e ->
                 Log.d("Teste", "Erro ao criar a lista no banco de dados")
             }
+    }
+
+    private fun CompartilharLista(){
+
+        for(amigo in amigosCompartilhar){
+            documentoUsuario = database.collection("usuario")
+                .document(amigo.id)
+
+            documentoUsuario.update("listasDeCompra", FieldValue.arrayUnion(documentoListaDeCompra))
+                .addOnSuccessListener {
+                    Log.d("Teste", "Sucesso ao compartilhar a lista de compra")
+                }
+                .addOnFailureListener {
+                    Log.d("Teste", "Erro ao compartilhar a lista de compra")
+                }
+        }
+
     }
 
     private fun DefinirAdaptadorProdutos(){
@@ -261,6 +283,7 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
                     Log.d("Teste", "Usuário desmarcado")
                     amigosCompartilhar.remove(usuario.amigos[positionStart])
                 }
+                Log.d("Teste", "Amigos compartilhar: " + amigosCompartilhar.size)
             }
         })
 

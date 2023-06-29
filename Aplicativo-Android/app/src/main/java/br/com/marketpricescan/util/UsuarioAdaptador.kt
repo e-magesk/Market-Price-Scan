@@ -55,8 +55,8 @@ class UsuarioAdaptador(private val context : Context, private val usuarios: Muta
                 .setMessage(usuario.nome + " será deletado da sua lista de amigos. Tem certeza que deseja fazer isso?")
                 .setPositiveButton("Remover amigo") { dialog, which ->
                     usuarios.remove(usuario)
-                    notifyDataSetChanged()
                     notifyItemRemoved(position)
+                    notifyDataSetChanged()
                     dialog.dismiss()
                 }
                 .setNegativeButton("Cancelar") { dialog, which ->

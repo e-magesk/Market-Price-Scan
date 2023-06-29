@@ -120,6 +120,7 @@ class HomeActivity : AppCompatActivity() {
                         val id = documentSnapshot.id
                         val listaDeCompra = ListaDeCompra(nome, id)
                         usuario.listasDeCompra.add(listaDeCompra)
+                        Log.d("Teste", "Lista de compra adicionada: ${listaDeCompra.nome}")
                     }
                 }
                 tasks.add(task)
@@ -190,9 +191,6 @@ class HomeActivity : AppCompatActivity() {
         }
 
         cvCriarNovaLista.setOnClickListener() { view ->
-            runBlocking {
-                VerificarDelecaoDeListas()
-            }
             val bundle = Bundle()
             bundle.putParcelable("usuario", usuario)
             var intent = Intent(this, CriarListaDeCompraActivity::class.java)
@@ -229,6 +227,8 @@ class HomeActivity : AppCompatActivity() {
                 val density = resources.displayMetrics.density
                 layout.height = (floor(60 * density) * (usuario.listasDeCompra.size + 1)).toInt()
                 cvMinhasListasBackground.layoutParams = layout
+
+                VerificarDelecaoDeListas()
             }
         })
         rvMinhasListas.setHasFixedSize(true)
@@ -237,14 +237,14 @@ class HomeActivity : AppCompatActivity() {
         rvMinhasListas.isClickable = true
     }
 
-    override fun onBackPressed() {
-        VerificarDelecaoDeListas()
-        finish()
-    }
+//    override fun onBackPressed() {
+//        finish()
+//    }
 
     private fun VerificarDelecaoDeListas(){
         var referenciasListas = mutableListOf<DocumentReference>()
         for(lista in usuario.listasDeCompra){
+            Log.d("Teste", "Lista de compra conferida: ${lista.nome}")
             referenciasListas.add(database.collection("lista_de_compra").document(lista.id))
         }
 
@@ -252,12 +252,11 @@ class HomeActivity : AppCompatActivity() {
             "listasDeCompra" to referenciasListas,
         )
 
-        runBlocking {
-            documentoUsuario.update(updates).addOnSuccessListener {
-                Log.d("Teste", "Substituição de lista feita com sucesso")
-            }.addOnFailureListener {
-                Log.d("Teste", "Substituição de lista falhou")
-            }
+        documentoUsuario.update(updates).addOnSuccessListener {
+            Log.d("Teste", "Substituição de lista feita com sucesso")
+        }.addOnFailureListener {
+            Log.d("Teste", "Substituição de lista falhou")
         }
+
     }
 }

@@ -49,8 +49,6 @@ class GerenciarAmigosActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.gerenciar_amigos)
 
-        Log.d("TESTE", "onCreate: Cheguei aqui pelo menos")
-
         val loadingCard = findViewById<CardView>(R.id.loadingPageAdicionarAmigos)
 
         loadingCard.visibility = View.VISIBLE // Exibir o indicador de progresso
@@ -64,15 +62,13 @@ class GerenciarAmigosActivity : AppCompatActivity() {
                 usuario = intent.getParcelableExtra<Usuario>("usuario")!!
             }
 
-            Log.d("TESTE", "onCoroutine: Receive the user " + usuario.nome + " with id " + usuario.id)
-
             IniciarComponentes()
 
-            BuscarAmigosUsuario()
+            PrepararExibicaoListaDeAmigos()
 
             DefinirAcoes()
 
-            delay(2000)
+            delay(500)
 
             loadingCard.visibility = View.GONE // Ocultar o indicador de progresso
         }
@@ -86,41 +82,41 @@ class GerenciarAmigosActivity : AppCompatActivity() {
         tvListaDeAmigosVazia = findViewById(R.id.tvListaDeAmigosVazia)
         rvListaDeAmigos = findViewById(R.id.rvListaDeAmigos)
 
-
-    }
-
-    private fun BuscarAmigosUsuario() {
-        lateinit var amigos: ArrayList<DocumentReference>
-
         documentoUsuario = database.collection("usuario").document(usuario.id)
-        documentoUsuario.get().addOnSuccessListener { documentSnapshot ->
-            if (documentSnapshot.exists()) {
-                amigos = documentSnapshot.get("amigos") as ArrayList<DocumentReference>
-
-                val coroutineScope = CoroutineScope(Dispatchers.Main)
-                coroutineScope.launch {
-                    val tasks = mutableListOf<Deferred<Unit>>()
-                    for (amigo in amigos) {
-                        val task = async {
-                            val documentSnapshot =
-                                amigo.get()
-                                    .await() // Await espera a conclusão da chamada assíncrona
-                            if (documentSnapshot.exists()) {
-                                val nome = documentSnapshot.getString("nome")!!
-                                val id = documentSnapshot.id
-                                usuario.amigos.add(Usuario(nome, id))
-                            }
-                        }
-                        tasks.add(task)
-                    }
-                    // Aguarde a conclusão de todas as tarefas assíncronas
-                    tasks.awaitAll()
-
-                    PrepararExibicaoListaDeAmigos()
-                }
-            }
-        }
     }
+
+//    private fun BuscarAmigosUsuario() {
+//        lateinit var amigos: ArrayList<DocumentReference>
+//
+//        documentoUsuario = database.collection("usuario").document(usuario.id)
+//        documentoUsuario.get().addOnSuccessListener { documentSnapshot ->
+//            if (documentSnapshot.exists()) {
+//                amigos = documentSnapshot.get("amigos") as ArrayList<DocumentReference>
+//
+//                val coroutineScope = CoroutineScope(Dispatchers.Main)
+//                coroutineScope.launch {
+//                    val tasks = mutableListOf<Deferred<Unit>>()
+//                    for (amigo in amigos) {
+//                        val task = async {
+//                            val documentSnapshot =
+//                                amigo.get()
+//                                    .await() // Await espera a conclusão da chamada assíncrona
+//                            if (documentSnapshot.exists()) {
+//                                val nome = documentSnapshot.getString("nome")!!
+//                                val id = documentSnapshot.id
+//                                usuario.amigos.add(Usuario(nome, id))
+//                            }
+//                        }
+//                        tasks.add(task)
+//                    }
+//                    // Aguarde a conclusão de todas as tarefas assíncronas
+//                    tasks.awaitAll()
+//
+//                    PrepararExibicaoListaDeAmigos()
+//                }
+//            }
+//        }
+//    }
 
     private fun DefinirAcoes(){
 
@@ -259,12 +255,14 @@ class GerenciarAmigosActivity : AppCompatActivity() {
         adaptador.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
                 super.onItemRangeRemoved(positionStart, itemCount)
-                Log.d("Teste", "Entrei para deletar")
-                val amigoRef = database.collection("usuario").document(usuario.amigos[positionStart].id)
+//                Log.d("Teste", "Entrei para deletar: " + usuario.amigos[positionStart].nome + " " + usuario.amigos[positionStart].id)
+                var amigoRef : DocumentReference = database.collection("usuario").document(usuario.amigos[positionStart].id)
+//                Log.d("Teste", "Entrei para deletar: " + amigoRef)
                 documentoUsuario.update("amigos", FieldValue.arrayRemove(amigoRef))
                     .addOnSuccessListener {
                         Log.d("Teste", "Deletado com sucesso")
                         VerificarSituacaoListaDeAmigos()
+                        adaptador.notifyDataSetChanged()
                     }
             }
         })
