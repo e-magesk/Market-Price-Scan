@@ -77,6 +77,43 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+                <LinearLayout
+                    android:id="@+id/llIdUsuario"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/etNomeEditar"
+                    android:layout_marginTop="20dp"
+                    android:background="@color/light_gray_blue"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:weightSum="10"
+                    >
+
+                    <TextView
+                        android:id="@+id/tvIdUsuario"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="8"
+                        android:text="ID: XXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+                        >
+                    </TextView>
+
+                    <ImageView
+                        android:id="@+id/iconCopyId"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/icon_content_copy"
+                         />
+
+
+                </LinearLayout>
+
                 <EditText
                     android:id="@+id/etNomeEditar"
                     android:layout_width="match_parent"
@@ -89,30 +126,10 @@
                     android:inputType="text"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/llIdUsuario"
                     android:enabled="false"
-                    app:layout_constraintBottom_toTopOf="@id/etIdUsuario"
-                    android:layout_marginTop="20dp"
-                    ></EditText>
-
-                <EditText
-                    android:id="@+id/etIdUsuario"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/edit_text"
-                    android:padding="20dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:hint="Id"
-                    android:drawableRight="@drawable/icon_content_copy"
-                    android:inputType="text"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:enabled="false"
-                    app:layout_constraintTop_toBottomOf="@id/etNomeEditar"
                     app:layout_constraintBottom_toTopOf="@id/etEmailEditar"
-                    >
-                </EditText>
+                    ></EditText>
 
                 <EditText
                     android:id="@+id/etEmailEditar"
@@ -127,7 +144,7 @@
                     android:inputType="textEmailAddress"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/etIdUsuario"
+                    app:layout_constraintTop_toBottomOf="@id/etNomeEditar"
                     app:layout_constraintBottom_toTopOf="@id/etSenhaEditar"
 
                     ></EditText>
