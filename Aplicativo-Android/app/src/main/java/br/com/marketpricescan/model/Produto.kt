@@ -45,4 +45,13 @@ class Produto() {
         this.codigoBarras = 0
     }
 
+    constructor(nome: String, preco: Double, codigoLocal: Long) : this(){
+        this.nome = nome
+        this.id = ""
+        this.preco = preco
+        this.isChecked = false
+        this.codigoLocal = codigoLocal
+        this.codigoBarras = 0
+    }
+
 }

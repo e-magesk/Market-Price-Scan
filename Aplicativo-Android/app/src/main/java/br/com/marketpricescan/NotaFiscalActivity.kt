@@ -113,17 +113,17 @@ class NotaFiscalActivity : AppCompatActivity() {
 
             var nome: String = ""
             var preco: Double = 0.0
-            var cod: Long
+            var cod: Long = 0
 
             for (data in rowData) {
                 nome = rowData.select("span.txtTit").text()
                 preco = rowData.select("span.valor").text().replace(',', '.').toDouble()
 
                 val textoCod = rowData.select("span.Rcod")
-                // val cod = Regex("\\d+").find(textoCod.text())?.value?.toLong()
+                cod = Regex("\\d+").find(textoCod.text())?.value?.toLong() ?: 0L
             }
 
-            produtos.add(Produto(nome, preco))
+            produtos.add(Produto(nome, preco, cod))
         }
 
         return produtos
