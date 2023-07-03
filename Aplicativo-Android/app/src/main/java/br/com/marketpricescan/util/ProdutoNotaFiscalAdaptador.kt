@@ -1,5 +1,6 @@
 package br.com.marketpricescan.util
 
+import android.app.AlertDialog
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -68,6 +69,35 @@ class ProdutoNotaFiscalAdaptador(private val context : Context, private val prod
                     produtos[currentPosition].isChecked = true
                 }
             }
+
+            itemView.setOnLongClickListener {
+                val currentPosition = bindingAdapterPosition
+                PopUpConfirmacaoDeletarItem(produtos[currentPosition], currentPosition)
+                // Implemente o clique longo do item aqui
+                true
+            }
+
+            tvProdutoNotaFiscal.setOnLongClickListener {
+                val currentPosition = bindingAdapterPosition
+                PopUpConfirmacaoDeletarItem(produtos[currentPosition], currentPosition)
+                true
+            }
         }
+        private fun PopUpConfirmacaoDeletarItem(produto: Produto, position: Int) {
+            val alertDialog = AlertDialog.Builder(itemView.context)
+                .setTitle("Deletar Item")
+                .setMessage("O item " + produto.nome + " será deletado da lista. Deseja continuar?")
+                .setPositiveButton("OK") { dialog, which ->
+                    produtos.remove(produto)
+                    notifyItemRemoved(position)
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Cancelar") { dialog, which ->
+                    dialog.dismiss()
+                }
+                .create()
+            alertDialog.show()
+        }
+
     }
 }

@@ -1,5 +1,6 @@
 package br.com.marketpricescan
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -90,6 +91,7 @@ class NotaFiscalActivity : AppCompatActivity() {
                 // IniciarComponentes()
                 rvListaDeCompra = findViewById(R.id.rvListaDeCompra)
                 tvListaVazia = findViewById(R.id.tvListaVazia)
+                etTituloLista = findViewById(R.id.etTituloLista)
 
                 DefinirAdaptador()
                 VerificarSituacaoLista()
@@ -155,9 +157,26 @@ class NotaFiscalActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        val intent = Intent(this, HomeActivity::class.java)
-        startActivity(intent)
-        finish()
+        var alertDialog = AlertDialog.Builder(this)
+            .setTitle("Salvar Lista?")
+            .setMessage("Deseja salvar a lista " + etTituloLista.text + "?")
+            .setPositiveButton("OK") { dialog, which ->
+                runBlocking {
+                    CriarProdutos()
+                }
+                val intent = Intent(this, HomeActivity::class.java)
+                startActivity(intent)
+                dialog.dismiss()
+                finish()
+            }
+            .setNegativeButton("Cancelar") { dialog, which ->
+                val intent = Intent(this, HomeActivity::class.java)
+                startActivity(intent)
+                dialog.dismiss()
+                finish()
+            }
+            .create()
+        alertDialog.show()
     }
 
     private fun CriarProdutos(){
@@ -171,7 +190,7 @@ class NotaFiscalActivity : AppCompatActivity() {
         val referenciasProdutos = mutableListOf<DocumentReference>()
         var flagFinal = 0
         for(produto in produtos){
-            val documentoProduto = FirebaseFirestore.getInstance().collection("produto")
+            val documentoProduto = FirebaseFirestore.getInstance().collection("produto_nota_fiscal")
                 .document()
             produto.id = documentoProduto.id
             referenciasProdutos.add(documentoProduto)
