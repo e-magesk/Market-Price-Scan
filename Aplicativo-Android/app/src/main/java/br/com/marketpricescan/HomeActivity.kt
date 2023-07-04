@@ -40,8 +40,8 @@ class HomeActivity : AppCompatActivity() {
     lateinit var tvSairDaConta : TextView
     private lateinit var adaptador: ListaDeCompraAdaptador
     private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
-    private val usuarioId: String = FirebaseAuth.getInstance().currentUser!!.uid
     private lateinit var documentoUsuario: DocumentReference
+    private val usuarioId: String = FirebaseAuth.getInstance().currentUser!!.uid
     private lateinit var usuario: Usuario
     private var flagExibindoMinhasListas : Boolean = false
 
@@ -230,16 +230,27 @@ class HomeActivity : AppCompatActivity() {
 
                 VerificarDelecaoDeListas()
             }
+
+            override fun onItemRangeChanged(positionStart: Int, itemCount: Int, payload: Any?) {
+                super.onItemRangeChanged(positionStart, itemCount, payload)
+
+                if(payload.toString() == "selected"){
+                    val bundle = Bundle()
+                    bundle.putParcelable("listaDeCompra", usuario.listasDeCompra[positionStart])
+                    bundle.putParcelable("usuario", usuario)
+                    val intent = Intent(this@HomeActivity, AtualizarListaDeCompraActivity::class.java)
+                    intent.putExtras(bundle)
+                    startActivity(intent)
+                    finish()
+                }
+            }
         })
+
         rvMinhasListas.setHasFixedSize(true)
         rvMinhasListas.layoutManager = LinearLayoutManager(this)
         rvMinhasListas.adapter = adaptador
         rvMinhasListas.isClickable = true
     }
-
-//    override fun onBackPressed() {
-//        finish()
-//    }
 
     private fun VerificarDelecaoDeListas(){
         var referenciasListas = mutableListOf<DocumentReference>()
@@ -257,6 +268,5 @@ class HomeActivity : AppCompatActivity() {
         }.addOnFailureListener {
             Log.d("Teste", "Substituição de lista falhou")
         }
-
     }
 }

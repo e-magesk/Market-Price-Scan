@@ -16,7 +16,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.model.ListaDeCompra
 import br.com.marketpricescan.model.Produto
+import br.com.marketpricescan.model.Usuario
 import br.com.marketpricescan.util.ProdutoListaDeCompraAdaptador
+import br.com.marketpricescan.util.UsuarioCompartilharAdaptador
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
@@ -35,10 +38,16 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
     private lateinit var btnAdicionarItem: Button
     private lateinit var tvListaVazia: TextView
     private lateinit var etTituloLista: TextView
-
+    private lateinit var btnCompartilhar: Button
+    private lateinit var cvCompartilharComAmigos : CardView
+    private lateinit var rvCompartilharComAmigos : RecyclerView
+    private lateinit var adaptadorUsuariosCompartilhar : UsuarioCompartilharAdaptador
     private lateinit var listaDeCompra: ListaDeCompra
     private lateinit var adaptador: ProdutoListaDeCompraAdaptador
     private lateinit var documentoListaDeCompra: DocumentReference
+    private var amigosCompartilhar = mutableListOf<Usuario>()
+    private val usuarioId: String = FirebaseAuth.getInstance().currentUser!!.uid
+    private lateinit var usuario: Usuario
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,13 +62,19 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 listaDeCompra = intent.getParcelableExtra("listaDeCompra", ListaDeCompra::class.java)!!
+                usuario = intent.getParcelableExtra("usuario", Usuario::class.java)!!
             } else {
                 listaDeCompra = intent.getParcelableExtra<ListaDeCompra>("listaDeCompra")!!
+                usuario = intent.getParcelableExtra<Usuario>("usuario")!!
             }
+
+            Log.d("Teste", "Nome usuario: " + usuario.nome)
 
             IniciarComponentes()
 
             DefinirAdaptador()
+
+            DefinirAdaptadorUsuariosCompartilhar()
 
             ObterProdutos()
 
@@ -78,6 +93,9 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
         rvListaDeCompra = findViewById(R.id.rvListaDeCompra)
         tvListaVazia = findViewById(R.id.tvListaVazia)
         etTituloLista = findViewById(R.id.etTituloLista)
+        btnCompartilhar = findViewById(R.id.btnCompartilhar)
+        rvCompartilharComAmigos = findViewById(R.id.rvCompartilharComAmigos)
+        cvCompartilharComAmigos = findViewById(R.id.cvCompartilharComAmigos)
 
         documentoListaDeCompra = FirebaseFirestore.getInstance().collection("lista_de_compra")
             .document(listaDeCompra.id)
@@ -103,6 +121,30 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
             }
     }
 
+    private fun DefinirAdaptadorUsuariosCompartilhar(){
+
+        adaptadorUsuariosCompartilhar = UsuarioCompartilharAdaptador(this, usuario.amigos)
+        adaptadorUsuariosCompartilhar.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeChanged(positionStart: Int, itemCount: Int, payload: Any?) {
+                super.onItemRangeChanged(positionStart, itemCount, payload)
+                if(payload.toString() === "checked"){
+                    Log.d("Teste", "Usuário selecionado")
+                    amigosCompartilhar.add(usuario.amigos[positionStart])
+                }
+                else if(payload.toString() === "unchecked"){
+                    Log.d("Teste", "Usuário desmarcado")
+                    amigosCompartilhar.remove(usuario.amigos[positionStart])
+                }
+                Log.d("Teste", "Amigos compartilhar: " + amigosCompartilhar.size)
+            }
+        })
+
+        rvCompartilharComAmigos.setHasFixedSize(true)
+        rvCompartilharComAmigos.layoutManager = LinearLayoutManager(this)
+        rvCompartilharComAmigos.adapter = adaptadorUsuariosCompartilhar
+        rvCompartilharComAmigos.isClickable = true
+    }
+
     private fun DefinirAcoes(){
         btnAdicionarItem.setOnClickListener() { view ->
             var documentoProduto = FirebaseFirestore.getInstance().collection("produto")
@@ -115,6 +157,10 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
                 rvListaDeCompra.smoothScrollToPosition(adaptador.itemCount - 1)
             }
             VerificarSituacaoLista()
+        }
+
+        btnCompartilhar.setOnClickListener() { view ->
+            cvCompartilharComAmigos.visibility = View.GONE
         }
     }
 
@@ -129,26 +175,33 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        var alertDialog = AlertDialog.Builder(this)
-            .setTitle("Salvar Lista?")
-            .setMessage("Deseja salvar a lista " + etTituloLista.text + "?")
-            .setPositiveButton("OK") { dialog, which ->
-                runBlocking {
-                    AtualizarProdutos()
+
+        if(cvCompartilharComAmigos.visibility === View.VISIBLE){
+            cvCompartilharComAmigos.visibility = View.GONE
+            amigosCompartilhar.clear()
+        }
+        else {
+            var alertDialog = AlertDialog.Builder(this)
+                .setTitle("Salvar Lista?")
+                .setMessage("Deseja salvar a lista " + etTituloLista.text + "?")
+                .setPositiveButton("OK") { dialog, which ->
+                    runBlocking {
+                        AtualizarProdutos()
+                    }
+                    val intent = Intent(this, HomeActivity::class.java)
+                    startActivity(intent)
+                    dialog.dismiss()
+                    finish()
                 }
-                val intent = Intent(this, HomeActivity::class.java)
-                startActivity(intent)
-                dialog.dismiss()
-                finish()
-            }
-            .setNegativeButton("Cancelar") { dialog, which ->
-                val intent = Intent(this, HomeActivity::class.java)
-                startActivity(intent)
-                dialog.dismiss()
-                finish()
-            }
-            .create()
-        alertDialog.show()
+                .setNegativeButton("Cancelar") { dialog, which ->
+                    val intent = Intent(this, HomeActivity::class.java)
+                    startActivity(intent)
+                    dialog.dismiss()
+                    finish()
+                }
+                .create()
+            alertDialog.show()
+        }
     }
 
     private fun AtualizarProdutos(){

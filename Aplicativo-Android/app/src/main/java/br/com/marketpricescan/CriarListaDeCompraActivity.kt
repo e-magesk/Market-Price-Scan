@@ -34,9 +34,9 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
 
     private lateinit var rvListaDeCompra: RecyclerView
     private lateinit var btnAdicionarItem: Button
-    private lateinit var btnCompartilhar: Button
     private lateinit var tvListaVazia: TextView
     private lateinit var etTituloLista: TextView
+    private lateinit var btnCompartilhar: Button
     private lateinit var cvCompartilharComAmigos : CardView
     private lateinit var rvCompartilharComAmigos : RecyclerView
     private lateinit var adaptadorUsuariosCompartilhar : UsuarioCompartilharAdaptador
