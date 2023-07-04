@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.ListView
@@ -21,6 +22,7 @@ import br.com.marketpricescan.util.ProdutoListaDeCompraAdaptador
 import br.com.marketpricescan.util.UsuarioCompartilharAdaptador
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -45,6 +47,7 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
     private lateinit var listaDeCompra: ListaDeCompra
     private lateinit var adaptador: ProdutoListaDeCompraAdaptador
     private lateinit var documentoListaDeCompra: DocumentReference
+    private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
     private var amigosCompartilhar = mutableListOf<Usuario>()
     private val usuarioId: String = FirebaseAuth.getInstance().currentUser!!.uid
     private lateinit var usuario: Usuario
@@ -146,6 +149,20 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
     }
 
     private fun DefinirAcoes(){
+
+        etTituloLista.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                val drawableRight = etTituloLista.compoundDrawables[2] // Ícone no lado direito (índice 2)
+                if (event.rawX >= (etTituloLista.right - drawableRight.bounds.width())) {
+                    if(cvCompartilharComAmigos.visibility === View.GONE){
+                        cvCompartilharComAmigos.visibility = View.VISIBLE
+                    }
+                    return@setOnTouchListener true
+                }
+            }
+            false
+        }
+
         btnAdicionarItem.setOnClickListener() { view ->
             var documentoProduto = FirebaseFirestore.getInstance().collection("produto")
                 .document()
@@ -172,6 +189,25 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
             tvListaVazia.visibility = TextView.INVISIBLE
             rvListaDeCompra.visibility = ListView.VISIBLE
         }
+    }
+
+    private fun CompartilharLista(){
+
+        runBlocking {
+            for(amigo in amigosCompartilhar){
+                var documentoUsuario = database.collection("usuario")
+                    .document(amigo.id)
+
+                documentoUsuario.update("listasDeCompra", FieldValue.arrayUnion(documentoListaDeCompra))
+                    .addOnSuccessListener {
+                        Log.d("Teste", "Sucesso ao compartilhar a lista de compra")
+                    }
+                    .addOnFailureListener {
+                        Log.d("Teste", "Erro ao compartilhar a lista de compra")
+                    }
+            }
+        }
+
     }
 
     override fun onBackPressed() {
@@ -253,6 +289,7 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
             documentoListaDeCompra.update(updates)
                 .addOnSuccessListener {
                     Log.d("Teste", "Sucesso ao atualizar a lista no banco de dados")
+                    CompartilharLista()
                 }
                 .addOnFailureListener { e ->
                     Log.d("Teste", "Erro ao atualizar a lista no banco de dados")
