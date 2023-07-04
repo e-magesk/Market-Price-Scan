@@ -49,6 +49,7 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
     private lateinit var documentoUsuario: DocumentReference
     private lateinit var usuario: Usuario
     private lateinit var documentoListaDeCompra: DocumentReference
+    private lateinit var loadingCard : CardView
 
 
     @SuppressLint("MissingInflatedId")
@@ -56,7 +57,7 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.lista_de_compra)
 
-        val loadingCard = findViewById<CardView>(R.id.loadingPageListaDeCompra)
+        loadingCard = findViewById<CardView>(R.id.loadingPageListaDeCompra)
         loadingCard.visibility = View.VISIBLE // Exibir o indicador de progresso
 
         val coroutineScope = CoroutineScope(Dispatchers.Main)
@@ -164,6 +165,12 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
                 .setPositiveButton("OK") { dialog, which ->
                     runBlocking {
                         CriarProdutos()
+                    }
+                    loadingCard.visibility = View.VISIBLE // Exibir o indicador de progresso
+                    val coroutineScope = CoroutineScope(Dispatchers.Main)
+                    coroutineScope.launch {
+                        delay(1000)
+                        loadingCard.visibility = View.GONE // Ocultar o indicador de progresso
                     }
                     val intent = Intent(this, HomeActivity::class.java)
                     startActivity(intent)
