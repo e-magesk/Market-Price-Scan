@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
@@ -19,6 +20,7 @@ import br.com.marketpricescan.model.ListaDeCompra
 import br.com.marketpricescan.model.Usuario
 import br.com.marketpricescan.util.ListaDeCompraAdaptador
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
@@ -41,12 +43,13 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var adaptador: ListaDeCompraAdaptador
     private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val usuarioId: String = FirebaseAuth.getInstance().currentUser!!.uid
-    private lateinit var documentoUsuario: DocumentReference
+    private var documentoUsuario: DocumentReference = database.collection("usuario").document(usuarioId!!)
+
     private lateinit var usuario: Usuario
     private var flagExibindoMinhasListas : Boolean = false
 
     lateinit var cvCriarListaQRCode: CardView
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home)
@@ -60,10 +63,10 @@ class HomeActivity : AppCompatActivity() {
 
             IniciarComponentes()
 
+            InicializarUsuario()
+
             cvCriarNovaLista.isClickable = true
             cvMinhasListas.isClickable = true
-
-            InicializarUsuario()
 
             delay(2000)
 
@@ -84,26 +87,48 @@ class HomeActivity : AppCompatActivity() {
 
         lateinit var listas : ArrayList<DocumentReference>
 
-        documentoUsuario = database.collection("usuario").document(usuarioId!!)
+        // documentoUsuario = database.collection("usuario").document(usuarioId!!)
         documentoUsuario.get().addOnSuccessListener { documentSnapshot ->
             if (documentSnapshot.exists()) {
                 usuario = Usuario(documentSnapshot.getString("nome")!!)
-                listas = documentSnapshot.get("listasDeCompra") as ArrayList<DocumentReference>
+                // listas = documentSnapshot.get("listasDeCompra") as ArrayList<DocumentReference>
 
                 var tvNomeUsuario = findViewById<TextView>(R.id.tvWelcomeHome)
                 tvNomeUsuario.text = "Welcome, ${this.usuario.nome}!"
 
-                InicializarListasDeCompraUsuario(listas) // transformar em função de corrotina
+                // listas = documentSnapshot.get("listasDeCompra") as ArrayList<DocumentReference>
+                AtualizarListasEmTempoReal()
+                // InicializarListasDeCompraUsuario(listas) // transformar em função de corrotina
 
                 DefinirAcoes()
             }
         }
     }
+    private fun AtualizarListasEmTempoReal() {
+        documentoUsuario.addSnapshotListener{ querySnapshot, firebaseFirestoreException ->
+            firebaseFirestoreException?.let {
+                Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                return@addSnapshotListener
+            }
+            querySnapshot?.let{
+                documentoUsuario = database.collection("usuario").document(usuarioId)
+                documentoUsuario.get().addOnSuccessListener { documentSnapshot ->
+                    if (documentSnapshot.exists()) {
+                        Log.d("Atualizacao", "------------------ Detectou")
+                        val listas = documentSnapshot.get("listasDeCompra") as ArrayList<DocumentReference>
+                        InicializarListasDeCompraUsuario(listas) // transformar em função de corrotina
+                    }
+                }
+            }
+        }
+    }
+
 
     private fun InicializarListasDeCompraUsuario(listas : ArrayList<DocumentReference>) {
 
         val coroutineScope = CoroutineScope(Dispatchers.Main)
         coroutineScope.launch {
+            usuario.listasDeCompra.clear()
             val tasks = mutableListOf<Deferred<Unit>>()
             for (lista in listas) {
                 val task = async {
@@ -156,6 +181,10 @@ class HomeActivity : AppCompatActivity() {
             if (ActivityCompat.checkSelfPermission(applicationContext, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
                 ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CAMERA), 1)
             } else {
+                runBlocking {
+                    VerificarDelecaoDeListas()
+                }
+
                 val intent = Intent(this, QRCodeActivity::class.java)
                 startActivity(intent)
                 finish()
