@@ -49,7 +49,7 @@ class HomeActivity : AppCompatActivity() {
     private var flagExibindoMinhasListas : Boolean = false
 
     lateinit var cvCriarListaQRCode: CardView
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home)
@@ -128,23 +128,25 @@ class HomeActivity : AppCompatActivity() {
 
         val coroutineScope = CoroutineScope(Dispatchers.Main)
         coroutineScope.launch {
-            usuario.listasDeCompra.clear()
-            val tasks = mutableListOf<Deferred<Unit>>()
-            for (lista in listas) {
-                val task = async {
-                    val documentSnapshot =
-                        lista.get().await() // Await espera a conclusão da chamada assíncrona
-                    if (documentSnapshot.exists()) {
-                        val nome = documentSnapshot.getString("nome")!!
-                        val id = documentSnapshot.id
-                        val listaDeCompra = ListaDeCompra(nome, id)
-                        usuario.listasDeCompra.add(listaDeCompra)
+            runBlocking {
+                usuario.listasDeCompra.clear()
+                val tasks = mutableListOf<Deferred<Unit>>()
+                for (lista in listas) {
+                    val task = async {
+                        val documentSnapshot =
+                            lista.get().await() // Await espera a conclusão da chamada assíncrona
+                        if (documentSnapshot.exists()) {
+                            val nome = documentSnapshot.getString("nome")!!
+                            val id = documentSnapshot.id
+                            val listaDeCompra = ListaDeCompra(nome, id)
+                            usuario.listasDeCompra.add(listaDeCompra)
+                        }
                     }
+                    tasks.add(task)
                 }
-                tasks.add(task)
+                // Aguarde a conclusão de todas as tarefas assíncronas
+                tasks.awaitAll()
             }
-            // Aguarde a conclusão de todas as tarefas assíncronas
-            tasks.awaitAll()
 
             PrepararCardViewMinhasListas()
         }
