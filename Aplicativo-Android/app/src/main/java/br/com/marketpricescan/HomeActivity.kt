@@ -102,7 +102,7 @@ class HomeActivity : AppCompatActivity() {
         // documentoUsuario = database.collection("usuario").document(usuarioId!!)
         documentoUsuario.get().addOnSuccessListener { documentSnapshot ->
             if (documentSnapshot.exists()) {
-                usuario = Usuario(documentSnapshot.getString("nome")!!)
+                usuario = Usuario(documentSnapshot.getString("nome")!!, usuarioId)
                 // listas = documentSnapshot.get("listasDeCompra") as ArrayList<DocumentReference>
                // usuario = Usuario(documentSnapshot.getString("nome")!!, usuarioId!!)
                 listas = documentSnapshot.get("listasDeCompra") as ArrayList<DocumentReference>
@@ -114,7 +114,7 @@ class HomeActivity : AppCompatActivity() {
                 // listas = documentSnapshot.get("listasDeCompra") as ArrayList<DocumentReference>
                 AtualizarListasEmTempoReal()
                 // InicializarListasDeCompraUsuario(listas) // transformar em função de corrotina
-                InicializarAmigos(amigos)
+                AtualizarAmigosEmTempoReal()
                 DefinirAcoes()
             }
         }
@@ -138,7 +138,24 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-
+    private fun AtualizarAmigosEmTempoReal() {
+        documentoUsuario.addSnapshotListener{ querySnapshot, firebaseFirestoreException ->
+            firebaseFirestoreException?.let {
+                Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                return@addSnapshotListener
+            }
+            querySnapshot?.let{
+                documentoUsuario = database.collection("usuario").document(usuarioId)
+                documentoUsuario.get().addOnSuccessListener { documentSnapshot ->
+                    if (documentSnapshot.exists()) {
+                        Log.d("Atualizacao", "------------------ Detectou")
+                        val amigos = documentSnapshot.get("amigos") as ArrayList<DocumentReference>
+                        InicializarAmigos(amigos) // transformar em função de corrotina
+                    }
+                }
+            }
+        }
+    }
     private fun InicializarListasDeCompraUsuario(listas : ArrayList<DocumentReference>) {
 
         val coroutineScope = CoroutineScope(Dispatchers.Main)
@@ -188,6 +205,7 @@ class HomeActivity : AppCompatActivity() {
             // Aguarde a conclusão de todas as tarefas assíncronas
             tasks.awaitAll()
         }
+        Log.d("Teste", "Cheguei até aqui")
     }
 
     private fun DefinirAcoes() {
@@ -231,7 +249,6 @@ class HomeActivity : AppCompatActivity() {
             var intent = Intent(this, CriarListaDeCompraActivity::class.java)
             intent.putExtras(bundle)
             startActivity(intent)
-            finish()
         }
 
         cvMinhasListas.setOnClickListener { view ->

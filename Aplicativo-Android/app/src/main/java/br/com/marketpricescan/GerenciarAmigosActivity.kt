@@ -61,7 +61,6 @@ class GerenciarAmigosActivity : AppCompatActivity() {
             } else {
                 usuario = intent.getParcelableExtra<Usuario>("usuario")!!
             }
-
             IniciarComponentes()
 
             PrepararExibicaoListaDeAmigos()
