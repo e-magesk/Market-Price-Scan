@@ -26,6 +26,19 @@
             android:name=".QRCodeActivity"
             android:exported="false" />
         <activity
+            android:name=".GerenciarAmigosActivity"
+            android:exported="true"
+            android:label="@string/title_activity_adicionar_amigos"
+            android:theme="@style/Theme.MarketPriceScan" />
+        <activity
+            android:name=".RedefinirSenhaActivity"
+            android:exported="true"
+            android:theme="@style/Theme.MarketPriceScan" />
+        <activity
+            android:name=".EditarUsuarioActivity"
+            android:exported="true"
+            android:theme="@style/Theme.MarketPriceScan" />
+        <activity
             android:name=".AtualizarListaDeCompraActivity"
             android:exported="true"
             android:label="@string/titulo_activity_atualizar_lista_de_compra"

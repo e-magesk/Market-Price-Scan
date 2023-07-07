@@ -10,7 +10,7 @@ class Produto() {
     var codigoBarras : Long = 0
 
     constructor(produto: Produto) : this(){
-        this.nome = produto.nome
+        this.nome = produto.nome.uppercase()
         this.preco = produto.preco
         this.isChecked = produto.isChecked
         this.codigoLocal = produto.codigoLocal
@@ -19,7 +19,7 @@ class Produto() {
     }
 
     constructor(nome: String) : this(){
-        this.nome = nome
+        this.nome = nome.uppercase()
         this.id = ""
         this.preco = 0.0
         this.isChecked = false
@@ -28,7 +28,7 @@ class Produto() {
     }
 
     constructor(nome: String, preco: Double) : this(){
-        this.nome = nome
+        this.nome = nome.uppercase()
         this.id = ""
         this.preco = preco
         this.isChecked = false
@@ -37,7 +37,7 @@ class Produto() {
     }
 
     constructor(nome: String, id: String) : this(){
-        this.nome = nome
+        this.nome = nome.uppercase()
         this.id = id
         this.preco = 0.0
         this.isChecked = false

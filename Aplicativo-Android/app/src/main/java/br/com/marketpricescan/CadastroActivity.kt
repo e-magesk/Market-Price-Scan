@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.graphics.Color
 import br.com.marketpricescan.model.Usuario
@@ -21,6 +22,7 @@ class CadastroActivity : ComponentActivity() {
     lateinit var etNomeCadastro : EditText
     lateinit var etEmailCadastro : EditText
     lateinit var etSenhaCadastro : EditText
+    lateinit var pbCadastro : ProgressBar
     lateinit var usuarioId : String
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,12 +53,14 @@ class CadastroActivity : ComponentActivity() {
         etNomeCadastro = findViewById(R.id.etNomeCadastro)
         etEmailCadastro = findViewById(R.id.etEmailCadastro)
         etSenhaCadastro = findViewById(R.id.etSenhaCadastro)
+        pbCadastro = findViewById(R.id.pbCadastro)
     }
 
     private fun CadastrarUsuario(view : View) {
         val email = etEmailCadastro.text.toString()
         val senha = etSenhaCadastro.text.toString()
 
+        pbCadastro.visibility = View.VISIBLE
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, senha)
             .addOnCompleteListener { task ->
             if(task.isSuccessful) {
@@ -65,6 +69,7 @@ class CadastroActivity : ComponentActivity() {
                 snackbar.setBackgroundTint(getColor(R.color.green))
                 snackbar.setTextColor(getColor(R.color.black))
                 snackbar.show()
+                pbCadastro.visibility = View.INVISIBLE
             }
             else{
                 var erro : String = ""
@@ -79,7 +84,7 @@ class CadastroActivity : ComponentActivity() {
                 } catch (e : Exception) {
                     erro = "Erro ao cadastrar usuário"
                 }
-
+                pbCadastro.visibility = View.INVISIBLE
                 var snackbar = Snackbar.make(view, erro, Snackbar.LENGTH_LONG)
                 snackbar.setBackgroundTint(getColor(R.color.red))
                 snackbar.setTextColor(getColor(R.color.black))
@@ -96,12 +101,6 @@ class CadastroActivity : ComponentActivity() {
         usuarioId = FirebaseAuth.getInstance().currentUser?.uid.toString()
         var database = FirebaseFirestore.getInstance()
         var usuario = Usuario(nome, usuarioId)
-
-//        val usuarioTeste = hashMapOf<String, Any>(
-//            "nome" to usuario.nome,
-//            "documentReferenceId" to doc.id,
-//            "documentReference" to doc
-//        )
 
         database.collection("usuario")
             .document(usuarioId)

@@ -180,6 +180,109 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cvConfiguracoesBackground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cvCriarListaQRCode"
+        android:layout_marginTop="20dp"
+        app:cardCornerRadius="20dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        app:cardBackgroundColor="@color/light_grey"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingTop="60dp"
+            >
+            <TextView
+                android:id="@+id/tvEditarConta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="EDITAR CONTA"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:drawableRight="@drawable/icon_person"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                ></TextView>
+            <TextView
+                android:id="@+id/tvListaDeAmigos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="LISTA DE AMIGOS"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:drawableRight="@drawable/icon_group"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                ></TextView>
+            <TextView
+                android:id="@+id/tvSairDaConta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SAIR DA CONTA"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:drawableRight="@drawable/icon_exit_to_app"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                ></TextView>
+        </LinearLayout>
+<!--        <androidx.recyclerview.widget.RecyclerView-->
+<!--            android:id="@+id/rvMinhasListas"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:background="@color/white"-->
+<!--            android:layout_marginTop="60dp"-->
+<!--            ></androidx.recyclerview.widget.RecyclerView>-->
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cvConfiguracoes"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cvCriarListaQRCode"
+        android:layout_marginTop="20dp"
+        app:cardCornerRadius="20dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        app:cardBackgroundColor="@color/white"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="CONFIGURAÇÕES"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:drawableRight="@drawable/icon_settings"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="20dp"
+                ></TextView>
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
         android:id="@+id/loadingPageHome"
         android:layout_height="match_parent"
         android:layout_width="match_parent"

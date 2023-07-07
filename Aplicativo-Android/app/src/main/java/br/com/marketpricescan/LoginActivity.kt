@@ -15,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuth
 class LoginActivity : AppCompatActivity() {
 
     lateinit var tvCadastrar : TextView
+    lateinit var tvRedefinirSenha : TextView
     lateinit var btnLogin : Button
     lateinit var etEmailUsuario : EditText
     lateinit var etSenhaUsuario : EditText
@@ -36,6 +37,11 @@ class LoginActivity : AppCompatActivity() {
         btnLogin.setOnClickListener { view ->
             AutenticarUsuario(view)
         }
+
+        tvRedefinirSenha.setOnClickListener {
+            val intent = Intent(this, RedefinirSenhaActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun IniciarComponentes() {
@@ -44,6 +50,7 @@ class LoginActivity : AppCompatActivity() {
         tvCadastrar = findViewById(R.id.tvCadastrar)
         btnLogin = findViewById(R.id.btnLogin)
         pbLogin = findViewById(R.id.pbLogin)
+        tvRedefinirSenha = findViewById(R.id.tvRedefinirSenha)
     }
 
     private fun AutenticarUsuario(view : View) {
