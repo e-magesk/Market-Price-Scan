@@ -84,39 +84,6 @@ class GerenciarAmigosActivity : AppCompatActivity() {
         documentoUsuario = database.collection("usuario").document(usuario.id)
     }
 
-//    private fun BuscarAmigosUsuario() {
-//        lateinit var amigos: ArrayList<DocumentReference>
-//
-//        documentoUsuario = database.collection("usuario").document(usuario.id)
-//        documentoUsuario.get().addOnSuccessListener { documentSnapshot ->
-//            if (documentSnapshot.exists()) {
-//                amigos = documentSnapshot.get("amigos") as ArrayList<DocumentReference>
-//
-//                val coroutineScope = CoroutineScope(Dispatchers.Main)
-//                coroutineScope.launch {
-//                    val tasks = mutableListOf<Deferred<Unit>>()
-//                    for (amigo in amigos) {
-//                        val task = async {
-//                            val documentSnapshot =
-//                                amigo.get()
-//                                    .await() // Await espera a conclusão da chamada assíncrona
-//                            if (documentSnapshot.exists()) {
-//                                val nome = documentSnapshot.getString("nome")!!
-//                                val id = documentSnapshot.id
-//                                usuario.amigos.add(Usuario(nome, id))
-//                            }
-//                        }
-//                        tasks.add(task)
-//                    }
-//                    // Aguarde a conclusão de todas as tarefas assíncronas
-//                    tasks.awaitAll()
-//
-//                    PrepararExibicaoListaDeAmigos()
-//                }
-//            }
-//        }
-//    }
-
     private fun DefinirAcoes(){
 
         cbId.setOnCheckedChangeListener { _, _ ->

@@ -8,13 +8,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.R
 import br.com.marketpricescan.model.Produto
-import com.google.android.material.color.MaterialColors.getColor
+import br.com.marketpricescan.model.Usuario
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.DecimalFormat
 
@@ -36,7 +37,7 @@ class ProdutoListaDeCompraAdaptador(private val context : Context, private val p
     }
 
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val etProdutoListaDeCompra: EditText =
+        private val actvProdutoListaDeCompra: AutoCompleteTextView =
             itemView.findViewById(R.id.etProdutoListaDeCompra)
         private val etPrecoProdutoListaDeCompra: EditText =
             itemView.findViewById(R.id.etPrecoProdutoListaDeCompra)
@@ -48,8 +49,8 @@ class ProdutoListaDeCompraAdaptador(private val context : Context, private val p
         }
 
         fun bind(produto: Produto) {
-            etProdutoListaDeCompra.setText(produto.nome)
-            etProdutoListaDeCompra.requestFocus()
+            actvProdutoListaDeCompra.setText(produto.nome)
+            actvProdutoListaDeCompra.requestFocus()
             if (produto.isChecked) {
                 ivCircleCheck.setImageResource(R.drawable.check_circle)
                 checkOrUncheck = 1
@@ -96,7 +97,7 @@ class ProdutoListaDeCompraAdaptador(private val context : Context, private val p
 
         private fun DefinirAcoes() {
 
-            etProdutoListaDeCompra.addTextChangedListener(object : TextWatcher {
+            actvProdutoListaDeCompra.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                     // Não é necessário implementar
                 }
@@ -107,11 +108,12 @@ class ProdutoListaDeCompraAdaptador(private val context : Context, private val p
                 }
 
                 override fun afterTextChanged(s: Editable?) {
-                    // Não é necessário implementar
+                    val texto = s.toString()
+                    BuscarProdutosPorNome(texto)
                 }
             })
 
-            etProdutoListaDeCompra.setOnLongClickListener {
+            actvProdutoListaDeCompra.setOnLongClickListener {
                 val currentPosition = bindingAdapterPosition
                 PopUpConfirmacaoDeletarItem(produtos[currentPosition], currentPosition)
                 true
@@ -172,7 +174,28 @@ class ProdutoListaDeCompraAdaptador(private val context : Context, private val p
                     // Não é necessário implementar
                 }
             })
+        }
 
+        private fun BuscarProdutosPorNome(texto : String){
+            val produtos = FirebaseFirestore.getInstance().collection("produto_nota_fiscal")
+            produtos.whereGreaterThanOrEqualTo("nome", texto.uppercase())
+                .orderBy("nome")
+                .limit(10)
+                .get()
+                .addOnSuccessListener { documents ->
+                    val sugestoes = mutableListOf<Produto>()
+                    for (document in documents) {
+                        val nome = document.getString("nome")!!
+                        val id = document.id
+                        val produto = Produto(nome, id)
+                        sugestoes.add(produto)
+                    }
+                    val adapter = ProdutoNomeArrayAdaptador(itemView.context, sugestoes)
+                    actvProdutoListaDeCompra.setAdapter(adapter)
+                }
+                .addOnFailureListener { exception ->
+                    actvProdutoListaDeCompra.setError("Nenhum usuário encontrado")
+                }
         }
     }
 }

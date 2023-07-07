@@ -29,15 +29,25 @@
                 android:layout_weight="4"
                 android:orientation="vertical">
 
-
-                <EditText
+                <AutoCompleteTextView
                     android:id="@+id/etProdutoListaDeCompra"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/white"
                     android:gravity="left"
                     android:text="Produto"
-                android:textSize="15sp"></EditText>
+                    android:textSize="15sp"
+                    >
+                </AutoCompleteTextView>
+<!--                <EditText-->
+<!--                    android:id="@+id/etProdutoListaDeCompra"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:backgroundTint="@color/white"-->
+<!--                    android:gravity="left"-->
+<!--                    android:text="Produto"-->
+<!--                    android:textSize="15sp"-->
+<!--                    ></EditText>-->
 
             </LinearLayout>
 
