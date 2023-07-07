@@ -1,18 +1,25 @@
 package br.com.marketpricescan
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.model.ListaDeCompra
 import br.com.marketpricescan.model.Usuario
 import br.com.marketpricescan.util.ListaDeCompraAdaptador
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
@@ -40,10 +47,13 @@ class HomeActivity : AppCompatActivity() {
     lateinit var tvSairDaConta : TextView
     private lateinit var adaptador: ListaDeCompraAdaptador
     private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
-    private lateinit var documentoUsuario: DocumentReference
     private val usuarioId: String = FirebaseAuth.getInstance().currentUser!!.uid
+    private var documentoUsuario: DocumentReference = database.collection("usuario").document(usuarioId!!)
+
     private lateinit var usuario: Usuario
     private var flagExibindoMinhasListas : Boolean = false
+
+    lateinit var cvCriarListaQRCode: CardView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,6 +84,7 @@ class HomeActivity : AppCompatActivity() {
         cvMinhasListasBackground = findViewById(R.id.cvMinhasListasBackground)
         cvConfiguracoesBackground = findViewById(R.id.cvConfiguracoesBackground)
         rvMinhasListas = findViewById(R.id.rvMinhasListas)
+        cvCriarListaQRCode = findViewById(R.id.cvCriarListaQRCode)
         tvEditarConta = findViewById(R.id.tvEditarConta)
         tvListaDeAmigos = findViewById(R.id.tvListaDeAmigos)
         tvSairDaConta = findViewById(R.id.tvSairDaConta)
@@ -88,45 +99,86 @@ class HomeActivity : AppCompatActivity() {
         lateinit var listas : ArrayList<DocumentReference>
         lateinit var amigos : ArrayList<DocumentReference>
 
-        documentoUsuario = database.collection("usuario").document(usuarioId!!)
+        // documentoUsuario = database.collection("usuario").document(usuarioId!!)
         documentoUsuario.get().addOnSuccessListener { documentSnapshot ->
             if (documentSnapshot.exists()) {
-                usuario = Usuario(documentSnapshot.getString("nome")!!, usuarioId!!)
+                usuario = Usuario(documentSnapshot.getString("nome")!!, usuarioId)
+                // listas = documentSnapshot.get("listasDeCompra") as ArrayList<DocumentReference>
+               // usuario = Usuario(documentSnapshot.getString("nome")!!, usuarioId!!)
                 listas = documentSnapshot.get("listasDeCompra") as ArrayList<DocumentReference>
                 amigos = documentSnapshot.get("amigos") as ArrayList<DocumentReference>
 
                 var tvNomeUsuario = findViewById<TextView>(R.id.tvWelcomeHome)
                 tvNomeUsuario.text = "Welcome, ${this.usuario.nome}!"
 
-                InicializarListasDeCompraUsuario(listas) // transformar em função de corrotina
-                InicializarAmigos(amigos)
-
+                // listas = documentSnapshot.get("listasDeCompra") as ArrayList<DocumentReference>
+                AtualizarListasEmTempoReal()
+                // InicializarListasDeCompraUsuario(listas) // transformar em função de corrotina
+                AtualizarAmigosEmTempoReal()
                 DefinirAcoes()
             }
         }
     }
+    private fun AtualizarListasEmTempoReal() {
+        documentoUsuario.addSnapshotListener{ querySnapshot, firebaseFirestoreException ->
+            firebaseFirestoreException?.let {
+                Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                return@addSnapshotListener
+            }
+            querySnapshot?.let{
+                documentoUsuario = database.collection("usuario").document(usuarioId)
+                documentoUsuario.get().addOnSuccessListener { documentSnapshot ->
+                    if (documentSnapshot.exists()) {
+                        Log.d("Atualizacao", "------------------ Detectou")
+                        val listas = documentSnapshot.get("listasDeCompra") as ArrayList<DocumentReference>
+                        InicializarListasDeCompraUsuario(listas) // transformar em função de corrotina
+                    }
+                }
+            }
+        }
+    }
 
+    private fun AtualizarAmigosEmTempoReal() {
+        documentoUsuario.addSnapshotListener{ querySnapshot, firebaseFirestoreException ->
+            firebaseFirestoreException?.let {
+                Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                return@addSnapshotListener
+            }
+            querySnapshot?.let{
+                documentoUsuario = database.collection("usuario").document(usuarioId)
+                documentoUsuario.get().addOnSuccessListener { documentSnapshot ->
+                    if (documentSnapshot.exists()) {
+                        Log.d("Atualizacao", "------------------ Detectou")
+                        val amigos = documentSnapshot.get("amigos") as ArrayList<DocumentReference>
+                        InicializarAmigos(amigos) // transformar em função de corrotina
+                    }
+                }
+            }
+        }
+    }
     private fun InicializarListasDeCompraUsuario(listas : ArrayList<DocumentReference>) {
 
         val coroutineScope = CoroutineScope(Dispatchers.Main)
         coroutineScope.launch {
-            val tasks = mutableListOf<Deferred<Unit>>()
-            for (lista in listas) {
-                val task = async {
-                    val documentSnapshot =
-                        lista.get().await() // Await espera a conclusão da chamada assíncrona
-                    if (documentSnapshot.exists()) {
-                        val nome = documentSnapshot.getString("nome")!!
-                        val id = documentSnapshot.id
-                        val listaDeCompra = ListaDeCompra(nome, id)
-                        usuario.listasDeCompra.add(listaDeCompra)
-                        Log.d("Teste", "Lista de compra adicionada: ${listaDeCompra.nome}")
+            runBlocking {
+                usuario.listasDeCompra.clear()
+                val tasks = mutableListOf<Deferred<Unit>>()
+                for (lista in listas) {
+                    val task = async {
+                        val documentSnapshot =
+                            lista.get().await() // Await espera a conclusão da chamada assíncrona
+                        if (documentSnapshot.exists()) {
+                            val nome = documentSnapshot.getString("nome")!!
+                            val id = documentSnapshot.id
+                            val listaDeCompra = ListaDeCompra(nome, id)
+                            usuario.listasDeCompra.add(listaDeCompra)
+                        }
                     }
+                    tasks.add(task)
                 }
-                tasks.add(task)
+                // Aguarde a conclusão de todas as tarefas assíncronas
+                tasks.awaitAll()
             }
-            // Aguarde a conclusão de todas as tarefas assíncronas
-            tasks.awaitAll()
 
             PrepararCardViewMinhasListas()
         }
@@ -153,6 +205,7 @@ class HomeActivity : AppCompatActivity() {
             // Aguarde a conclusão de todas as tarefas assíncronas
             tasks.awaitAll()
         }
+        Log.d("Teste", "Cheguei até aqui")
     }
 
     private fun DefinirAcoes() {
@@ -196,7 +249,6 @@ class HomeActivity : AppCompatActivity() {
             var intent = Intent(this, CriarListaDeCompraActivity::class.java)
             intent.putExtras(bundle)
             startActivity(intent)
-            finish()
         }
 
         cvMinhasListas.setOnClickListener { view ->
@@ -214,6 +266,34 @@ class HomeActivity : AppCompatActivity() {
                 adaptador.notifyDataSetChanged()
                 flagExibindoMinhasListas = true
             }
+        }
+
+        cvCriarListaQRCode.setOnClickListener() { view ->
+            if (ActivityCompat.checkSelfPermission(applicationContext, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CAMERA), 1)
+            } else {
+                runBlocking {
+                    VerificarDelecaoDeListas()
+                }
+
+                val intent = Intent(this, QRCodeActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+        }
+
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (grantResults[0] == PERMISSION_GRANTED){
+            val intent = Intent(this, QRCodeActivity::class.java)
+            startActivity(intent)
+            finish()
         }
     }
 
