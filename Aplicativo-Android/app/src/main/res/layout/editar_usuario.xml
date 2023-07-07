@@ -15,8 +15,8 @@
 
         <ImageView
             android:id="@+id/logo"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:src="@drawable/logo_com_fundo"
             tools:layout_editor_absoluteX="105dp"
             tools:layout_editor_absoluteY="32dp"
@@ -63,7 +63,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/cvComponentes"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="350dp"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
             app:cardCornerRadius="20dp"
@@ -77,6 +77,43 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+                <LinearLayout
+                    android:id="@+id/llIdUsuario"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/etNomeEditar"
+                    android:layout_marginTop="20dp"
+                    android:background="@color/light_gray_blue"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:weightSum="10"
+                    >
+
+                    <TextView
+                        android:id="@+id/tvIdUsuario"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="8"
+                        android:text="ID: XXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+                        >
+                    </TextView>
+
+                    <ImageView
+                        android:id="@+id/iconCopyId"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/icon_content_copy"
+                         />
+
+
+                </LinearLayout>
+
                 <EditText
                     android:id="@+id/etNomeEditar"
                     android:layout_width="match_parent"
@@ -89,10 +126,9 @@
                     android:inputType="text"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/llIdUsuario"
                     android:enabled="false"
                     app:layout_constraintBottom_toTopOf="@id/etEmailEditar"
-                    android:layout_marginTop="20dp"
                     ></EditText>
 
                 <EditText

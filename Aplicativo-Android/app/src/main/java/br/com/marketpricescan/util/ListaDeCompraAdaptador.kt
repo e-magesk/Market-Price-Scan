@@ -46,12 +46,14 @@ class ListaDeCompraAdaptador(private val context : Context, private val listasDe
 
             itemView.setOnClickListener {
                 val currentPosition = bindingAdapterPosition
-                val bundle = Bundle()
-                bundle.putParcelable("listaDeCompra", listasDeCompra[currentPosition])
-                val intent = Intent(itemView.context, AtualizarListaDeCompraActivity::class.java)
-                intent.putExtras(bundle)
-                itemView.context.startActivity(intent)
-                (itemView.context as? Activity)?.finish()
+                notifyItemRangeChanged(currentPosition, 1, "selected")
+
+//                val bundle = Bundle()
+//                bundle.putParcelable("listaDeCompra", listasDeCompra[currentPosition])
+//                val intent = Intent(itemView.context, AtualizarListaDeCompraActivity::class.java)
+//                intent.putExtras(bundle)
+//                itemView.context.startActivity(intent)
+//                (itemView.context as? Activity)?.finish()
             }
 
         }

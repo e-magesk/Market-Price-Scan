@@ -1,13 +1,20 @@
 package br.com.marketpricescan
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import br.com.marketpricescan.model.Usuario
 import com.google.android.material.snackbar.Snackbar
@@ -21,9 +28,11 @@ import kotlinx.coroutines.launch
 
 class EditarUsuarioActivity : AppCompatActivity() {
 
-    private lateinit var etNomeEditar: TextView
-    private lateinit var etEmailEditar: TextView
-    private lateinit var etSenhaEditar: TextView
+    private lateinit var etNomeEditar: EditText
+    private lateinit var etEmailEditar: EditText
+    private lateinit var etSenhaEditar: EditText
+    private lateinit var tvIdUsuario: TextView
+    private lateinit var iconCopyId: ImageView
     private lateinit var pbEditarUsuario: ProgressBar
     private lateinit var btnEditarUsuario: Button
     private lateinit var usuario: Usuario
@@ -57,6 +66,8 @@ class EditarUsuarioActivity : AppCompatActivity() {
         etNomeEditar = findViewById(R.id.etNomeEditar)
         etEmailEditar = findViewById(R.id.etEmailEditar)
         etSenhaEditar = findViewById(R.id.etSenhaEditar)
+        tvIdUsuario = findViewById(R.id.tvIdUsuario)
+        iconCopyId = findViewById(R.id.iconCopyId)
         btnEditarUsuario = findViewById(R.id.btnEditarUsuario)
         pbEditarUsuario = findViewById(R.id.pbEditarUsuario)
     }
@@ -68,6 +79,7 @@ class EditarUsuarioActivity : AppCompatActivity() {
         }
         etEmailEditar.setText(FirebaseAuth.getInstance().currentUser?.email)
         etSenhaEditar.setText("********")
+        tvIdUsuario.setText("ID: " + usuarioId)
     }
 
     private fun DefinirAcoes(){
@@ -96,7 +108,6 @@ class EditarUsuarioActivity : AppCompatActivity() {
                             startActivity(intent)
                             finish()
                         }
-
                     }?.addOnFailureListener {
                         pbEditarUsuario.visibility = View.INVISIBLE
                         var snackbar = Snackbar.make(view, "Erro ao alterar informações! Tente novamente.", Snackbar.LENGTH_LONG)
@@ -105,6 +116,17 @@ class EditarUsuarioActivity : AppCompatActivity() {
                         snackbar.show()
                     }
                 }
+            }
+        }
+
+        iconCopyId.setOnClickListener { view ->
+            val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val textToCopy = usuarioId.trim()
+            if (textToCopy.isNotEmpty()) {
+                val clipData = ClipData.newPlainText("ID", textToCopy)
+                clipboardManager.setPrimaryClip(clipData)
+
+                Toast.makeText(this, "ID do usuário copiado para a área de transferência", Toast.LENGTH_SHORT).show()
             }
         }
     }

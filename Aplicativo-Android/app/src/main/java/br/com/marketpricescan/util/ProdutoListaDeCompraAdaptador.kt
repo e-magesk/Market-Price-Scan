@@ -44,9 +44,7 @@ class ProdutoListaDeCompraAdaptador(private val context : Context, private val p
         private var checkOrUncheck: Int = 0
 
         init {
-
             DefinirAcoes()
-
         }
 
         fun bind(produto: Produto) {

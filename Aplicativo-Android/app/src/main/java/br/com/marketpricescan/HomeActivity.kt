@@ -1,12 +1,9 @@
 package br.com.marketpricescan
 
 import android.content.Intent
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
@@ -29,17 +26,22 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlin.math.floor
 
+
 class HomeActivity : AppCompatActivity() {
 
     lateinit var cvMinhasListas: CardView
     lateinit var cvMinhasListasBackground: CardView
     lateinit var cvCriarNovaLista: CardView
-    lateinit var cvEditarConta : CardView
+    lateinit var cvConfiguracoes : CardView
+    lateinit var cvConfiguracoesBackground : CardView
     lateinit var rvMinhasListas : RecyclerView
+    lateinit var tvEditarConta : TextView
+    lateinit var tvListaDeAmigos : TextView
+    lateinit var tvSairDaConta : TextView
     private lateinit var adaptador: ListaDeCompraAdaptador
     private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
-    private val usuarioId: String = FirebaseAuth.getInstance().currentUser!!.uid
     private lateinit var documentoUsuario: DocumentReference
+    private val usuarioId: String = FirebaseAuth.getInstance().currentUser!!.uid
     private lateinit var usuario: Usuario
     private var flagExibindoMinhasListas : Boolean = false
 
@@ -58,7 +60,7 @@ class HomeActivity : AppCompatActivity() {
 
             InicializarUsuario()
 
-            delay(2000)
+            delay(3000)
 
             loadingCard.visibility = View.GONE // Ocultar o indicador de progresso
         }
@@ -66,31 +68,38 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun IniciarComponentes() {
-        cvEditarConta = findViewById(R.id.cvEditarConta)
+        cvConfiguracoes = findViewById(R.id.cvConfiguracoes)
         cvCriarNovaLista = findViewById(R.id.cvCriarNovaLista)
         cvMinhasListas = findViewById(R.id.cvMinhasListas)
         cvMinhasListasBackground = findViewById(R.id.cvMinhasListasBackground)
+        cvConfiguracoesBackground = findViewById(R.id.cvConfiguracoesBackground)
         rvMinhasListas = findViewById(R.id.rvMinhasListas)
+        tvEditarConta = findViewById(R.id.tvEditarConta)
+        tvListaDeAmigos = findViewById(R.id.tvListaDeAmigos)
+        tvSairDaConta = findViewById(R.id.tvSairDaConta)
 
         cvCriarNovaLista.isClickable = true
         cvMinhasListas.isClickable = true
-        cvEditarConta.isClickable = true
+        cvConfiguracoes.isClickable = true
     }
 
     private fun InicializarUsuario() {
 
         lateinit var listas : ArrayList<DocumentReference>
+        lateinit var amigos : ArrayList<DocumentReference>
 
         documentoUsuario = database.collection("usuario").document(usuarioId!!)
         documentoUsuario.get().addOnSuccessListener { documentSnapshot ->
             if (documentSnapshot.exists()) {
-                usuario = Usuario(documentSnapshot.getString("nome")!!)
+                usuario = Usuario(documentSnapshot.getString("nome")!!, usuarioId!!)
                 listas = documentSnapshot.get("listasDeCompra") as ArrayList<DocumentReference>
+                amigos = documentSnapshot.get("amigos") as ArrayList<DocumentReference>
 
                 var tvNomeUsuario = findViewById<TextView>(R.id.tvWelcomeHome)
                 tvNomeUsuario.text = "Welcome, ${this.usuario.nome}!"
 
                 InicializarListasDeCompraUsuario(listas) // transformar em função de corrotina
+                InicializarAmigos(amigos)
 
                 DefinirAcoes()
             }
@@ -111,6 +120,7 @@ class HomeActivity : AppCompatActivity() {
                         val id = documentSnapshot.id
                         val listaDeCompra = ListaDeCompra(nome, id)
                         usuario.listasDeCompra.add(listaDeCompra)
+                        Log.d("Teste", "Lista de compra adicionada: ${listaDeCompra.nome}")
                     }
                 }
                 tasks.add(task)
@@ -122,19 +132,69 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    private fun InicializarAmigos(amigos : ArrayList<DocumentReference>){
+
+        val coroutineScope = CoroutineScope(Dispatchers.Main)
+        coroutineScope.launch {
+            val tasks = mutableListOf<Deferred<Unit>>()
+            for (amigo in amigos) {
+                val task = async {
+                    val documentSnapshot =
+                        amigo.get()
+                            .await() // Await espera a conclusão da chamada assíncrona
+                    if (documentSnapshot.exists()) {
+                        val nome = documentSnapshot.getString("nome")!!
+                        val id = documentSnapshot.id
+                        usuario.amigos.add(Usuario(nome, id))
+                    }
+                }
+                tasks.add(task)
+            }
+            // Aguarde a conclusão de todas as tarefas assíncronas
+            tasks.awaitAll()
+        }
+    }
+
     private fun DefinirAcoes() {
 
-        cvEditarConta.setOnClickListener() { view ->
+        // CONFIGURAÇÕES
+
+        cvConfiguracoes.setOnClickListener() { view ->
+            if(cvConfiguracoesBackground.visibility === View.GONE){
+                cvConfiguracoesBackground.visibility = View.VISIBLE
+            }
+            else{
+                cvConfiguracoesBackground.visibility = View.GONE
+            }
+        }
+
+        tvEditarConta.setOnClickListener() { view ->
             var intent = Intent(this, EditarUsuarioActivity::class.java)
+            startActivity(intent)
+            cvConfiguracoesBackground.visibility = View.GONE
+        }
+
+        tvListaDeAmigos.setOnClickListener() { view ->
+            val bundle = Bundle()
+            bundle.putParcelable("usuario", usuario)
+            var intent = Intent(this, GerenciarAmigosActivity::class.java)
+            intent.putExtras(bundle)
+            startActivity(intent)
+            cvConfiguracoesBackground.visibility = View.GONE
+        }
+
+        tvSairDaConta.setOnClickListener() { view ->
+            FirebaseAuth.getInstance().signOut()
+            var intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
         }
 
         cvCriarNovaLista.setOnClickListener() { view ->
-            runBlocking {
-                VerificarDelecaoDeListas()
-            }
+            val bundle = Bundle()
+            bundle.putParcelable("usuario", usuario)
             var intent = Intent(this, CriarListaDeCompraActivity::class.java)
+            intent.putExtras(bundle)
             startActivity(intent)
             finish()
         }
@@ -167,22 +227,35 @@ class HomeActivity : AppCompatActivity() {
                 val density = resources.displayMetrics.density
                 layout.height = (floor(60 * density) * (usuario.listasDeCompra.size + 1)).toInt()
                 cvMinhasListasBackground.layoutParams = layout
+
+                VerificarDelecaoDeListas()
+            }
+
+            override fun onItemRangeChanged(positionStart: Int, itemCount: Int, payload: Any?) {
+                super.onItemRangeChanged(positionStart, itemCount, payload)
+
+                if(payload.toString() == "selected"){
+                    val bundle = Bundle()
+                    bundle.putParcelable("listaDeCompra", usuario.listasDeCompra[positionStart])
+                    bundle.putParcelable("usuario", usuario)
+                    val intent = Intent(this@HomeActivity, AtualizarListaDeCompraActivity::class.java)
+                    intent.putExtras(bundle)
+                    startActivity(intent)
+                    finish()
+                }
             }
         })
+
         rvMinhasListas.setHasFixedSize(true)
         rvMinhasListas.layoutManager = LinearLayoutManager(this)
         rvMinhasListas.adapter = adaptador
         rvMinhasListas.isClickable = true
     }
 
-    override fun onBackPressed() {
-        VerificarDelecaoDeListas()
-        finish()
-    }
-
     private fun VerificarDelecaoDeListas(){
         var referenciasListas = mutableListOf<DocumentReference>()
         for(lista in usuario.listasDeCompra){
+            Log.d("Teste", "Lista de compra conferida: ${lista.nome}")
             referenciasListas.add(database.collection("lista_de_compra").document(lista.id))
         }
 
@@ -190,12 +263,10 @@ class HomeActivity : AppCompatActivity() {
             "listasDeCompra" to referenciasListas,
         )
 
-        runBlocking {
-            documentoUsuario.update(updates).addOnSuccessListener {
-                Log.d("Teste", "Substituição de lista feita com sucesso")
-            }.addOnFailureListener {
-                Log.d("Teste", "Substituição de lista falhou")
-            }
+        documentoUsuario.update(updates).addOnSuccessListener {
+            Log.d("Teste", "Substituição de lista feita com sucesso")
+        }.addOnFailureListener {
+            Log.d("Teste", "Substituição de lista falhou")
         }
     }
 }
