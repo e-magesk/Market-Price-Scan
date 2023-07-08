@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.model.ListaDeCompra
 import br.com.marketpricescan.model.Produto
+import br.com.marketpricescan.model.ProdutoNotaFiscal
 import br.com.marketpricescan.model.Supermercado
 import br.com.marketpricescan.util.ProdutoNotaFiscalAdaptador
 import com.google.firebase.auth.FirebaseAuth
@@ -24,6 +25,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 import java.net.URLEncoder
@@ -43,12 +45,13 @@ class NotaFiscalActivity : AppCompatActivity() {
 
     var produtos = mutableListOf<Produto>()
     private lateinit var adaptador: ProdutoNotaFiscalAdaptador
+    lateinit var supermercado : Supermercado
 
     private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
     private lateinit var documentoListaDeCompra: DocumentReference
     private lateinit var documentoUsuario: DocumentReference
     private val usuarioId: String = FirebaseAuth.getInstance().currentUser!!.uid
-
+    lateinit var documentoSupermercado : DocumentReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -146,28 +149,19 @@ class NotaFiscalActivity : AppCompatActivity() {
         else if(textos[1].text().startsWith("CNPJ:")){
             cnpj = textos[1].text().substring(5)
         }
-
+        val id = cnpj.replace(".", "").replace("/", "").replace("-", "")
         val endereco = textos[1].text()
-        val supermercado = Supermercado("", nome, endereco, cnpj)
+        supermercado = Supermercado(id, nome, endereco, cnpj)
 
-        try{
-            //Testando se existe o supermercado no banco de dados
-            database.collection("supermercado").document(cnpj)
-        }
-        catch (e: Exception){
-            //Se não existe, cria um novo documento
-            AdicionarSupermercadoAoBanco(supermercado)
-
-            Log.d("Teste", "Erro " + e.message)
-        }
+        AdicionarSupermercadoAoBanco(supermercado)
     }
 
     private fun AdicionarSupermercadoAoBanco(supermercado : Supermercado){
         try{
-            Log.d("Teste", "Antes documento " + supermercado.cnpj)
-            val document = database.collection("supermercado").document()
-            supermercado.id = document.id
-            document.set(supermercado)
+            Log.d("Teste", "Antes documento " + supermercado.id)
+            documentoSupermercado = database.collection("supermercado").document(supermercado.id)
+            supermercado.id = documentoSupermercado.id
+            documentoSupermercado.set(supermercado)
                 .addOnSuccessListener {
                     Log.d("Teste", "Sucesso ao salvar o supermercado no banco de dados")
                 }
@@ -240,23 +234,71 @@ class NotaFiscalActivity : AppCompatActivity() {
 
         val referenciasProdutos = mutableListOf<DocumentReference>()
         var flagFinal = 0
-        for(produto in produtos){
-            val documentoProduto = FirebaseFirestore.getInstance().collection("produto_nota_fiscal")
-                .document()
-            produto.id = documentoProduto.id
-            referenciasProdutos.add(documentoProduto)
-            documentoProduto.set(produto)
-                .addOnSuccessListener {
-                    flagFinal++
-                    if (flagFinal == produtos.size){
-                        runBlocking {
-                            SalvarListaDeCompra(referenciasProdutos)
-                        }
+        for(produto in produtos) {
+            Log.d("Teste", "Entrei pra salvar" + produto.codigoLocal)
+            val query = database.collection("produto")
+                .whereEqualTo("supermercadoId", supermercado.id)
+                .whereEqualTo("codigoLocal", produto.codigoLocal)
+
+            // ATUALIZANDO PRODUTOS
+            query.get()
+                .addOnSuccessListener { querySnapshot ->
+                    Log.d("Teste", "QuerySnapshot " + querySnapshot.size())
+
+                    if (querySnapshot.size() !== 0) {
+                        Log.d("Teste", "Documento encontrado")
+                        val docRef = querySnapshot.documents[0].reference
+                        referenciasProdutos.add(docRef)
+                        docRef.set(produto)
+                            .addOnSuccessListener {
+                                flagFinal++
+                                if (flagFinal == produtos.size) {
+                                    runBlocking {
+                                        SalvarListaDeCompra(referenciasProdutos)
+                                    }
+                                }
+                                Log.d("Teste","Sucesso ao atualizar o produto no banco de dados"
+                                )
+                            }
+                            .addOnFailureListener {
+                                Log.d("Teste", "Erro ao atualizar o produto no banco de dados")
+                            }
                     }
-                    Log.d("Teste", "Sucesso ao salvar o produto no banco de dados")
+                    else{
+                        Log.d("Teste", "Documento não encontrado")
+                        val documentoProdutoOriginal = database.collection("produto_nota_fiscal").document(produto.codigoLocal.toString())
+                        var produtoOriginal = ProdutoNotaFiscal(produto.codigoLocal.toString(), produto.nome)
+                        documentoProdutoOriginal.set(produtoOriginal)
+                            .addOnSuccessListener {
+                                Log.d("Teste", "Sucesso ao salvar o produto original no banco de dados")
+                                val documentoProduto = FirebaseFirestore.getInstance().collection("produto")
+                                    .document()
+                                produto.id = documentoProduto.id
+                                produto.supermercadoId = supermercado.id
+                                referenciasProdutos.add(documentoProduto)
+                                documentoProduto.set(produto)
+                                    .addOnSuccessListener {
+                                        flagFinal++
+                                        if (flagFinal == produtos.size){
+                                            runBlocking {
+                                                SalvarListaDeCompra(referenciasProdutos)
+                                            }
+                                        }
+                                        Log.d("Teste", "Sucesso ao salvar o produto no banco de dados")
+                                    }
+                                    .addOnFailureListener {
+                                        Log.d("Teste", "Erro ao salvar o produto no banco de dados")
+                                    }
+
+                            }
+                            .addOnFailureListener {
+                                Log.d("Teste", "Erro ao salvar o produto original no banco de dados")
+                            }
+                    }
+
                 }
-                .addOnFailureListener {
-                    Log.d("Teste", "Erro ao salvar o produto no banco de dados")
+                .addOnFailureListener { exception ->
+                    Log.d("Teste", "Erro ao buscar o produto no banco de dados " + exception.message)
                 }
         }
     }

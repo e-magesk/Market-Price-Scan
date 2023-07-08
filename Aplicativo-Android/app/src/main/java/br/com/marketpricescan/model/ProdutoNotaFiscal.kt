@@ -4,18 +4,15 @@ class ProdutoNotaFiscal() {
 
     var id : String = ""
     var nome : String = ""
-    var codigoBarras : Long = 0
 
     constructor(produto: ProdutoNotaFiscal) : this(){
-        this.nome = produto.nome.uppercase()
-        this.codigoBarras = produto.codigoBarras
         this.id = produto.id
+        this.nome = produto.nome.uppercase()
     }
 
-    constructor(id : String, nome : String, codigoBarras : Long) : this(){
+    constructor(id : String, nome : String) : this(){
         this.id = id
         this.nome = nome.uppercase()
-        this.codigoBarras = codigoBarras
     }
 
 }

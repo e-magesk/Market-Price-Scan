@@ -8,7 +8,7 @@ class Produto() {
     var isChecked : Boolean = false
     var codigoLocal : Long = 0
     var codigoBarras : Long = 0
-    var supermercado : Supermercado = Supermercado()
+    var supermercadoId : String = ""
 
     constructor(produto: Produto) : this(){
         this.nome = produto.nome.uppercase()
@@ -17,7 +17,7 @@ class Produto() {
         this.codigoLocal = produto.codigoLocal
         this.codigoBarras = produto.codigoBarras
         this.id = produto.id
-        this.supermercado = produto.supermercado
+        this.supermercadoId = produto.supermercadoId
     }
 
     constructor(nome: String) : this(){
