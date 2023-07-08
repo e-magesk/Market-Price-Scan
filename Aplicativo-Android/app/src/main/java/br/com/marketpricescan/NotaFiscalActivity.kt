@@ -2,7 +2,6 @@ package br.com.marketpricescan
 
 import android.app.AlertDialog
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -15,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.model.ListaDeCompra
 import br.com.marketpricescan.model.Produto
-import br.com.marketpricescan.util.ProdutoListaDeCompraAdaptador
+import br.com.marketpricescan.model.Supermercado
 import br.com.marketpricescan.util.ProdutoNotaFiscalAdaptador
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
@@ -69,15 +68,17 @@ class NotaFiscalActivity : AppCompatActivity() {
 
         // Codifica URL
         val encodedUrl = URLEncoder.encode(url, "UTF-8")
+
             // Desfaz a codificação para barras, dois pontos, ponto de interrogação e igual
-        val decodedUrl = encodedUrl
+        var decodedUrl = encodedUrl
             .replace("%2F", "/")
             .replace("%3A", ":")
             .replace("%3F", "?")
             .replace("%3D", "=")
 
         CoroutineScope(Dispatchers.IO).launch{
-            produtos = getTextFromUrl(decodedUrl)
+            getSupermercadoFromUrl(decodedUrl)
+            produtos = getProdutosFromUrl(decodedUrl)
 
             withContext(Dispatchers.Main) {
                 for (produto in produtos){
@@ -98,10 +99,17 @@ class NotaFiscalActivity : AppCompatActivity() {
         }
     }
 
-    private fun getTextFromUrl(url: String): MutableList<Produto>{
-        val produtos = mutableListOf<Produto>()
-        val document = Jsoup.connect(url).get()
 
+    private fun getProdutosFromUrl(url: String): MutableList<Produto>{
+        val produtos = mutableListOf<Produto>()
+        Log.d("Teste", "Depois documento " + url)
+        try{
+            val document = Jsoup.connect(url).get()
+        }
+        catch (e: Exception){
+            Log.d("Teste", "Erro " + e.message)
+        }
+        val document = Jsoup.connect(url).get()
         val tabela = document.select("table#tabResult")
 
         val tableRows = tabela.select("table tr")
@@ -124,6 +132,52 @@ class NotaFiscalActivity : AppCompatActivity() {
         }
 
         return produtos
+    }
+
+    private fun getSupermercadoFromUrl(url : String){
+        val document = Jsoup.connect(url).get()
+        val div = document.select("div#conteudo")
+        val nome = div.select("#u20").text()
+        val textos = div.select(".text")
+        var cnpj : String = ""
+        if(textos[0].text().startsWith("CNPJ: ")){
+            cnpj = textos[0].text().substring(6)
+        }
+        else if(textos[1].text().startsWith("CNPJ:")){
+            cnpj = textos[1].text().substring(5)
+        }
+
+        val endereco = textos[1].text()
+        val supermercado = Supermercado("", nome, endereco, cnpj)
+
+        try{
+            //Testando se existe o supermercado no banco de dados
+            database.collection("supermercado").document(cnpj)
+        }
+        catch (e: Exception){
+            //Se não existe, cria um novo documento
+            AdicionarSupermercadoAoBanco(supermercado)
+
+            Log.d("Teste", "Erro " + e.message)
+        }
+    }
+
+    private fun AdicionarSupermercadoAoBanco(supermercado : Supermercado){
+        try{
+            Log.d("Teste", "Antes documento " + supermercado.cnpj)
+            val document = database.collection("supermercado").document()
+            supermercado.id = document.id
+            document.set(supermercado)
+                .addOnSuccessListener {
+                    Log.d("Teste", "Sucesso ao salvar o supermercado no banco de dados")
+                }
+                .addOnFailureListener {
+                    Log.d("Teste", "Erro ao salvar o supermercado no banco de dados")
+                }
+        }
+        catch (e : Exception){
+            Log.d("Teste", "Erro " + e.message)
+        }
     }
 
     private fun DefinirAdaptador(){

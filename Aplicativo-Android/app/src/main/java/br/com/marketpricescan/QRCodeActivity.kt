@@ -2,6 +2,7 @@ package br.com.marketpricescan
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.budiyev.android.codescanner.AutoFocusMode
@@ -19,7 +20,6 @@ class QRCodeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.qrcode)
         val scannerView = findViewById<CodeScannerView>(R.id.scanner_view)
-
         codeScanner = CodeScanner(this, scannerView)
 
         // Parameters (default values)
