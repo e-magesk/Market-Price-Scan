@@ -247,6 +247,7 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
             val tasks = mutableListOf<Deferred<Unit>>()
             val referenciasProdutos = mutableListOf<DocumentReference>()
             for (produto in listaDeCompra.produtos) {
+                Log.d("Teste", "Produto: " + produto.codigoLocal)
                 val task : Deferred<Unit> = async {
                     val documentoProduto =
                         FirebaseFirestore.getInstance().collection("produto").document(produto.id)

@@ -6,8 +6,8 @@ class Produto() {
     var nome : String = ""
     var preco : Double = 0.0
     var isChecked : Boolean = false
-    var codigoLocal : Long = 0
-    var codigoBarras : Long = 0
+    var codigoLocal : String = ""
+    var codigoBarras : String = ""
     var supermercadoId : String = ""
 
     constructor(produto: Produto) : this(){
@@ -25,8 +25,8 @@ class Produto() {
         this.id = ""
         this.preco = 0.0
         this.isChecked = false
-        this.codigoLocal = 0
-        this.codigoBarras = 0
+        this.codigoLocal = ""
+        this.codigoBarras = ""
     }
 
     constructor(nome: String, preco: Double) : this(){
@@ -34,8 +34,8 @@ class Produto() {
         this.id = ""
         this.preco = preco
         this.isChecked = false
-        this.codigoLocal = 0
-        this.codigoBarras = 0
+        this.codigoLocal = ""
+        this.codigoBarras = ""
     }
 
     constructor(nome: String, id: String) : this(){
@@ -43,17 +43,17 @@ class Produto() {
         this.id = id
         this.preco = 0.0
         this.isChecked = false
-        this.codigoLocal = 0
-        this.codigoBarras = 0
+        this.codigoLocal = ""
+        this.codigoBarras = ""
     }
 
-    constructor(nome: String, preco: Double, codigoLocal: Long) : this(){
+    constructor(nome: String, preco: Double, codigoLocal: String) : this(){
         this.nome = nome
         this.id = ""
         this.preco = preco
         this.isChecked = false
         this.codigoLocal = codigoLocal
-        this.codigoBarras = 0
+        this.codigoBarras = ""
     }
 
 }

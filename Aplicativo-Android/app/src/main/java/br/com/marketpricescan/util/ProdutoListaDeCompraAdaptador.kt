@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import android.widget.ImageView
@@ -15,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.R
 import br.com.marketpricescan.model.Produto
+import br.com.marketpricescan.model.ProdutoNotaFiscal
 import br.com.marketpricescan.model.Usuario
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.DecimalFormat
@@ -109,7 +111,7 @@ class ProdutoListaDeCompraAdaptador(private val context : Context, private val p
 
                 override fun afterTextChanged(s: Editable?) {
                     val texto = s.toString()
-                    BuscarProdutosPorNome(texto)
+                    BuscarProdutosPorNome(texto, bindingAdapterPosition)
                 }
             })
 
@@ -176,26 +178,38 @@ class ProdutoListaDeCompraAdaptador(private val context : Context, private val p
             })
         }
 
-        private fun BuscarProdutosPorNome(texto : String){
+        private fun BuscarProdutosPorNome(texto : String, posicao: Int){
             val produtos = FirebaseFirestore.getInstance().collection("produto_nota_fiscal")
             produtos.whereGreaterThanOrEqualTo("nome", texto.uppercase())
                 .orderBy("nome")
                 .limit(10)
                 .get()
                 .addOnSuccessListener { documents ->
-                    val sugestoes = mutableListOf<Produto>()
+                    val sugestoes = mutableListOf<ProdutoNotaFiscal>()
                     for (document in documents) {
                         val nome = document.getString("nome")!!
                         val id = document.id
-                        val produto = Produto(nome, id)
+                        val produto = ProdutoNotaFiscal(id, nome)
                         sugestoes.add(produto)
                     }
                     val adapter = ProdutoNomeArrayAdaptador(itemView.context, sugestoes)
                     actvProdutoListaDeCompra.setAdapter(adapter)
+                    actvProdutoListaDeCompra.setOnItemClickListener { parent, view, position, id ->
+                        val selectedItem = parent.getItemAtPosition(position) as ProdutoNotaFiscal
+                        MudarItem(posicao, selectedItem)
+                    }
                 }
                 .addOnFailureListener { exception ->
-                    actvProdutoListaDeCompra.setError("Nenhum usuário encontrado")
+                    actvProdutoListaDeCompra.setError("Nenhum produto encontrado")
                 }
+        }
+
+        private fun MudarItem(position: Int, produto: ProdutoNotaFiscal){
+            Log.d("Teste", "MudarItem: " + produto.nome + " " + produto.id)
+            produtos[position].nome = produto.nome
+            produtos[position].codigoLocal = produto.id
+            Log.d("Teste", "MudarItem: " + produtos[position].nome + " " + produtos[position].codigoLocal)
+            notifyItemChanged(position)
         }
     }
 }

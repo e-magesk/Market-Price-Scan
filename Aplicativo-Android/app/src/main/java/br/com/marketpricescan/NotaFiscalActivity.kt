@@ -131,7 +131,7 @@ class NotaFiscalActivity : AppCompatActivity() {
                 cod = Regex("\\d+").find(textoCod.text())?.value?.toLong() ?: 0L
             }
 
-            produtos.add(Produto(nome, preco, cod))
+            produtos.add(Produto(nome, preco, cod.toString()))
         }
 
         return produtos
