@@ -25,6 +25,10 @@ class ProdutoNomeArrayAdaptador(context: Context, listaProdutos: List<Produto>) 
 
     override fun getFilter(): Filter {
         return object : Filter() {
+            override fun convertResultToString(resultValue: Any?): CharSequence {
+                return (resultValue as Produto)?.nome ?: ""
+            }
+
             override fun performFiltering(constraint: CharSequence?): FilterResults {
                 val filtro = constraint?.toString()?.toLowerCase()
                 val resultados = FilterResults()

@@ -51,9 +51,6 @@ class NotaFiscalActivity : AppCompatActivity() {
     private val usuarioId: String = FirebaseAuth.getInstance().currentUser!!.uid
 
 
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.lista_de_compra)
