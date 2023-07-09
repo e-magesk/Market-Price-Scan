@@ -202,8 +202,10 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        rootLayout.setOnClickListener() { view ->
-            cvOpcoes.visibility = View.GONE
+        rootLayout.setOnClickListener { view ->
+            if(cvOpcoes.visibility === View.VISIBLE){
+                cvOpcoes.visibility = View.GONE
+            }
         }
 
         btnCompartilhar.setOnClickListener() { view ->

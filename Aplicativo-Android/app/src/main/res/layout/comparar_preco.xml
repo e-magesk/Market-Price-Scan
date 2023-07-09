@@ -23,5 +23,28 @@
             android:layout_marginTop="30dp"
             >
         </androidx.recyclerview.widget.RecyclerView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/loadingPageCompararPrecos"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:foregroundGravity="center"
+            app:cardBackgroundColor="@color/medium_blue"
+            android:visibility="gone"
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                >
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="true"
+                    android:indeterminateTintMode="src_atop"
+                    android:indeterminateTint="@color/white"
+                    />
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
