@@ -13,6 +13,7 @@ import android.widget.ListView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.model.ListaDeCompra
@@ -50,6 +51,10 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
     private lateinit var usuario: Usuario
     private lateinit var documentoListaDeCompra: DocumentReference
     private lateinit var loadingCard : CardView
+    private lateinit var rootLayout : ConstraintLayout
+    private lateinit var tvCompartilhar : TextView
+    private lateinit var tvCompararPrecos : TextView
+    private lateinit var cvOpcoes : CardView
 
 
     @SuppressLint("MissingInflatedId")
@@ -92,10 +97,12 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
         tvListaVazia = findViewById(R.id.tvListaVazia)
         etTituloLista = findViewById(R.id.etTituloLista)
         btnCompartilhar = findViewById(R.id.btnCompartilhar)
-
+        rootLayout = findViewById(R.id.rootLayoutListaDeCompra)
+        cvOpcoes = findViewById(R.id.cvOpcoes)
         rvCompartilharComAmigos = findViewById(R.id.rvCompartilharComAmigos)
         cvCompartilharComAmigos = findViewById(R.id.cvCompartilharComAmigos)
-
+        tvCompararPrecos = findViewById(R.id.tvCompararPrecos)
+        tvCompartilhar = findViewById(R.id.tvCompartilhar)
         listaDeCompra = ListaDeCompra("")
     }
 
@@ -130,13 +137,23 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
             if (event.action == MotionEvent.ACTION_UP) {
                 val drawableRight = etTituloLista.compoundDrawables[2] // Ícone no lado direito (índice 2)
                 if (event.rawX >= (etTituloLista.right - drawableRight.bounds.width())) {
-                    if(cvCompartilharComAmigos.visibility === View.GONE){
-                        cvCompartilharComAmigos.visibility = View.VISIBLE
+                    if(cvOpcoes.visibility === View.GONE){
+                        cvOpcoes.visibility = View.VISIBLE
                     }
                     return@setOnTouchListener true
                 }
             }
             false
+        }
+
+        tvCompararPrecos.setOnClickListener() { view ->
+            val intent = Intent(this, CompararPrecosActivity::class.java)
+            intent.putExtra("listaDeCompra", listaDeCompra)
+            startActivity(intent)
+        }
+
+        tvCompartilhar.setOnClickListener() { view ->
+            cvCompartilharComAmigos.visibility = View.VISIBLE
         }
 
         btnAdicionarItem.setOnClickListener() { view ->
@@ -154,7 +171,10 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if(cvCompartilharComAmigos.visibility === View.VISIBLE){
+        if(cvOpcoes.visibility === View.VISIBLE){
+            cvOpcoes.visibility = View.GONE
+        }
+        else if(cvCompartilharComAmigos.visibility === View.VISIBLE){
             cvCompartilharComAmigos.visibility = View.GONE
             amigosCompartilhar.clear()
         }
