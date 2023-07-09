@@ -33,7 +33,7 @@ class CompararPrecosActivity : AppCompatActivity() {
             listaDeCompraComparacao = intent.getParcelableExtra<ListaDeCompra>("listaDeCompra")!!
         }
 
-        Log.d("Teste", "nome lista " + "${listaDeCompraComparacao.nome}")
+        Log.d("Teste", "Lista chegou no comparador" + "${listaDeCompraComparacao.produtos.size}")
 
         InicializarComponentes()
 

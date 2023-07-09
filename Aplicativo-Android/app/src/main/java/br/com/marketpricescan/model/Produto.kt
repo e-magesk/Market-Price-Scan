@@ -1,6 +1,9 @@
 package br.com.marketpricescan.model
 
-class Produto() {
+import android.os.Parcel
+import android.os.Parcelable
+
+class Produto() : Parcelable {
 
     var id : String = ""
     var nome : String = ""
@@ -18,6 +21,16 @@ class Produto() {
         this.codigoBarras = produto.codigoBarras
         this.id = produto.id
         this.supermercadoId = produto.supermercadoId
+    }
+
+    constructor(parcel: Parcel) : this() {
+        id = parcel.readString()!!
+        nome = parcel.readString()!!
+        preco = parcel.readDouble()
+        isChecked = parcel.readByte() != 0.toByte()
+        codigoLocal = parcel.readString()!!
+        codigoBarras = parcel.readString()!!
+        supermercadoId = parcel.readString()!!
     }
 
     constructor(nome: String) : this(){
@@ -54,6 +67,30 @@ class Produto() {
         this.isChecked = false
         this.codigoLocal = codigoLocal
         this.codigoBarras = ""
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(id)
+        parcel.writeString(nome)
+        parcel.writeDouble(preco)
+        parcel.writeByte(if (isChecked) 1 else 0)
+        parcel.writeString(codigoLocal)
+        parcel.writeString(codigoBarras)
+        parcel.writeString(supermercadoId)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<Produto> {
+        override fun createFromParcel(parcel: Parcel): Produto {
+            return Produto(parcel)
+        }
+
+        override fun newArray(size: Int): Array<Produto?> {
+            return arrayOfNulls(size)
+        }
     }
 
 }

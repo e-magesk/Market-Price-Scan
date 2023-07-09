@@ -27,7 +27,8 @@ class SupermercadoAdaptador(private val context : Context, private val supermerc
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val supermercado = supermercados[position]
-        holder.bind(supermercado)
+        Log.d("Teste", "Chegou aqui no on bind view holder " + position)
+        holder.bind(supermercado, position)
     }
 
     override fun getItemCount(): Int {
@@ -38,40 +39,44 @@ class SupermercadoAdaptador(private val context : Context, private val supermerc
         private val tvNomeSupermercado: TextView = itemView.findViewById(R.id.tvNomeSupermercado)
         private val rvProdutosSupermercado : RecyclerView = itemView.findViewById(R.id.rvProdutosSupermercado)
         lateinit var produtos : MutableList<Produto>
+        lateinit var adaptadorProdutosSupermercado : ProdutoNotaFiscalAdaptador
 
         init{
-            BuscarProdutos()
+            Log.d("Teste", "Chegou aqui no init")
         }
 
-        fun bind(supermercado : Supermercado) {
+        fun bind(supermercado : Supermercado, position : Int) {
             tvNomeSupermercado.setText(supermercado.nome)
+            Log.d("Teste", "Chegou aqui no bind " + position)
+            BuscarProdutos(position)
         }
 
         private fun DefinirAdaptador(){
-            var adaptadorProdutosSupermercado = ProdutoAdaptador(context, produtos)
+            adaptadorProdutosSupermercado = ProdutoNotaFiscalAdaptador(context, produtos)
             rvProdutosSupermercado.setHasFixedSize(true)
             rvProdutosSupermercado.layoutManager = LinearLayoutManager(context)
             rvProdutosSupermercado.adapter = adaptadorProdutosSupermercado
             rvProdutosSupermercado.isClickable = true
         }
 
-        private fun BuscarProdutos(){
+        private fun BuscarProdutos(posicao : Int){
             produtos = mutableListOf()
             var database = FirebaseFirestore.getInstance()
             for(produto in listaDeCompraReferencia.produtos){
+                Log.d("Teste", "Codigo local " + produto.codigoLocal + " supermercado id " + produto.supermercadoId)
                 if(!produto.codigoLocal.equals("")){
-                    val query = database.collection("produto")
-                        .whereEqualTo("supermercadoId", supermercados[bindingAdapterPosition].id)
-                        .whereEqualTo("codigoLocal", produto.codigoLocal)
-
-                    // ATUALIZANDO PRODUTOS
+                    Log.d("Teste", "Chegou aqui na query " + posicao)
+                        val query = database.collection("produto")
+                            .whereEqualTo("supermercadoId", supermercados[posicao].id)
+                            .whereEqualTo("codigoLocal", produto.codigoLocal)
+                    //ATUALIZANDO PRODUTOS
                     query.get()
                         .addOnSuccessListener { querySnapshot ->
                             Log.d("Teste", "QuerySnapshot " + querySnapshot.size())
                             if(querySnapshot.size() > 0){
                                 var produto = Produto(querySnapshot.documents[0].toObject(Produto::class.java)!!)
                                 produtos.add(produto)
-                                notifyDataSetChanged()
+                                adaptadorProdutosSupermercado.notifyDataSetChanged()
                             }
                         }
                 }

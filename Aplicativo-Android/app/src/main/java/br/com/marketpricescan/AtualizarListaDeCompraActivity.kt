@@ -196,7 +196,8 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
         tvCompararPrecos.setOnClickListener() { view ->
             val bundle = Bundle()
             bundle.putParcelable("listaDeCompra", listaDeCompra)
-            val intent = Intent(this, CompararPrecosActivity::class.java)
+            val intent = Intent(this@AtualizarListaDeCompraActivity, CompararPrecosActivity::class.java)
+            Log.d("Teste", "Atualizar Lista de compra: " + listaDeCompra.produtos.size)
             intent.putExtras(bundle)
             startActivity(intent)
         }

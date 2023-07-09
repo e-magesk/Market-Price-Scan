@@ -8,9 +8,8 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        app:cardCornerRadius="20dp"
+        android:layout_margin="15dp"
+        app:cardCornerRadius="15dp"
         >
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_height="match_parent"
@@ -23,7 +22,7 @@
                 android:text="Nome do Supermercado"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginLeft="5dp"
+                android:layout_marginLeft="10dp"
                 android:textStyle="bold"
                 android:textSize="20sp"
                 >
