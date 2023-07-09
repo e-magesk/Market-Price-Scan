@@ -3,6 +3,7 @@ package br.com.marketpricescan
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.model.ListaDeCompra
@@ -32,6 +33,8 @@ class CompararPrecosActivity : AppCompatActivity() {
             listaDeCompraComparacao = intent.getParcelableExtra<ListaDeCompra>("listaDeCompra")!!
         }
 
+        Log.d("Teste", "nome lista " + "${listaDeCompraComparacao.nome}")
+
         InicializarComponentes()
 
         BuscarSupermercados()
@@ -46,12 +49,11 @@ class CompararPrecosActivity : AppCompatActivity() {
         rvSupermercados.setHasFixedSize(true)
         rvSupermercados.layoutManager = LinearLayoutManager(this)
         rvSupermercados.adapter = adaptadorSupermercados
-        rvSupermercados.isClickable = true
     }
 
     private fun BuscarSupermercados(){
-
-        database.collection("supermercados")
+        supermercados = mutableListOf()
+        database.collection("supermercado")
             .get()
             .addOnSuccessListener { result ->
                 for (document in result) {

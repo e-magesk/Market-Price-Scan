@@ -140,10 +140,19 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
                     if(cvOpcoes.visibility === View.GONE){
                         cvOpcoes.visibility = View.VISIBLE
                     }
+                    else{
+                        cvOpcoes.visibility = View.GONE
+                    }
                     return@setOnTouchListener true
                 }
             }
             false
+        }
+
+        rootLayout.setOnClickListener { view ->
+            if(cvOpcoes.visibility === View.VISIBLE){
+                cvOpcoes.visibility = View.GONE
+            }
         }
 
         tvCompararPrecos.setOnClickListener() { view ->
@@ -153,6 +162,7 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
         }
 
         tvCompartilhar.setOnClickListener() { view ->
+            cvOpcoes.visibility = View.GONE
             cvCompartilharComAmigos.visibility = View.VISIBLE
         }
 
@@ -174,7 +184,7 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
         if(cvOpcoes.visibility === View.VISIBLE){
             cvOpcoes.visibility = View.GONE
         }
-        else if(cvCompartilharComAmigos.visibility === View.VISIBLE){
+        if(cvCompartilharComAmigos.visibility === View.VISIBLE){
             cvCompartilharComAmigos.visibility = View.GONE
             amigosCompartilhar.clear()
         }

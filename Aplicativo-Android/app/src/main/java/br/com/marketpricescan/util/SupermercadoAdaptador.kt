@@ -20,8 +20,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 class SupermercadoAdaptador(private val context : Context, private val supermercados: MutableList<Supermercado>, private val listaDeCompraReferencia : ListaDeCompra) : RecyclerView.Adapter<SupermercadoAdaptador.ItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
+        Log.d("Teste", "Chegou aqui no on create view holder")
         val itemView = LayoutInflater.from(context).inflate(R.layout.supermercado_adaptador, parent, false)
-        return ItemViewHolder(itemView, listaDeCompraReferencia)
+        return ItemViewHolder(itemView)
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
@@ -33,7 +34,7 @@ class SupermercadoAdaptador(private val context : Context, private val supermerc
         return supermercados.size
     }
 
-    inner class ItemViewHolder(itemView: View, listaDeCompraReferencia: ListaDeCompra) : RecyclerView.ViewHolder(itemView) {
+    inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvNomeSupermercado: TextView = itemView.findViewById(R.id.tvNomeSupermercado)
         private val rvProdutosSupermercado : RecyclerView = itemView.findViewById(R.id.rvProdutosSupermercado)
         lateinit var produtos : MutableList<Produto>
