@@ -116,7 +116,7 @@
 
         <TextView
             android:id="@+id/tvCadastrar"
-            android:text="Não possue conta? \n Clique aqui para se cadastrar"
+            android:text="Não possui conta? \n Clique aqui para se cadastrar"
             android:textSize="15sp"
             android:textColor="@color/white"
             android:fontFamily="@font/jetbrains_mono_bold"
