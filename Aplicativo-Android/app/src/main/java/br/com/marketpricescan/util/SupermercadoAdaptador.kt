@@ -110,7 +110,7 @@ class SupermercadoAdaptador(private val context : Context, private val supermerc
             for(produto in produtos){
                 valorTotal += produto.preco
             }
-            tvPrecoTotal.setText("R$ " + valorTotal.toString())
+            tvPrecoTotal.setText("R$ " + String.format("%.2f", valorTotal))
         }
     }
 }

@@ -60,7 +60,7 @@ class ProdutoListaDeCompraAdaptador(private val context : Context, private val p
                 ivCircleCheck.setImageResource(R.drawable.unchecked_circle)
                 checkOrUncheck = 0
             }
-            etPrecoProdutoListaDeCompra.setText(produto.preco.toString())
+            etPrecoProdutoListaDeCompra.setText(String.format("%.2f", produto.preco))
         }
 
         private fun PopUpConfirmacaoDeletarItem(produto: Produto, position: Int) {
