@@ -185,7 +185,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun InicializarAmigos(amigos : ArrayList<DocumentReference>){
-
+        usuario.amigos.clear()
         val coroutineScope = CoroutineScope(Dispatchers.Main)
         coroutineScope.launch {
             val tasks = mutableListOf<Deferred<Unit>>()
