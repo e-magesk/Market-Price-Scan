@@ -248,6 +248,8 @@ class NotaFiscalActivity : AppCompatActivity() {
                     if (querySnapshot.size() !== 0) {
                         Log.d("Teste", "Documento encontrado")
                         val docRef = querySnapshot.documents[0].reference
+                        produto.id = docRef.id
+                        produto.supermercadoId = supermercado.id
                         referenciasProdutos.add(docRef)
                         docRef.set(produto)
                             .addOnSuccessListener {

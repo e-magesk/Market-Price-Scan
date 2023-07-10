@@ -60,7 +60,7 @@ class SupermercadoAdaptador(private val context : Context, private val supermerc
                 for (produto in listaDeCompraReferencia.produtos) {
                     Log.d(
                         "Teste",
-                        "Codigo local " + produto.codigoLocal + " supermercado id " + produto.supermercadoId
+                        "Codigo local " + produto.codigoLocal + " supermercado id " + supermercados[posicao].id
                     )
                     if (!produto.codigoLocal.equals("")) {
                         Log.d("Teste", "Chegou aqui na query " + posicao)
