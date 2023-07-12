@@ -13,7 +13,7 @@
             <li><a href="#instalacao">Instalação</a></li>
         </ol>
     </li>
-    <li><a href="#contribuições">Contribuindo</a></li>
+    <li><a href="#contribuições">Contribuições</a></li>
     <li><a href="#licenca">Licença</a></li>
     <li><a href="#contato">Licença</a></li>
   </ol>
@@ -55,6 +55,12 @@ Aqui estão a linguagem, IDE e ferrmentas que foram utilizadas no desenvolviment
 
 ### Pré-requisitos
 ### Instalação
+
+## :mantelpiece_clock: Histórico de lançamentos
+ *  v1.0.0:
+ ** Aplicativo com criação, gerenciamento e compartilhamento de listas.
+ * vx.x.x:
+ ** 
 
 <div id="contribuições"> </div>
 
