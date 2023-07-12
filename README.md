@@ -13,6 +13,7 @@
             <li><a href="#instalacao">Instalação</a></li>
         </ol>
     </li>
+    <li><a href="#historico">Histórico de Lançamentos</a></li>
     <li><a href="#contribuições">Contribuições</a></li>
     <li><a href="#licenca">Licença</a></li>
     <li><a href="#contato">Licença</a></li>
@@ -56,11 +57,13 @@ Aqui estão a linguagem, IDE e ferrmentas que foram utilizadas no desenvolviment
 ### Pré-requisitos
 ### Instalação
 
+<div id="historico"> </div>
+
 ## :mantelpiece_clock: Histórico de lançamentos
  *  v1.0.0:
- ** Aplicativo com criação, gerenciamento e compartilhamento de listas.
+   *  Aplicativo com criação, gerenciamento e compartilhamento de listas.
  * vx.x.x:
- ** 
+   * Aplicativo com comparação de preços entre supermercados.
 
 <div id="contribuições"> </div>
 
