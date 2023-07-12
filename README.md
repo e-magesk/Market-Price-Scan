@@ -30,7 +30,7 @@ Market Price $can é um aplicativo mobile android para criação de listas de co
 O projeto foi desenvolvido na disciplina de Projeto Integrado do curso de Ciência da Computação na UFES - Universidade Federal do Espírito Santo.
 
 <div align=center>
-<img src="img-readme/gifMPS.gif" alt="Gif do App"  height="350" width="25%">
+<img src="img-readme/gifMPS.gif" alt="Gif do App" width="20%">
 </div>
 
 <div id="funcionalidades"> </div>
