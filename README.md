@@ -4,10 +4,6 @@
 
 <!-- ![Kotlin](https://img.shields.io/badge/kotlin-%237F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white) ![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white) ![Android Studio](https://img.shields.io/badge/Android%20Studio-3DDC84.svg?style=for-the-badge&logo=android-studio&logoColor=white) ![Android](https://img.shields.io/static/v1?label=made%20for&message=android&color=green&style=for-the-badge&logo=ANDROID)  -->
 
-<div align=center>
-<img src="img-readme/gifMPS.gif" alt="Gif do App" width="33%">
-</div>
-
 ## Tópicos
   <ol>
     <li><a href="#sobre-o-projeto">Sobre o Projeto</a></li>
@@ -33,6 +29,9 @@ Market Price $can é um aplicativo mobile android para criação de listas de co
 
 O projeto foi desenvolvido na disciplina de Projeto Integrado do curso de Ciência da Computação na UFES - Universidade Federal do Espírito Santo.
 
+<div align=center>
+<img src="img-readme/gifMPS.gif" alt="Gif do App" width="25%">
+</div>
 
 <div id="funcionalidades"> </div>
 
