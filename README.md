@@ -61,7 +61,7 @@ Aqui estão a linguagem, IDE e ferrmentas que foram utilizadas no desenvolviment
 
 ## :mantelpiece_clock: Histórico de lançamentos
  *  v1.0.0:
-   *  Aplicativo com criação, gerenciamento e compartilhamento de listas.
+   * Aplicativo com criação, gerenciamento e compartilhamento de listas.
  * vx.x.x:
    * Aplicativo com comparação de preços entre supermercados.
 
