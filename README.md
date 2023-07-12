@@ -16,7 +16,7 @@
     <li><a href="#historico">Histórico de Lançamentos</a></li>
     <li><a href="#contribuições">Contribuições</a></li>
     <li><a href="#licenca">Licença</a></li>
-    <li><a href="#contato">Licença</a></li>
+    <li><a href="#contato">Contato</a></li>
   </ol>
 
 
