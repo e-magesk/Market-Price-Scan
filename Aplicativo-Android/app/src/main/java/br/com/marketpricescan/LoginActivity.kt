@@ -12,6 +12,10 @@ import br.com.marketpricescan.model.Usuario
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 
+/**
+ * Classe responsável pela tela de login do aplicativo.
+ * Permite que o usuário faça login utilizando seu email e senha.
+ */
 class LoginActivity : AppCompatActivity() {
 
     lateinit var tvCadastrar : TextView
@@ -44,6 +48,9 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Inicializa os componentes da tela.
+     */
     private fun IniciarComponentes() {
         etEmailUsuario = findViewById(R.id.etEmailUsuario)
         etSenhaUsuario = findViewById(R.id.etSenhaUsuario)
@@ -53,12 +60,20 @@ class LoginActivity : AppCompatActivity() {
         tvRedefinirSenha = findViewById(R.id.tvRedefinirSenha)
     }
 
+    /**
+     * Autentica o usuário utilizando o email e senha fornecidos.
+     * Exibe uma Snackbar com mensagem de erro se o email ou senha estiverem vazios.
+     * Inicia a atividade HomeActivity se o login for bem sucedido.
+     *
+     * @param view A referência para a view que chamou a função.
+     */
     private fun AutenticarUsuario(view : View) {
 
         var email = etEmailUsuario.text.toString()
         var senha = etSenhaUsuario.text.toString()
 
         if(email.isEmpty() || senha.isEmpty()) {
+            // Exibe uma Snackbar com mensagem de erro se o email ou senha estiverem vazios
             var snackbar = Snackbar.make(view, "Preencha todos os campos", Snackbar.LENGTH_LONG)
             snackbar.setBackgroundTint(getColor(R.color.white))
             snackbar.setTextColor(getColor(R.color.black))
@@ -66,13 +81,16 @@ class LoginActivity : AppCompatActivity() {
         }
         else{
             pbLogin.visibility = View.VISIBLE
+            // Realiza a autenticação pelo Firebase.
             FirebaseAuth.getInstance().signInWithEmailAndPassword(email, senha).addOnCompleteListener { task ->
                 if(task.isSuccessful) {
+                    // Inicia HomeActivity se o login for bem sucedido
                     val intent = Intent(this, HomeActivity::class.java)
                     startActivity(intent)
                     finish()
                 }
                 else {
+                    // Exibe uma Snackbar de erro se o login falhar
                     pbLogin.visibility = View.INVISIBLE
                     var snackbar = Snackbar.make(view, "Erro ao autenticar usuário", Snackbar.LENGTH_LONG)
                     snackbar.setBackgroundTint(getColor(R.color.red))
