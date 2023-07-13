@@ -244,11 +244,13 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Função responsável por definir as ações dos elementos da interface.
+     */
     private fun DefinirAcoes() {
-
-        // CONFIGURAÇÕES
-
+        // Define a ação quando o usuário tocar no campo de Configurações
         cvConfiguracoes.setOnClickListener() { view ->
+            // Altera visibilidade da lista de opçoes de configuração
             if(cvConfiguracoesBackground.visibility === View.GONE){
                 cvConfiguracoesBackground.visibility = View.VISIBLE
             }
@@ -257,12 +259,14 @@ class HomeActivity : AppCompatActivity() {
             }
         }
 
+        // Define a ação quando o usuário tocar no campo de Editar conta
         tvEditarConta.setOnClickListener() { view ->
             var intent = Intent(this, EditarUsuarioActivity::class.java)
             startActivity(intent)
             cvConfiguracoesBackground.visibility = View.GONE
         }
 
+        // Define a ação quando o usuário tocar no campo de Lista de Amigos
         tvListaDeAmigos.setOnClickListener() { view ->
             val bundle = Bundle()
             bundle.putParcelable("usuario", usuario)
@@ -272,13 +276,18 @@ class HomeActivity : AppCompatActivity() {
             cvConfiguracoesBackground.visibility = View.GONE
         }
 
+        // Define a ação quando o usuário tocar no campo de Sair da Conta
         tvSairDaConta.setOnClickListener() { view ->
+            // Faz logout do usuário atual
             FirebaseAuth.getInstance().signOut()
+
+            // Cria uma intent para abrir a atividade de login
             var intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
         }
 
+        // Define a ação quando o usuário tocar no campo de Criar Nova Lista
         cvCriarNovaLista.setOnClickListener() { view ->
             val bundle = Bundle()
             bundle.putParcelable("usuario", usuario)
@@ -287,7 +296,9 @@ class HomeActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        // Define a ação quando o usuário tocar no campo de Minhas Listas
         cvMinhasListas.setOnClickListener { view ->
+            // Define a exibição da lista de listas de compra
             if(flagExibindoMinhasListas) {
                 var layout = cvMinhasListasBackground.layoutParams
                 val density = resources.displayMetrics.density
@@ -304,14 +315,18 @@ class HomeActivity : AppCompatActivity() {
             }
         }
 
+        // Define a ação quando o usuário tocar no campo de Criar Lista QR Code
         cvCriarListaQRCode.setOnClickListener() { view ->
+            // Caso permissão da câmera não esteja habilitada, faz a requisição.
             if (ActivityCompat.checkSelfPermission(applicationContext, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
                 ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CAMERA), 1)
-            } else {
+            } else { // Permissão concedida
+                // Verifica se há listas para serem deletadas
                 runBlocking {
                     VerificarDelecaoDeListas()
                 }
 
+                // Cria uma intent para abrir a atividade de QR Code
                 val intent = Intent(this, QRCodeActivity::class.java)
                 startActivity(intent)
                 finish()
@@ -320,6 +335,14 @@ class HomeActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Função que é chamada quando o resultado de uma solicitação de permissão é retornado.
+     * Função utilizada na requisição de uso da câmera.
+     *
+     * @param requestCode O código de solicitação fornecido ao solicitar permissão.
+     * @param permissions As permissões solicitadas.
+     * @param grantResults Os resultados das solicitações de permissão.
+     */
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -327,29 +350,51 @@ class HomeActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (grantResults[0] == PERMISSION_GRANTED){
+            // Se a permissão foi concedida, cria uma intent para abrir a atividade de QR Code
             val intent = Intent(this, QRCodeActivity::class.java)
             startActivity(intent)
             finish()
         }
     }
 
+    /**
+     * Prepara o CardView para exibir as listas de compras do usuário.
+     * Configura o adaptador, o layout manager e o clique nos itens da RecyclerView.
+     * Verifica a remoção e alteração de itens para executar ações específicas.
+     */
     private fun PrepararCardViewMinhasListas(){
         adaptador = ListaDeCompraAdaptador(this, usuario.listasDeCompra)
         adaptador.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+
+            /**
+             * Chamado quando os itens da lista são removidos.
+             *
+             * @param positionStart A posição inicial dos itens removidos.
+             * @param itemCount O número de itens removidos.
+             */
             override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
                 super.onItemRangeRemoved(positionStart, itemCount)
                 Log.d("Teste", "Entrei para deletar")
+                // Atualiza a altura do layout do CardView com base no número de listas de compras
                 var layout = cvMinhasListasBackground.layoutParams
                 val density = resources.displayMetrics.density
                 layout.height = (floor(60 * density) * (usuario.listasDeCompra.size + 1)).toInt()
                 cvMinhasListasBackground.layoutParams = layout
 
+                // Verifica se há listas para serem deletadas
                 VerificarDelecaoDeListas()
             }
 
+            /**
+             * Chamado quando os itens da lista são alterados.
+             *
+             * @param positionStart A posição inicial dos itens alterados.
+             * @param itemCount O número de itens alterados.
+             * @param payload Dados adicionais sobre a alteração.
+             */
             override fun onItemRangeChanged(positionStart: Int, itemCount: Int, payload: Any?) {
                 super.onItemRangeChanged(positionStart, itemCount, payload)
-
+                // Verifica se uma lista de compras foi selecionada
                 if(payload.toString() == "selected"){
                     val bundle = Bundle()
                     bundle.putParcelable("listaDeCompra", usuario.listasDeCompra[positionStart])
@@ -362,23 +407,30 @@ class HomeActivity : AppCompatActivity() {
             }
         })
 
+        // Configura a RecyclerView
         rvMinhasListas.setHasFixedSize(true)
         rvMinhasListas.layoutManager = LinearLayoutManager(this)
         rvMinhasListas.adapter = adaptador
         rvMinhasListas.isClickable = true
     }
 
+    /**
+    * Verifica se há listas de compras para deleção e realiza as ações necessárias.
+    */
     private fun VerificarDelecaoDeListas(){
+        // Cria uma lista de referências dos documentos das listas de compras do usuário.
         var referenciasListas = mutableListOf<DocumentReference>()
         for(lista in usuario.listasDeCompra){
             Log.d("Teste", "Lista de compra conferida: ${lista.nome}")
             referenciasListas.add(database.collection("lista_de_compra").document(lista.id))
         }
 
+        // Cria um mapa de atualizações contendo a lista de referências
         val updates = hashMapOf<String, Any>(
             "listasDeCompra" to referenciasListas,
         )
 
+        //   Atualiza o documento do usuário no Firestore substituindo a lista de referências.
         documentoUsuario.update(updates).addOnSuccessListener {
             Log.d("Teste", "Substituição de lista feita com sucesso")
         }.addOnFailureListener {
