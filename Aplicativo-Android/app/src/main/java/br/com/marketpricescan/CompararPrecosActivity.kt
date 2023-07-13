@@ -49,7 +49,6 @@ class CompararPrecosActivity : AppCompatActivity() {
 
         Log.d("Teste", "Lista chegou no comparador" + "${listaDeCompraComparacao.produtos.size}")
 
-        // Inicializa os componentes da tela
         InicializarComponentes()
         // Busca os supermercados no Firestore
         BuscarSupermercados()

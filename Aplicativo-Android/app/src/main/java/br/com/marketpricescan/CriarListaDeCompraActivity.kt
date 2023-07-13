@@ -31,6 +31,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
+/**
+ * Activity responsável por criar uma nova lista de compra.
+ */
 class CriarListaDeCompraActivity : AppCompatActivity() {
 
     private lateinit var rvListaDeCompra: RecyclerView
@@ -68,6 +71,7 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
         val coroutineScope = CoroutineScope(Dispatchers.Main)
         coroutineScope.launch {
 
+            // Obtém o objeto "usuario" enviado pela activity HomeActivity
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 usuario = intent.getParcelableExtra("usuario", Usuario::class.java)!!
             } else {
@@ -91,6 +95,10 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Inicializa os componentes da tela de cadastro de usuário.
+     * Associa as variáveis locais aos elementos de layout correspondentes através de seus IDs.
+     */
     private fun IniciarComponentes() {
         btnAdicionarItem = findViewById(R.id.btnAdicionarItem)
         rvListaDeCompra = findViewById(R.id.rvListaDeCompra)
@@ -106,6 +114,9 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
         listaDeCompra = ListaDeCompra("")
     }
 
+    /**
+     * Função responsável por exibir a lista de compras de acordo com sua situação (vazia ou não).
+     */
     private fun VerificarSituacaoLista() {
         if (produtos.size == 0) {
             tvListaVazia.visibility = TextView.VISIBLE
@@ -116,11 +127,15 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Função responsável por vincular a lista de compras ao usuário.
+     */
     private fun VincularListaAoUsuario() {
-
+        // Obtém o documento do usuário a partir do ID
         documentoUsuario = database.collection("usuario")
             .document(usuarioId)
 
+        // Atualiza o campo "listasDeCompra" do documento do usuário, adicionando o documento da lista de compras
         documentoUsuario.update("listasDeCompra", FieldValue.arrayUnion(documentoListaDeCompra))
             .addOnSuccessListener {
                 Log.d("Teste", "Sucesso ao vincular a lista ao usuário")
@@ -131,11 +146,15 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Função responsável por definir as ações dos componentes da tela.
+     */
     private fun DefinirAcoes(){
-
+        // Define a ação quando o usuário tocar no campo de título da lista
         etTituloLista.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_UP) {
                 val drawableRight = etTituloLista.compoundDrawables[2] // Ícone no lado direito (índice 2)
+                // Configuração de visibilidade para o toque em opções ao lado do título da lista
                 if (event.rawX >= (etTituloLista.right - drawableRight.bounds.width())) {
                     if(cvOpcoes.visibility === View.GONE){
                         cvOpcoes.visibility = View.VISIBLE
@@ -149,23 +168,29 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
             false
         }
 
+        // Define a ação quando o usuário tocar em qualquer área da tela
         rootLayout.setOnClickListener { view ->
+            // Esconde as opções caso estejam visíveis
             if(cvOpcoes.visibility === View.VISIBLE){
                 cvOpcoes.visibility = View.GONE
             }
         }
 
+        // Define a ação quando o usuário clicar no botão "Comparar Preços"
         tvCompararPrecos.setOnClickListener() { view ->
             val intent = Intent(this, CompararPrecosActivity::class.java)
             intent.putExtra("listaDeCompra", listaDeCompra)
             startActivity(intent)
         }
 
+        // Define a ação quando o usuário clicar no botão "Compartilhar"
         tvCompartilhar.setOnClickListener() { view ->
+            // Esconde as opções e exibe o componente para compartilhar com amigos
             cvOpcoes.visibility = View.GONE
             cvCompartilharComAmigos.visibility = View.VISIBLE
         }
 
+        // Define a ação quando o usuário clicar no botão "Adicionar Item"
         btnAdicionarItem.setOnClickListener() { view ->
             produtos.add(Produto("" ))
             adaptadorProdutos.notifyDataSetChanged()
@@ -174,13 +199,18 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
 
         }
 
+        // Configuração do listener para o clique no botão "Compartilhar" para ocultar a seção de compartilhamento com amigos
         btnCompartilhar.setOnClickListener() { view ->
             cvCompartilharComAmigos.visibility = View.GONE
         }
 
     }
 
+    /**
+     * Sobrescreve o método onBackPressed() para tratar o evento de pressionar o botão "Voltar".
+     */
     override fun onBackPressed() {
+        // Oculta a visibilidade dos CardView opções e compartilhar com amigos
         if(cvOpcoes.visibility === View.VISIBLE){
             cvOpcoes.visibility = View.GONE
         }
@@ -189,13 +219,17 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
             amigosCompartilhar.clear()
         }
         else {
+            // Exibe um diálogo de confirmação para salvar a lista
             var alertDialog = AlertDialog.Builder(this)
                 .setTitle("Salvar Lista?")
                 .setMessage("Deseja salvar a lista " + etTituloLista.text + "?")
                 .setPositiveButton("OK") { dialog, which ->
+                    // Em caso afirmativo, chama função para criar os produtos no Firestore
                     runBlocking {
                         CriarProdutos()
                     }
+
+                    // Delay para carregamento
                     loadingCard.visibility = View.VISIBLE // Exibir o indicador de progresso
                     val coroutineScope = CoroutineScope(Dispatchers.Main)
                     coroutineScope.launch {
@@ -218,10 +252,14 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Função responsável por criar e salvar os produtos no banco de dados.
+     */
     private fun CriarProdutos(){
 
         if(produtos.size == 0){
             runBlocking {
+                // Salva a lista de compras vazia no banco de dados
                 SalvarListaDeCompra(mutableListOf<DocumentReference>())
             }
             return
@@ -230,6 +268,7 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
         var referenciasProdutos = mutableListOf<DocumentReference>()
         var flagFinal = 0
         for(produto in produtos){
+            // Cria um novo documento para cada produto na lista de produtos
             var documentoProduto = FirebaseFirestore.getInstance().collection("produto")
                 .document()
             produto.id = documentoProduto.id
@@ -237,7 +276,9 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
             documentoProduto.set(produto)
                 .addOnSuccessListener {
                     flagFinal++
+                    // Verifica se todos os produtos foram salvos
                     if (flagFinal == produtos.size){
+                        // Salva a lista de compras no banco de dados
                         runBlocking {
                             SalvarListaDeCompra(referenciasProdutos)
                         }
@@ -250,20 +291,27 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Função responsável por salvar a lista de compra no banco de dados.
+     * @param referenciaProdutos Lista de referências aos documentos dos produtos.
+     */
     private fun SalvarListaDeCompra(referenciaProdutos: MutableList<DocumentReference>){
-
+        // Cria um novo documento para a lista de compra
         documentoListaDeCompra = database.collection("lista_de_compra")
             .document()
 
+        // Cria um mapa com os dados a serem salvos
         val updates = hashMapOf<String, Any>(
             "produtos" to referenciaProdutos,
             "nome" to etTituloLista.text.toString(),
             "id" to documentoListaDeCompra.id
         )
 
+        // Salva os dados da lista de compra no documento
         documentoListaDeCompra.set(updates)
             .addOnSuccessListener {
                 Log.d("Teste", "Sucesso ao criar a lista no banco de dados")
+                // Vincula lista de compras com o usuário e compartilha com amigos.
                 runBlocking {
                     VincularListaAoUsuario()
                     CompartilharLista()
@@ -274,12 +322,16 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
             }
     }
 
+    /**
+     * Função responsável por compartilhar a lista de compra com os amigos selecionados.
+     */
     private fun CompartilharLista(){
 
         for(amigo in amigosCompartilhar){
             documentoUsuario = database.collection("usuario")
                 .document(amigo.id)
 
+            // Adiciona a lista de compra ao array de listas de compra do amigo
             documentoUsuario.update("listasDeCompra", FieldValue.arrayUnion(documentoListaDeCompra))
                 .addOnSuccessListener {
                     Log.d("Teste", "Sucesso ao compartilhar a lista de compra")
@@ -291,27 +343,40 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Função responsável por definir o adaptador para a lista de produtos exibida no RecyclerView.
+     */
     private fun DefinirAdaptadorProdutos(){
         adaptadorProdutos = ProdutoListaDeCompraAdaptador(this, produtos)
+        // Registra um observer para monitorar remoções de itens do adaptador
         adaptadorProdutos.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
                 super.onItemRangeRemoved(positionStart, itemCount)
+                // Verifica a situação da lista após a remoção de itens
                 VerificarSituacaoLista()
             }
         })
 
+        // Configura o RecyclerView
         rvListaDeCompra.setHasFixedSize(true)
         rvListaDeCompra.layoutManager = LinearLayoutManager(this)
         rvListaDeCompra.adapter = adaptadorProdutos
         rvListaDeCompra.isClickable = true
     }
 
+    /**
+     * Função responsável por definir o adaptador para a lista de usuários disponíveis para compartilhar.
+     */
     private fun DefinirAdaptadorUsuariosCompartilhar(){
 
         adaptadorUsuariosCompartilhar = UsuarioCompartilharAdaptador(this, usuario.amigos)
+
+        // Registra um observer para monitorar alterações nos itens do adaptador
         adaptadorUsuariosCompartilhar.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeChanged(positionStart: Int, itemCount: Int, payload: Any?) {
                 super.onItemRangeChanged(positionStart, itemCount, payload)
+                // Verifica o payload para determinar se o usuário foi selecionado ou desmarcado.
+                // Insere ou remove o amigo da lista de amigos de acordo com o payload.
                 if(payload.toString() === "checked"){
                     Log.d("Teste", "Usuário selecionado")
                     amigosCompartilhar.add(usuario.amigos[positionStart])
@@ -324,6 +389,7 @@ class CriarListaDeCompraActivity : AppCompatActivity() {
             }
         })
 
+        // Configura o RecyclerView
         rvCompartilharComAmigos.setHasFixedSize(true)
         rvCompartilharComAmigos.layoutManager = LinearLayoutManager(this)
         rvCompartilharComAmigos.adapter = adaptadorUsuariosCompartilhar
