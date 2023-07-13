@@ -67,8 +67,9 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.lista_de_compra)
 
+        // Exibe o indicador de progresso
         val loadingCard = findViewById<CardView>(R.id.loadingPageListaDeCompra)
-        loadingCard.visibility = View.VISIBLE // Exibir o indicador de progresso
+        loadingCard.visibility = View.VISIBLE
 
         val coroutineScope = CoroutineScope(Dispatchers.Main)
         coroutineScope.launch {
