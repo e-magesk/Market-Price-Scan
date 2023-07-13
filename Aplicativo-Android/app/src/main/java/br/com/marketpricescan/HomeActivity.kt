@@ -33,7 +33,9 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlin.math.floor
 
-
+/**
+ * Classe responsável por controlar a tela inicial da aplicação.
+ */
 class HomeActivity : AppCompatActivity() {
 
     lateinit var cvMinhasListas: CardView
@@ -77,6 +79,9 @@ class HomeActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Função responsável por inicializar os componentes da tela.
+     */
     private fun IniciarComponentes() {
         cvConfiguracoes = findViewById(R.id.cvConfiguracoes)
         cvCriarNovaLista = findViewById(R.id.cvCriarNovaLista)
@@ -94,68 +99,89 @@ class HomeActivity : AppCompatActivity() {
         cvConfiguracoes.isClickable = true
     }
 
+    /**
+     * Função responsável por inicializar o usuário.
+     */
     private fun InicializarUsuario() {
 
         lateinit var listas : ArrayList<DocumentReference>
         lateinit var amigos : ArrayList<DocumentReference>
 
-        // documentoUsuario = database.collection("usuario").document(usuarioId!!)
         documentoUsuario.get().addOnSuccessListener { documentSnapshot ->
             if (documentSnapshot.exists()) {
+                // Criar objeto Usuario com base nos dados do documento
                 usuario = Usuario(documentSnapshot.getString("nome")!!, usuarioId)
-                // listas = documentSnapshot.get("listasDeCompra") as ArrayList<DocumentReference>
-               // usuario = Usuario(documentSnapshot.getString("nome")!!, usuarioId!!)
+
                 listas = documentSnapshot.get("listasDeCompra") as ArrayList<DocumentReference>
                 amigos = documentSnapshot.get("amigos") as ArrayList<DocumentReference>
 
                 var tvNomeUsuario = findViewById<TextView>(R.id.tvWelcomeHome)
                 tvNomeUsuario.text = "Welcome, ${this.usuario.nome}!"
 
-                // listas = documentSnapshot.get("listasDeCompra") as ArrayList<DocumentReference>
+                // Chama funções para atualizar as listas de compras e amigos tempo real
                 AtualizarListasEmTempoReal()
-                // InicializarListasDeCompraUsuario(listas) // transformar em função de corrotina
                 AtualizarAmigosEmTempoReal()
+                // Chama função para definir ações da interface
                 DefinirAcoes()
             }
         }
     }
+    /**
+     * Atualiza as listas de compra do usuário em tempo real, sempre que houver alguma alteração no banco de dados.
+     */
     private fun AtualizarListasEmTempoReal() {
+        // Adiciona um listener para capturar mudanças nos dados do documento
         documentoUsuario.addSnapshotListener{ querySnapshot, firebaseFirestoreException ->
             firebaseFirestoreException?.let {
                 Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
                 return@addSnapshotListener
             }
             querySnapshot?.let{
+                // Obtém uma referência atualizada do documento do usuário
                 documentoUsuario = database.collection("usuario").document(usuarioId)
                 documentoUsuario.get().addOnSuccessListener { documentSnapshot ->
                     if (documentSnapshot.exists()) {
-                        Log.d("Atualizacao", "------------------ Detectou")
+                        // Obtém as referências das listas de compra do usuario
                         val listas = documentSnapshot.get("listasDeCompra") as ArrayList<DocumentReference>
-                        InicializarListasDeCompraUsuario(listas) // transformar em função de corrotina
+
+                        // Chama função para inicializar as listas de compra do usuário
+                        InicializarListasDeCompraUsuario(listas)
                     }
                 }
             }
         }
     }
 
+    /**
+     * Atualiza as lista de amigos do usuário em tempo real, sempre que houver alguma alteração no banco de dados.
+     */
     private fun AtualizarAmigosEmTempoReal() {
+        // Adiciona um listener para capturar mudanças nos dados do documento
         documentoUsuario.addSnapshotListener{ querySnapshot, firebaseFirestoreException ->
             firebaseFirestoreException?.let {
                 Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
                 return@addSnapshotListener
             }
             querySnapshot?.let{
+                // Obtém uma referência atualizada do documento do usuário
                 documentoUsuario = database.collection("usuario").document(usuarioId)
                 documentoUsuario.get().addOnSuccessListener { documentSnapshot ->
                     if (documentSnapshot.exists()) {
-                        Log.d("Atualizacao", "------------------ Detectou")
+                        // Obtém as referências dos amigos do usuario
                         val amigos = documentSnapshot.get("amigos") as ArrayList<DocumentReference>
-                        InicializarAmigos(amigos) // transformar em função de corrotina
+                        // Chama função para inicializar os amigos
+                        InicializarAmigos(amigos)
                     }
                 }
             }
         }
     }
+
+    /**
+     * Inicializa as listas de compra do usuário com base nas referências fornecidas.
+     *
+     * @param listas As referências das listas de compra.
+     */
     private fun InicializarListasDeCompraUsuario(listas : ArrayList<DocumentReference>) {
 
         val coroutineScope = CoroutineScope(Dispatchers.Main)
@@ -165,18 +191,21 @@ class HomeActivity : AppCompatActivity() {
                 val tasks = mutableListOf<Deferred<Unit>>()
                 for (lista in listas) {
                     val task = async {
+                        // Obtém o documento da lista de compra
                         val documentSnapshot =
                             lista.get().await() // Await espera a conclusão da chamada assíncrona
                         if (documentSnapshot.exists()) {
+                            // Extrai os dados do documento
                             val nome = documentSnapshot.getString("nome")!!
                             val id = documentSnapshot.id
                             val listaDeCompra = ListaDeCompra(nome, id)
+                            // Adiciona a lista de compra à lista do usuário
                             usuario.listasDeCompra.add(listaDeCompra)
                         }
                     }
                     tasks.add(task)
                 }
-                // Aguarde a conclusão de todas as tarefas assíncronas
+                // Aguarda a conclusão de todas as tarefas assíncronas
                 tasks.awaitAll()
             }
 
@@ -184,6 +213,11 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Inicializa os amigos do usuário com base nas referências fornecidas.
+     *
+     * @param amigos As referências dos amigos.
+     */
     private fun InicializarAmigos(amigos : ArrayList<DocumentReference>){
         usuario.amigos.clear()
         val coroutineScope = CoroutineScope(Dispatchers.Main)
@@ -191,21 +225,23 @@ class HomeActivity : AppCompatActivity() {
             val tasks = mutableListOf<Deferred<Unit>>()
             for (amigo in amigos) {
                 val task = async {
+                    // Obtém o documento do amigo
                     val documentSnapshot =
                         amigo.get()
                             .await() // Await espera a conclusão da chamada assíncrona
                     if (documentSnapshot.exists()) {
+                        // Extrai os dados do documento
                         val nome = documentSnapshot.getString("nome")!!
                         val id = documentSnapshot.id
+                        // Adiciona o amigo à lista de amigos do usuário
                         usuario.amigos.add(Usuario(nome, id))
                     }
                 }
                 tasks.add(task)
             }
-            // Aguarde a conclusão de todas as tarefas assíncronas
+            // Aguarda a conclusão de todas as tarefas assíncronas
             tasks.awaitAll()
         }
-        Log.d("Teste", "Cheguei até aqui")
     }
 
     private fun DefinirAcoes() {
