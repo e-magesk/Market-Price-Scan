@@ -20,6 +20,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+/**
+ * Activity responsável por comparar os preços dos produtos em diferentes supermercados.
+ */
 class CompararPrecosActivity : AppCompatActivity() {
 
     lateinit var rvSupermercados : RecyclerView
@@ -37,6 +40,7 @@ class CompararPrecosActivity : AppCompatActivity() {
         cvLoadingPage = findViewById(R.id.loadingPageCompararPrecos)
         cvLoadingPage.visibility = View.VISIBLE
 
+        // Obtém a lista de compra enviada pela activity AtualizarListaDeComprasActivity
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             listaDeCompraComparacao = intent.getParcelableExtra("listaDeCompra", ListaDeCompra::class.java)!!
         } else {
@@ -45,10 +49,12 @@ class CompararPrecosActivity : AppCompatActivity() {
 
         Log.d("Teste", "Lista chegou no comparador" + "${listaDeCompraComparacao.produtos.size}")
 
+        // Inicializa os componentes da tela
         InicializarComponentes()
-
+        // Busca os supermercados no Firestore
         BuscarSupermercados()
 
+        // Delay para carregamento
         val coroutineScope = CoroutineScope(Dispatchers.Main)
         coroutineScope.launch {
             delay(3000)
@@ -56,10 +62,16 @@ class CompararPrecosActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Inicializa os componentes da tela.
+     */
     private fun InicializarComponentes(){
         rvSupermercados = findViewById(R.id.rvSupermercados)
     }
 
+    /**
+     * Define o adaptador e configura o RecyclerView com os supermercados e a lista de compra.
+     */
     private fun DefinirAdaptador(){
         adaptadorSupermercados = SupermercadoAdaptador(this, supermercados, listaDeCompraComparacao)
         rvSupermercados.setHasFixedSize(true)
@@ -67,13 +79,19 @@ class CompararPrecosActivity : AppCompatActivity() {
         rvSupermercados.adapter = adaptadorSupermercados
     }
 
+    /**
+     * Busca os supermercados no Firestore e adiciona-os à lista de supermercados.
+     */
     private fun BuscarSupermercados(){
         supermercados = mutableListOf()
+
+        // Acessa a coleção "supermercado" no Firestore
         database.collection("supermercado")
             .get()
             .addOnSuccessListener { result ->
                 for (document in result) {
-                    var supermercado = Supermercado(document.toObject(Supermercado::class.java)!!)
+                    // Para cada documento retornado, cria um objeto Supermercado e adiciona à lista
+                    val supermercado = Supermercado(document.toObject(Supermercado::class.java)!!)
                     supermercados.add(supermercado)
                 }
                 DefinirAdaptador()

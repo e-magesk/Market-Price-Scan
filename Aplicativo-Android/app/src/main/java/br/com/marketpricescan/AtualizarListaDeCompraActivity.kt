@@ -74,6 +74,7 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
         val coroutineScope = CoroutineScope(Dispatchers.Main)
         coroutineScope.launch {
 
+            // Obtém a lista de compra enviada pela activity HomeActivity
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 listaDeCompra = intent.getParcelableExtra("listaDeCompra", ListaDeCompra::class.java)!!
                 usuario = intent.getParcelableExtra("usuario", Usuario::class.java)!!
