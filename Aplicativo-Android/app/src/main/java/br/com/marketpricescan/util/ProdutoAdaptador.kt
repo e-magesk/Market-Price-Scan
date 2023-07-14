@@ -21,6 +21,12 @@ import br.com.marketpricescan.model.Usuario
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.DecimalFormat
 
+/**
+ * Adaptador personalizado para exibição de produtos em um RecyclerView.
+ *
+ * @property context Contexto da aplicação.
+ * @property produtos Lista de produtos a serem exibidos.
+ */
 class ProdutoAdaptador(private val context : Context, private val produtos: MutableList<Produto>) : RecyclerView.Adapter<ProdutoAdaptador.ItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -38,11 +44,21 @@ class ProdutoAdaptador(private val context : Context, private val produtos: Muta
         return produtos.size
     }
 
+    /**
+     * ViewHolder para os itens de produto.
+     *
+     * @param itemView A visualização de um item de produto.
+     */
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val actvProdutoListaDeCompra: AutoCompleteTextView = itemView.findViewById(R.id.etProdutoListaDeCompra)
         private val etPrecoProdutoListaDeCompra: EditText = itemView.findViewById(R.id.etPrecoProdutoListaDeCompra)
         private val ivCircleCheck: ImageView = itemView.findViewById(R.id.circleCheck)
 
+        /**
+         * Liga os dados de um produto à visualização do item.
+         *
+         * @param produto Produto a ser exibido.
+         */
         fun bind(produto: Produto) {
             actvProdutoListaDeCompra.setText(produto.nome)
             actvProdutoListaDeCompra.isClickable = false
