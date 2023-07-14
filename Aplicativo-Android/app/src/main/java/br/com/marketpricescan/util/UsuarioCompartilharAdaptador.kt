@@ -12,6 +12,12 @@ import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.R
 import br.com.marketpricescan.model.Usuario
 
+/**
+ * Adaptador para exibir uma lista de usuários para compartilhamento em um RecyclerView.
+ *
+ * @property context O contexto da aplicação.
+ * @property usuarios A lista de usuários a ser exibida.
+ */
 class UsuarioCompartilharAdaptador(private val context : Context, private val usuarios: MutableList<Usuario>) : RecyclerView.Adapter<UsuarioCompartilharAdaptador.ItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -28,6 +34,11 @@ class UsuarioCompartilharAdaptador(private val context : Context, private val us
         return usuarios.size
     }
 
+    /**
+     * Classe interna que representa cada item de visualização individual na lista.
+     *
+     * @param itemView A exibição do item.
+     */
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvNomeUsuarioCompartilhar: TextView = itemView.findViewById(R.id.tvNomeUsuarioCompartilhar)
         private val iconCheckAmigo : ImageView = itemView.findViewById(R.id.iconCheckAmigo)
@@ -50,6 +61,12 @@ class UsuarioCompartilharAdaptador(private val context : Context, private val us
             tvNomeUsuarioCompartilhar.setText(usuario.nome)
         }
 
+        /**
+         * Marca ou desmarca um amigo com base no estado atual.
+         *
+         * @param usuario O usuário a ser verificado ou desmarcado.
+         * @param position A posição do usuário na lista.
+         */
         private fun CheckOrUncheckFriend(usuario: Usuario, position : Int){
             if (checkOrUncheck == 1) {
                 iconCheckAmigo.setImageResource(R.drawable.unchecked_circle)
