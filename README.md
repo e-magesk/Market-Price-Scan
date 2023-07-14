@@ -68,7 +68,7 @@ Aqui estão a linguagem, IDE e ferrmentas que foram utilizadas no desenvolviment
 
  * v1.0.0:
    * Aplicativo com criação, gerenciamento e compartilhamento de listas.
- * vx.x.x:
+ * v1.1.0:
    * Aplicativo com comparação de preços entre supermercados.
 
 <div id="contribuições"> </div>
@@ -95,7 +95,7 @@ Distribuído na Licença MIT. Veja `LICENSE` para mais informações
 
 ## ✉️ Contato
 
-Eduarda Magesk - @edu.ufes.br
+Eduarda Magesk - eduarda.magesk@edu.ufes.br
 
 Letícia Cardoso - leticia.c.rodrigues@edu.ufes.br
 
