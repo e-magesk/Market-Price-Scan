@@ -10,9 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c266b3e8-be57-4435-9a93-50d6ce0627f0" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/GerenciarAmigosActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/GerenciarAmigosActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/HomeActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/br/com/marketpricescan/HomeActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/login.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/login.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,6 +65,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="layoutResourceFile" />
+        <option value="resourceFile" />
         <option value="Kotlin Class" />
       </list>
     </option>
@@ -103,6 +102,9 @@
       <recent name="br.com.marketpricescan.util" />
     </key>
     <key name="android.template.-304121197">
+      <recent name="br.com.marketpricescan" />
+    </key>
+    <key name="android.template.887136985">
       <recent name="br.com.marketpricescan" />
     </key>
   </component>

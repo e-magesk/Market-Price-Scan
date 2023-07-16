@@ -8,13 +8,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.R
 import br.com.marketpricescan.model.Produto
-import com.google.android.material.color.MaterialColors.getColor
+import br.com.marketpricescan.model.ProdutoNotaFiscal
+import br.com.marketpricescan.model.Usuario
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.DecimalFormat
 
@@ -36,7 +39,7 @@ class ProdutoListaDeCompraAdaptador(private val context : Context, private val p
     }
 
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val etProdutoListaDeCompra: EditText =
+        private val actvProdutoListaDeCompra: AutoCompleteTextView =
             itemView.findViewById(R.id.etProdutoListaDeCompra)
         private val etPrecoProdutoListaDeCompra: EditText =
             itemView.findViewById(R.id.etPrecoProdutoListaDeCompra)
@@ -48,8 +51,8 @@ class ProdutoListaDeCompraAdaptador(private val context : Context, private val p
         }
 
         fun bind(produto: Produto) {
-            etProdutoListaDeCompra.setText(produto.nome)
-            etProdutoListaDeCompra.requestFocus()
+            actvProdutoListaDeCompra.setText(produto.nome)
+            actvProdutoListaDeCompra.requestFocus()
             if (produto.isChecked) {
                 ivCircleCheck.setImageResource(R.drawable.check_circle)
                 checkOrUncheck = 1
@@ -57,7 +60,7 @@ class ProdutoListaDeCompraAdaptador(private val context : Context, private val p
                 ivCircleCheck.setImageResource(R.drawable.unchecked_circle)
                 checkOrUncheck = 0
             }
-            etPrecoProdutoListaDeCompra.setText(produto.preco.toString())
+            etPrecoProdutoListaDeCompra.setText(String.format("%.2f", produto.preco))
         }
 
         private fun PopUpConfirmacaoDeletarItem(produto: Produto, position: Int) {
@@ -96,7 +99,7 @@ class ProdutoListaDeCompraAdaptador(private val context : Context, private val p
 
         private fun DefinirAcoes() {
 
-            etProdutoListaDeCompra.addTextChangedListener(object : TextWatcher {
+            actvProdutoListaDeCompra.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                     // Não é necessário implementar
                 }
@@ -107,11 +110,12 @@ class ProdutoListaDeCompraAdaptador(private val context : Context, private val p
                 }
 
                 override fun afterTextChanged(s: Editable?) {
-                    // Não é necessário implementar
+                    val texto = s.toString()
+                    BuscarProdutosPorNome(texto, bindingAdapterPosition)
                 }
             })
 
-            etProdutoListaDeCompra.setOnLongClickListener {
+            actvProdutoListaDeCompra.setOnLongClickListener {
                 val currentPosition = bindingAdapterPosition
                 PopUpConfirmacaoDeletarItem(produtos[currentPosition], currentPosition)
                 true
@@ -172,7 +176,40 @@ class ProdutoListaDeCompraAdaptador(private val context : Context, private val p
                     // Não é necessário implementar
                 }
             })
+        }
 
+        private fun BuscarProdutosPorNome(texto : String, posicao: Int){
+            val produtos = FirebaseFirestore.getInstance().collection("produto_nota_fiscal")
+            produtos.whereGreaterThanOrEqualTo("nome", texto.uppercase())
+                .orderBy("nome")
+                .limit(10)
+                .get()
+                .addOnSuccessListener { documents ->
+                    val sugestoes = mutableListOf<ProdutoNotaFiscal>()
+                    for (document in documents) {
+                        val nome = document.getString("nome")!!
+                        val id = document.id
+                        val produto = ProdutoNotaFiscal(id, nome)
+                        sugestoes.add(produto)
+                    }
+                    val adapter = ProdutoNomeArrayAdaptador(itemView.context, sugestoes)
+                    actvProdutoListaDeCompra.setAdapter(adapter)
+                    actvProdutoListaDeCompra.setOnItemClickListener { parent, view, position, id ->
+                        val selectedItem = parent.getItemAtPosition(position) as ProdutoNotaFiscal
+                        MudarItem(posicao, selectedItem)
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    actvProdutoListaDeCompra.setError("Nenhum produto encontrado")
+                }
+        }
+
+        private fun MudarItem(position: Int, produto: ProdutoNotaFiscal){
+            Log.d("Teste", "MudarItem: " + produto.nome + " " + produto.id)
+            produtos[position].nome = produto.nome
+            produtos[position].codigoLocal = produto.id
+            Log.d("Teste", "MudarItem: " + produtos[position].nome + " " + produtos[position].codigoLocal)
+            notifyItemChanged(position)
         }
     }
 }

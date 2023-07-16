@@ -13,6 +13,7 @@ class ListaDeCompra() : Parcelable{
     constructor(parcel: Parcel) : this() {
         id = parcel.readString()!!
         nome = parcel.readString()!!
+        parcel.readTypedList(produtos, Produto.CREATOR)
     }
 
 
@@ -48,6 +49,7 @@ class ListaDeCompra() : Parcelable{
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(id)
         parcel.writeString(nome)
+        parcel.writeTypedList(produtos)
     }
 
     override fun describeContents(): Int {

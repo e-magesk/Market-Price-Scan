@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.model.ListaDeCompra
@@ -51,6 +52,10 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
     private var amigosCompartilhar = mutableListOf<Usuario>()
     private val usuarioId: String = FirebaseAuth.getInstance().currentUser!!.uid
     private lateinit var usuario: Usuario
+    private lateinit var rootLayout : ConstraintLayout
+    private lateinit var tvCompartilhar : TextView
+    private lateinit var tvCompararPrecos : TextView
+    private lateinit var cvOpcoes : CardView
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,6 +104,10 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
         btnCompartilhar = findViewById(R.id.btnCompartilhar)
         rvCompartilharComAmigos = findViewById(R.id.rvCompartilharComAmigos)
         cvCompartilharComAmigos = findViewById(R.id.cvCompartilharComAmigos)
+        rootLayout = findViewById(R.id.rootLayoutListaDeCompra)
+        tvCompartilhar = findViewById(R.id.tvCompartilhar)
+        tvCompararPrecos = findViewById(R.id.tvCompararPrecos)
+        cvOpcoes = findViewById(R.id.cvOpcoes)
 
         documentoListaDeCompra = FirebaseFirestore.getInstance().collection("lista_de_compra")
             .document(listaDeCompra.id)
@@ -154,8 +163,11 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
             if (event.action == MotionEvent.ACTION_UP) {
                 val drawableRight = etTituloLista.compoundDrawables[2] // Ícone no lado direito (índice 2)
                 if (event.rawX >= (etTituloLista.right - drawableRight.bounds.width())) {
-                    if(cvCompartilharComAmigos.visibility === View.GONE){
-                        cvCompartilharComAmigos.visibility = View.VISIBLE
+                    if(cvOpcoes.visibility === View.GONE){
+                        cvOpcoes.visibility = View.VISIBLE
+                    }
+                    else{
+                        cvOpcoes.visibility = View.GONE
                     }
                     return@setOnTouchListener true
                 }
@@ -174,6 +186,26 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
                 rvListaDeCompra.smoothScrollToPosition(adaptador.itemCount - 1)
             }
             VerificarSituacaoLista()
+        }
+
+        tvCompartilhar.setOnClickListener() { view ->
+            cvCompartilharComAmigos.visibility = View.VISIBLE
+            cvOpcoes.visibility = View.GONE
+        }
+
+        tvCompararPrecos.setOnClickListener() { view ->
+            val bundle = Bundle()
+            bundle.putParcelable("listaDeCompra", listaDeCompra)
+            val intent = Intent(this@AtualizarListaDeCompraActivity, CompararPrecosActivity::class.java)
+            Log.d("Teste", "Atualizar Lista de compra: " + listaDeCompra.produtos.size)
+            intent.putExtras(bundle)
+            startActivity(intent)
+        }
+
+        rootLayout.setOnClickListener { view ->
+            if(cvOpcoes.visibility === View.VISIBLE){
+                cvOpcoes.visibility = View.GONE
+            }
         }
 
         btnCompartilhar.setOnClickListener() { view ->
@@ -212,7 +244,10 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
 
-        if(cvCompartilharComAmigos.visibility === View.VISIBLE){
+        if(cvOpcoes.visibility === View.VISIBLE){
+            cvOpcoes.visibility = View.GONE
+        }
+        else if(cvCompartilharComAmigos.visibility === View.VISIBLE){
             cvCompartilharComAmigos.visibility = View.GONE
             amigosCompartilhar.clear()
         }
@@ -247,6 +282,7 @@ class AtualizarListaDeCompraActivity : AppCompatActivity() {
             val tasks = mutableListOf<Deferred<Unit>>()
             val referenciasProdutos = mutableListOf<DocumentReference>()
             for (produto in listaDeCompra.produtos) {
+                Log.d("Teste", "Produto: " + produto.codigoLocal)
                 val task : Deferred<Unit> = async {
                     val documentoProduto =
                         FirebaseFirestore.getInstance().collection("produto").document(produto.id)
