@@ -30,11 +30,10 @@ import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 import java.net.URLEncoder
 
+/**
+ * Classe responsável por exibir a lista de compra com base em uma nota fiscal.
+ */
 class NotaFiscalActivity : AppCompatActivity() {
-
-    //data class Produto(var nome: String="", val preco: Double=0.0)
-    //data class ScrapingResult(val produtos: MutableList<Produto> = mutableListOf(), var count:Int = 0)
-
     lateinit var btnAdicionarItem: Button
     lateinit var listaDeCompra : ListaDeCompra
 
@@ -84,12 +83,7 @@ class NotaFiscalActivity : AppCompatActivity() {
             produtos = getProdutosFromUrl(decodedUrl)
 
             withContext(Dispatchers.Main) {
-                for (produto in produtos){
-                    println(produto.nome)
-                    println(produto.preco)
-                }
-
-                // IniciarComponentes()
+                // Inicia componentes
                 rvListaDeCompra = findViewById(R.id.rvListaDeCompra)
                 tvListaVazia = findViewById(R.id.tvListaVazia)
                 etTituloLista = findViewById(R.id.etTituloLista)
@@ -102,16 +96,24 @@ class NotaFiscalActivity : AppCompatActivity() {
         }
     }
 
-
+    /**
+     * Função responsável por obter os produtos da nota fiscal a partir de uma URL.
+     *
+     * @param url URL da nota fiscal.
+     * @return Lista de produtos da nota fiscal.
+     */
     private fun getProdutosFromUrl(url: String): MutableList<Produto>{
         val produtos = mutableListOf<Produto>()
-        Log.d("Teste", "Depois documento " + url)
+
+        // Tenta conectar à URL e obter o documento HTML
         try{
             val document = Jsoup.connect(url).get()
         }
         catch (e: Exception){
             Log.d("Teste", "Erro " + e.message)
         }
+
+        // Obtém o documento HTML da URL
         val document = Jsoup.connect(url).get()
         val tabela = document.select("table#tabResult")
 
@@ -124,6 +126,7 @@ class NotaFiscalActivity : AppCompatActivity() {
             var cod: Long = 0
 
             for (data in rowData) {
+                // Obtém nome preço e codigo do produto a partir do elemento HTML
                 nome = rowData.select("span.txtTit").text()
                 preco = rowData.select("span.valor").text().replace(',', '.').toDouble()
 
@@ -131,17 +134,27 @@ class NotaFiscalActivity : AppCompatActivity() {
                 cod = Regex("\\d+").find(textoCod.text())?.value?.toLong() ?: 0L
             }
 
+            // Cria um objeto Produto com os dados coletados e adiciona à lista de produtos
             produtos.add(Produto(nome, preco, cod.toString()))
         }
 
         return produtos
     }
 
+    /**
+     * Obtém informações de um supermercado a partir de uma URL.
+     *
+     * @param url A URL do supermercado.
+     */
     private fun getSupermercadoFromUrl(url : String){
+        // Obtém o documento HTML da URL
         val document = Jsoup.connect(url).get()
+
         val div = document.select("div#conteudo")
         val nome = div.select("#u20").text()
         val textos = div.select(".text")
+
+        // Obtem valor do CNPJ a paretir do texto
         var cnpj : String = ""
         if(textos[0].text().startsWith("CNPJ: ")){
             cnpj = textos[0].text().substring(6)
@@ -149,18 +162,34 @@ class NotaFiscalActivity : AppCompatActivity() {
         else if(textos[1].text().startsWith("CNPJ:")){
             cnpj = textos[1].text().substring(5)
         }
+
+        // Remove pontos, barras e traços do CNPJ para obter o ID
         val id = cnpj.replace(".", "").replace("/", "").replace("-", "")
+
+        // Obtém o endereço do supermercado a partir do segundo elemento de texto
         val endereco = textos[1].text()
+
+        // Cria um objeto Supermercado com as informações coletadas
         supermercado = Supermercado(id, nome, endereco, cnpj)
 
+        // Chama função para dicionar o supermercado ao banco de dados
         AdicionarSupermercadoAoBanco(supermercado)
     }
 
+    /**
+     * Adiciona um objeto Supermercado ao banco de dados.
+     *
+     * @param supermercado O objeto Supermercado a ser adicionado ao banco de dados.
+     */
     private fun AdicionarSupermercadoAoBanco(supermercado : Supermercado){
         try{
             Log.d("Teste", "Antes documento " + supermercado.id)
+
+            // Obtém uma referência ao documento do supermercado no banco de dados
             documentoSupermercado = database.collection("supermercado").document(supermercado.id)
             supermercado.id = documentoSupermercado.id
+
+            // Salva os dados do supermercado no documento
             documentoSupermercado.set(supermercado)
                 .addOnSuccessListener {
                     Log.d("Teste", "Sucesso ao salvar o supermercado no banco de dados")
@@ -174,23 +203,26 @@ class NotaFiscalActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Define o adaptador para a lista de produtos.
+     */
     private fun DefinirAdaptador(){
+        // Cria o adaptador de ProdutoNotaFiscalAdaptador, passando a referência para a atividade (this) e a lista de produtos
         adaptador = ProdutoNotaFiscalAdaptador(this, produtos)
-//        adaptador.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-//            override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
-//                super.onItemRangeRemoved(positionStart, itemCount)
-//                VerificarSituacaoLista()
-//            }
-//        })
 
+        // Define configurações para RecyclerView
         rvListaDeCompra.setHasFixedSize(true)
         rvListaDeCompra.layoutManager = LinearLayoutManager(this)
         rvListaDeCompra.adapter = adaptador
         rvListaDeCompra.isClickable = true
     }
 
+    /**
+     * Verifica a situação da lista de produtos e atualiza a visibilidade dos elementos na tela.
+     */
     private fun VerificarSituacaoLista() {
         if (produtos.size == 0) {
+            // Se a lista de produtos estiver vazia, exibe a mensagem de lista vazia e oculta a RecyclerView
             tvListaVazia.visibility = TextView.VISIBLE
             rvListaDeCompra.visibility = ListView.INVISIBLE
 
@@ -201,20 +233,27 @@ class NotaFiscalActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Sobrescreve o método onBackPressed() para exibir um diálogo de confirmação ao pressionar o botão de voltar.
+     */
     override fun onBackPressed() {
+        // Cria um AlertDialog com título, mensagem e botões de ação para confirmar salvamento da lista
         var alertDialog = AlertDialog.Builder(this)
             .setTitle("Salvar Lista?")
             .setMessage("Deseja salvar a lista " + etTituloLista.text + "?")
             .setPositiveButton("OK") { dialog, which ->
+                // Ao pressionar o botão "OK", executa função para criar os produtos
                 runBlocking {
                     CriarProdutos()
                 }
+                // Inicia HomeActivity
                 val intent = Intent(this, HomeActivity::class.java)
                 startActivity(intent)
                 dialog.dismiss()
                 finish()
             }
             .setNegativeButton("Cancelar") { dialog, which ->
+                // Inicia HomeActivity
                 val intent = Intent(this, HomeActivity::class.java)
                 startActivity(intent)
                 dialog.dismiss()
@@ -224,7 +263,11 @@ class NotaFiscalActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
+    /**
+     * Cria os produtos no banco de dados.
+     */
     private fun CriarProdutos(){
+        // Se a lista de produtos estiver vazia, salva a lista de compra vazia
         if(produtos.size == 0){
             runBlocking {
                 SalvarListaDeCompra(mutableListOf<DocumentReference>())
@@ -236,24 +279,36 @@ class NotaFiscalActivity : AppCompatActivity() {
         var flagFinal = 0
         for(produto in produtos) {
             Log.d("Teste", "Entrei pra salvar" + produto.codigoLocal)
+
+            // Cria uma query para buscar o produto no banco de dados
             val query = database.collection("produto")
                 .whereEqualTo("supermercadoId", supermercado.id)
                 .whereEqualTo("codigoLocal", produto.codigoLocal)
 
-            // ATUALIZANDO PRODUTOS
+            // Atualiza produtos
             query.get()
                 .addOnSuccessListener { querySnapshot ->
                     Log.d("Teste", "QuerySnapshot " + querySnapshot.size())
 
-                    if (querySnapshot.size() !== 0) {
+                    if (querySnapshot.size() !== 0) { // Se o produto já existe no banco de dados, atualiza seus dados
                         Log.d("Teste", "Documento encontrado")
+
+                        // Obtém a referência do documento do produto
                         val docRef = querySnapshot.documents[0].reference
+
+                        // Define id do produto e id do supermercado do produto
                         produto.id = docRef.id
                         produto.supermercadoId = supermercado.id
+
+                        // Adiciona a referência do documento do produto na lista de referências
                         referenciasProdutos.add(docRef)
+
+                        // Atualiza os dados do produto no documento
                         docRef.set(produto)
                             .addOnSuccessListener {
+                                // Incrementa a contagem de produtos inseridos
                                 flagFinal++
+                                // Se todos produtos foram inseridos, chama função para salvar lista de compras
                                 if (flagFinal == produtos.size) {
                                     runBlocking {
                                         SalvarListaDeCompra(referenciasProdutos)
@@ -267,21 +322,37 @@ class NotaFiscalActivity : AppCompatActivity() {
                             }
                     }
                     else{
+                        // Se o produto não existe no banco de dados, cria um novo documento para ele
                         Log.d("Teste", "Documento não encontrado")
+
+                        // Cria um novo documento para o produto na coleção "produto_nota_fiscal"
                         val documentoProdutoOriginal = database.collection("produto_nota_fiscal").document(produto.codigoLocal.toString())
+
+                        // Cria um objeto ProdutoNotaFiscal com os dados do produto original
                         var produtoOriginal = ProdutoNotaFiscal(produto.codigoLocal.toString(), produto.nome)
+
+                        // Salva o produto original no banco de dados
                         documentoProdutoOriginal.set(produtoOriginal)
                             .addOnSuccessListener {
                                 Log.d("Teste", "Sucesso ao salvar o produto original no banco de dados")
+
+                                // Cria um novo documento para o produto na coleção "produto"
                                 val documentoProduto = FirebaseFirestore.getInstance().collection("produto")
                                     .document()
+                                // Define o ID e o supermercadoId do produto
                                 produto.id = documentoProduto.id
                                 produto.supermercadoId = supermercado.id
+
+                                // Adiciona a referência do documento do produto na lista de referências
                                 referenciasProdutos.add(documentoProduto)
+
+                                // Salva o produto no banco de dados
                                 documentoProduto.set(produto)
                                     .addOnSuccessListener {
+                                        // Incrementa a contagem de produtos inseridos
                                         flagFinal++
                                         if (flagFinal == produtos.size){
+                                            // Se todos produtos foram inseridos, chama função para salvar lista de compras
                                             runBlocking {
                                                 SalvarListaDeCompra(referenciasProdutos)
                                             }
@@ -289,11 +360,13 @@ class NotaFiscalActivity : AppCompatActivity() {
                                         Log.d("Teste", "Sucesso ao salvar o produto no banco de dados")
                                     }
                                     .addOnFailureListener {
+                                        // Em caso de erro ao salvar o produto
                                         Log.d("Teste", "Erro ao salvar o produto no banco de dados")
                                     }
 
                             }
                             .addOnFailureListener {
+                                // Em caso de erro ao salvar o produto original
                                 Log.d("Teste", "Erro ao salvar o produto original no banco de dados")
                             }
                     }
@@ -305,20 +378,29 @@ class NotaFiscalActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Salva a lista de compra no banco de dados.
+     *
+     * @param referenciaProdutos A lista de referências dos produtos da lista de compra.
+     */
     private fun SalvarListaDeCompra(referenciaProdutos: MutableList<DocumentReference>){
-
+        // Cria um novo documento para a lista de compra na coleção "lista_de_compra"
         documentoListaDeCompra = database.collection("lista_de_compra")
             .document()
 
+        // Cria um mapa de atualizações com os dados da lista de compra
         val updates = hashMapOf<String, Any>(
             "produtos" to referenciaProdutos,
             "nome" to etTituloLista.text.toString(),
             "id" to documentoListaDeCompra.id
         )
 
+        // Salva os dados da lista de compra no documento
         documentoListaDeCompra.set(updates)
             .addOnSuccessListener {
                 Log.d("Teste", "Sucesso ao criar a lista no banco de dados")
+
+                // Executa a função para vincular a lista ao usuário
                 runBlocking {
                     VincularListaAoUsuario()
                 }
@@ -327,11 +409,16 @@ class NotaFiscalActivity : AppCompatActivity() {
                 Log.d("Teste", "Erro ao criar a lista no banco de dados")
             }
     }
-    private fun VincularListaAoUsuario() {
 
+    /**
+     * Vincula a lista de compra ao usuário.
+     */
+    private fun VincularListaAoUsuario() {
+        // Obtém a referência do documento do usuário na coleção "usuario"
         documentoUsuario = database.collection("usuario")
             .document(usuarioId)
 
+        // Atualiza o campo "listasDeCompra" do documento do usuário adicionando a referência da lista de compra
         documentoUsuario.update("listasDeCompra", FieldValue.arrayUnion(documentoListaDeCompra))
             .addOnSuccessListener {
                 Log.d("Teste", "Sucesso ao vincular a lista ao usuário")

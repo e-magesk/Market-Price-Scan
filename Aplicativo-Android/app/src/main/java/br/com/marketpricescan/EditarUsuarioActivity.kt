@@ -26,6 +26,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+/**
+ * Classe responsável pela atividade de edição de usuário.
+ */
 class EditarUsuarioActivity : AppCompatActivity() {
 
     private lateinit var etNomeEditar: EditText
@@ -62,6 +65,9 @@ class EditarUsuarioActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Função responsável por iniciar os componentes da interface.
+     */
     private fun IniciarComponentes(){
         etNomeEditar = findViewById(R.id.etNomeEditar)
         etEmailEditar = findViewById(R.id.etEmailEditar)
@@ -72,6 +78,10 @@ class EditarUsuarioActivity : AppCompatActivity() {
         pbEditarUsuario = findViewById(R.id.pbEditarUsuario)
     }
 
+    /**
+     * Função responsável por inicializar o usuário.
+     * Busca as informações do usuário no banco de dados e preenche os campos de nome, email e ID.
+     */
     private fun InicializarUsuario(){
         database.collection("usuario").document(usuarioId).get().addOnSuccessListener {document ->
             usuario = Usuario(document.getString("nome")!!)
@@ -82,26 +92,36 @@ class EditarUsuarioActivity : AppCompatActivity() {
         tvIdUsuario.setText("ID: " + usuarioId)
     }
 
+    /**
+     * Função responsável por definir as ações dos botões.
+     */
     private fun DefinirAcoes(){
 
         val intent = Intent(this, HomeActivity::class.java)
 
+        // Ação do botão de editar usuário
         btnEditarUsuario.setOnClickListener {view ->
+            //Ao clicar no botão, verifica se os campos de email e senha estão preenchidos.
             if(etEmailEditar.text.toString().isEmpty()){
                 etEmailEditar.error = "Campo obrigatório"
                 etEmailEditar.requestFocus()
             }else if(etSenhaEditar.text.toString().isEmpty()){
                 etSenhaEditar.error = "Campo obrigatório"
                 etSenhaEditar.requestFocus()
-            }else{
+            }else{ // Caso os campos estejam preenchidos
                 pbEditarUsuario.visibility = View.VISIBLE
+                // Atualiza o email do usuário
                 FirebaseAuth.getInstance().currentUser?.updateEmail(etEmailEditar.text.toString())?.addOnSuccessListener {
+                    // Atualiza a senha do usuário
                     FirebaseAuth.getInstance().currentUser?.updatePassword(etSenhaEditar.text.toString())?.addOnSuccessListener {
+                        // Exibe uma snackbar com a mensagem de sucesso
                         var snackbar = Snackbar.make(view, "Os dados foram alterados com sucesso!", Snackbar.LENGTH_LONG)
                         snackbar.setBackgroundTint(getColor(R.color.green))
                         snackbar.setTextColor(getColor(R.color.black))
                         pbEditarUsuario.visibility = View.INVISIBLE
                         snackbar.show()
+
+                        // Delay para carregamento
                         val coroutineScope = CoroutineScope(Dispatchers.Main)
                         coroutineScope.launch {
                             delay(1000)
@@ -109,6 +129,7 @@ class EditarUsuarioActivity : AppCompatActivity() {
                             finish()
                         }
                     }?.addOnFailureListener {
+                        // Exibe uma snackbar com a mensagem de erro
                         pbEditarUsuario.visibility = View.INVISIBLE
                         var snackbar = Snackbar.make(view, "Erro ao alterar informações! Tente novamente.", Snackbar.LENGTH_LONG)
                         snackbar.setBackgroundTint(getColor(R.color.red))
@@ -119,6 +140,7 @@ class EditarUsuarioActivity : AppCompatActivity() {
             }
         }
 
+        // Ação do ícone de copiar o ID do usuário
         iconCopyId.setOnClickListener { view ->
             val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val textToCopy = usuarioId.trim()

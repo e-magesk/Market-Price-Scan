@@ -11,6 +11,12 @@ import androidx.recyclerview.widget.RecyclerView
 import br.com.marketpricescan.R
 import br.com.marketpricescan.model.Produto
 
+/**
+ * Adaptador para exibição de produtos em uma lista de nota fiscal.
+ *
+ * @param context O contexto da aplicação.
+ * @param produtos A lista de produtos a ser exibida.
+ */
 class ProdutoNotaFiscalAdaptador(private val context : Context, private val produtos: MutableList<Produto>) : RecyclerView.Adapter<ProdutoNotaFiscalAdaptador.ItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -42,6 +48,11 @@ class ProdutoNotaFiscalAdaptador(private val context : Context, private val prod
 
         }
 
+        /**
+         * Atualiza a visualização do ItemViewHolder com base nos dados do produto fornecido.
+         *
+         * @param produto O produto a ser exibido.
+         */
         fun bind(produto: Produto) {
             tvProdutoNotaFiscal.text = produto.nome
             tvProdutoNotaFiscal.requestFocus()
@@ -55,8 +66,12 @@ class ProdutoNotaFiscalAdaptador(private val context : Context, private val prod
             tvPrecoProdutoNotaFiscal.text = produto.preco.toString()
         }
 
+        /**
+         * Define as ações dos elementos do item da lista.
+         */
         private fun definirAcoes() {
-
+            // Define a ação de clique para o "ivCircleCheck".
+            // Quando ocorre o clique, alterna entre o ícone de check e uncheck e atualiza o estado do produto na lista.
             ivCircleCheck.setOnClickListener {
                 val currentPosition = bindingAdapterPosition
                 if (checkOrUncheck == 1) {
@@ -70,6 +85,8 @@ class ProdutoNotaFiscalAdaptador(private val context : Context, private val prod
                 }
             }
 
+            // Define a ação de clique longo para o itemView do produto.
+            // Quando ocorre o clique longo, exibe um pop-up de confirmação para deletar o item da lista.
             itemView.setOnLongClickListener {
                 val currentPosition = bindingAdapterPosition
                 PopUpConfirmacaoDeletarItem(produtos[currentPosition], currentPosition)
@@ -77,17 +94,27 @@ class ProdutoNotaFiscalAdaptador(private val context : Context, private val prod
                 true
             }
 
+            // Define a ação de clique longo para o textView do prouto.
+            // Quando ocorre o clique longo, exibe um pop-up de confirmação para deletar o item da lista.
             tvProdutoNotaFiscal.setOnLongClickListener {
                 val currentPosition = bindingAdapterPosition
                 PopUpConfirmacaoDeletarItem(produtos[currentPosition], currentPosition)
                 true
             }
         }
+
+        /**
+         * Exibe um popup de confirmação para deletar o item da lista.
+         *
+         * @param produto O produto a ser deletado.
+         * @param position A posição do item na lista.
+         */
         private fun PopUpConfirmacaoDeletarItem(produto: Produto, position: Int) {
             val alertDialog = AlertDialog.Builder(itemView.context)
                 .setTitle("Deletar Item")
                 .setMessage("O item " + produto.nome + " será deletado da lista. Deseja continuar?")
                 .setPositiveButton("OK") { dialog, which ->
+                    // Remove o produto da lista de produtos
                     produtos.remove(produto)
                     notifyItemRemoved(position)
                     dialog.dismiss()
