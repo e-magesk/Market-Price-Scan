@@ -9,12 +9,6 @@
     <li><a href="#sobre-o-projeto">Sobre o Projeto</a></li>
     <li><a href="#funcionalidades">Funcionalidades</a></li>
     <li><a href="#feito-com">Feito com</a></li>
-    <li><a href="#deploy">Deploy da aplicação</a>
-        <ol>
-            <li><a href="#pre-requisitos">Pré-Requisitos</a></li>
-            <li><a href="#instalacao">Instalação</a></li>
-        </ol>
-    </li>
     <li><a href="#historico">Histórico de Lançamentos</a></li>
     <li><a href="#contribuições">Contribuições</a></li>
     <li><a href="#licenca">Licença</a></li>
@@ -55,20 +49,13 @@ Aqui estão a linguagem, IDE e ferrmentas que foram utilizadas no desenvolviment
 * [Gradle](https://gradle.org/)
 * [Firebase](https://firebase.google.com/?hl=pt)
 
-<div id="deploy"> </div>
-
-## :calling: Deploy da Aplicação
-
-### Pré-requisitos
-### Instalação
-
 <div id="historico"> </div>
 
 ## :mantelpiece_clock: Histórico de lançamentos
 
- * v1.0.0:
+ * v1.0.0.0:
    * Aplicativo com criação, gerenciamento e compartilhamento de listas.
- * v1.1.0:
+ * v2.0.0.0:
    * Aplicativo com comparação de preços entre supermercados.
 
 <div id="contribuições"> </div>
